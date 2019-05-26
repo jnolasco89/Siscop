@@ -1,0 +1,10 @@
+sv\org\siscop\caritas\entidades\Catalogo.class
+sv\org\siscop\caritas\entidades\ItemCatalogo.class
+sv\org\siscop\caritas\dao\ItemsCatalogoFacade.class
+sv\org\siscop\caritas\ejb\ServiciosCatalogo.class
+sv\org\siscop\caritas\entidades\Catalogo_.class
+sv\org\siscop\caritas\ejb\ServiciosCatalogoLocal.class
+sv\org\siscop\caritas\dao\AbstractFacade.class
+sv\org\siscop\caritas\dao\CatalogoFacade.class
+sv\org\siscop\caritas\ejb\NewSessionBean.class
+sv\org\siscop\caritas\entidades\ItemCatalogo_.class

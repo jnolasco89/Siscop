@@ -1,0 +1,196 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-lg-12">
+                <p:layoutUnit position="center">
+                    <h3 style="margin-top:0">Mantenimiento de catálogos</h3>
+                    <h:form id="principal">
+                        <p:growl id="growl" showDetail="true"/>
+                        <p:tabView id="tabs" activeIndex="#{catalogoController.tabActiva}">
+                            <p:tab id="busqueda" title="Búsqueda">
+                                <h:panelGrid>
+                                    <p:menubar>
+                                        <p:menuitem>
+                                            <p:inputText id="txtCampoBusqueda" value="#{catalogoController.campoBusqueda}"/>
+                                        </p:menuitem>
+                                        <p:menuitem 
+                                            value="Buscar" 
+                                            actionListener="#{catalogoController.buscar()}" 
+                                            icon="ui-icon-search"
+                                            update="tablaCatalogos"/>
+                                        <p:menuitem 
+                                            value="Limpiar" 
+                                            action="#{catalogoController.limpiarBusqueda()}" 
+                                            update=":principal:tabs"
+                                            icon="ui-icon-refresh" />
+                                    </p:menubar>
+                                    <p:dataTable id="tablaCatalogos" var = "cat" 
+                                                 widgetVar="tablaCatalogos"
+                                                 value="#{catalogoController.listaCatalogos}"
+                                                 selectionMode="single"
+                                                 selection="#{catalogoController.currentCatalog}"
+                                                 rowKey="#{cat.codigo}"
+                                                 emptyMessage="Sin registros">
+                                        <p:ajax event="rowSelect"
+                                                listener="#{catalogoController.catalogoSeleccionado()}"
+                                                update=":principal:tabs"
+                                                />
+                                        <p:column headerText="Código">
+                                            <h:outputText value="#{cat.codigo}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre">
+                                            <h:outputText value="#{cat.nombre}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:tab>
+                            <p:tab id="detalle" title="Detalle">
+                                <p:panelGrid>
+                                    <p:menubar>
+                                        <p:menuitem 
+                                            value="Guardar" 
+                                            action="#{catalogoController.guardarCatalago()}" 
+                                            icon="ui-icon-disk" 
+                                            update=":principal:growl,
+                                            :principal:tabs:tablaCatalogos,
+                                            datosCatalogo, 
+                                            panelItemsCatalogo ">
+                                        </p:menuitem>
+                                        <p:menuitem 
+                                            value="Limpiar" 
+                                            action="#{catalogoController.limpiarBusqueda()}" 
+                                            update=":principal:tabs"
+                                            icon="ui-icon-refresh" />
+                                    </p:menubar>
+                                </p:panelGrid>
+                                <p:panel style="margin-top: 5px;" header="Catalogo">
+                                    <h:panelGrid id="datosCatalogo" columns="4" cellpadding="5">
+                                        <p:outputLabel for="txtCodigo" value="Codigo:"/>
+                                        <p:inputText id="txtCodigo" value="#{catalogoController.currentCatalog.codigo}"/>
+                                        <p:outputLabel for="txtNombre" value="Nombre:"/>
+                                        <p:inputText id="txtNombre" value="#{catalogoController.currentCatalog.nombre}"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                                <p:panel id="panelItemsCatalogo" style="margin-top: 5px;" header="Items catalogo">
+                                    <h:panelGrid id="gridItemsCatalogo">
+                                        <p:menubar>
+                                            <p:menuitem value="Nuevo" 
+                                                        icon="ui-icon-plus"  
+                                                        onclick="PF('dialogAddItemCatalogo').show()"
+                                                        />
+                                        </p:menubar>
+                                        <p:dataTable id="itemsCatalogo"
+                                                     widgetVar="itemsCatalogo"
+                                                     var = "item" 
+                                                     value="#{catalogoController.itemsCatalogo}"
+                                                     emptyMessage="Sin registros"
+                                                     rowIndexVar="index"
+                                                     >
+                                            <p:ajax event="rowSelect"
+                                                    update=":principal" />
+                                            <p:column headerText="Código">
+                                                <h:outputText value="#{item.codigo}" />
+                                            </p:column>
+                                            <p:column headerText="Nombre">
+                                                <h:outputText value="#{item.descripcion}" />
+                                            </p:column>
+                                            <p:column headerText="Opciones" style="text-align: center;">
+                                                <p:commandButton 
+                                                    icon="ui-icon-trash" 
+                                                    style="width: 30px;margin: 0px 10px 0px 10px;"
+                                                    action="#{catalogoController.eliminarItem(index)}" 
+                                                    update="principal"/>
+                                                <p:commandButton 
+                                                    icon="ui-icon-pencil" 
+                                                    style="width: 30px;margin: 0px 10px 0px 10px;"
+                                                    action="#{catalogoController.setEditIndexAndItem(item, index)}"
+                                                    update=":principal:dialogEditItemCatalogo"
+                                                    oncomplete="PF('dialogEditItemCatalogo').show()"
+                                                    />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </p:tab>
+                        </p:tabView>
+
+                        <p:dialog id="dialogAddItemCatalogo" 
+                                  widgetVar="dialogAddItemCatalogo" 
+                                  modal="true" 
+                                  header="Agregar item" 
+                                  width="320" 
+                                  height="150"
+                                  resizable="false"
+                                  >
+                            <p:panel>
+                                <h:panelGrid columns="2" cellpadding="5">
+
+                                    <p:outputLabel for="txtDialogCodigoNewItem" value="Codigo:" />
+                                    <p:inputText id="txtDialogCodigoNewItem" value="#{catalogoController.currentAddItem.codigo}"/>
+
+                                    <p:outputLabel for="txtDialogNombreNewItem" value="Nombre: "/>
+                                    <p:inputText id="txtDialogNombreNewItem" value="#{catalogoController.currentAddItem.descripcion}"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                    <p:commandButton 
+                                        id="agregarItemCatalogo"
+                                        value="Agregar" 
+                                        actionListener="#{catalogoController.agregarItem()}"
+                                        update="principal"
+                                        />
+                                    <p:commandButton 
+                                        value="Cancelar" 
+                                        type="button"
+                                        onclick="PF('dialogAddItemCatalogo').hide()"
+                                        />
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:dialog>
+
+                        <p:dialog id="dialogEditItemCatalogo" 
+                                  widgetVar="dialogEditItemCatalogo" 
+                                  modal="true" 
+                                  header="Editar item" 
+                                  width="320" 
+                                  height="150"
+                                  resizable="false"
+                                  >
+                            <p:panel>
+                                <h:panelGrid columns="2" cellpadding="5">
+
+                                    <p:outputLabel for="txtDialogCodigoEditItem" value="Codigo:" />
+                                    <p:inputText id="txtDialogCodigoEditItem" value="#{catalogoController.currentEditItem.codigo}"/>
+
+                                    <p:outputLabel for="txtDialogNombreEditItem" value="Nombre: "/>
+                                    <p:inputText id="txtDialogNombreEditItem" value="#{catalogoController.currentEditItem.descripcion}"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                    <p:commandButton 
+                                        id="editarItemCatalogo"
+                                        value="Editar" 
+                                        actionListener="#{catalogoController.editarItem()}"
+                                        update="principal"
+                                        />
+                                    <p:commandButton 
+                                        value="Cancelar" 
+                                        type="button"
+                                        onclick="PF('dialogEditItemCatalogo').hide()"
+                                        />
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:dialog>
+
+
+                    </h:form>
+                </p:layoutUnit>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>

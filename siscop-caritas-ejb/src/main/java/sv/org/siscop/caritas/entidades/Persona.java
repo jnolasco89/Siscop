@@ -6,7 +6,6 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -15,6 +14,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -35,8 +36,9 @@ public class Persona implements Auditable, Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "persona_generator")
     @SequenceGenerator(name = "persona_generator", sequenceName = "seq_persona", allocationSize = 1)
     private Long id;
-    @Column(name = "idtipo")
-    private BigInteger idtipo;
+    @JoinColumn(name = "idtipo", referencedColumnName = "id")
+    @ManyToOne
+    private ItemCatalogo tipo;
     @Size(max = 50)
     @Column(name = "nomcom")
     private String nomcom;
@@ -77,12 +79,12 @@ public class Persona implements Auditable, Serializable {
         this.id = id;
     }
 
-    public BigInteger getIdtipo() {
-        return idtipo;
+    public ItemCatalogo getTipo() {
+        return tipo;
     }
 
-    public void setIdtipo(BigInteger idtipo) {
-        this.idtipo = idtipo;
+    public void setTipo(ItemCatalogo tipo) {
+        this.tipo = tipo;
     }
 
     public String getNomcom() {

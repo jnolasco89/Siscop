@@ -6,7 +6,6 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -36,8 +35,9 @@ public class Direccion implements Auditable, Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "direccion_generator")
     @SequenceGenerator(name = "direccion_generator", sequenceName = "seq_direccion", allocationSize = 1)
     private Long id;
-    @Column(name = "idtipo")
-    private BigInteger idtipo;
+    @JoinColumn(name = "idtipo", referencedColumnName = "id")
+    @ManyToOne
+    private ItemCatalogo tipo;
     @Size(max = 200)
     @Column(name = "direccion")
     private String direccion;
@@ -65,12 +65,12 @@ public class Direccion implements Auditable, Serializable {
         this.id = id;
     }
 
-    public BigInteger getIdtipo() {
-        return idtipo;
+    public ItemCatalogo getTipo() {
+        return tipo;
     }
 
-    public void setIdtipo(BigInteger idtipo) {
-        this.idtipo = idtipo;
+    public void setTipo(ItemCatalogo tipo) {
+        this.tipo = tipo;
     }
 
     public String getDireccion() {

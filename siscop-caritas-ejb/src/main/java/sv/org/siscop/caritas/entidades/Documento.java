@@ -6,7 +6,6 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -39,8 +38,9 @@ public class Documento implements Auditable, Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "documento_generator")
     @SequenceGenerator(name = "documento_generator", sequenceName = "seq_documento", allocationSize = 1)
     private Long id;
-    @Column(name = "idtipo")
-    private BigInteger idtipo;
+    @JoinColumn(name = "idtipo", referencedColumnName = "id")
+    @ManyToOne
+    private ItemCatalogo tipo;
     @Size(max = 20)
     @Column(name = "numero")
     private String numero;
@@ -72,12 +72,12 @@ public class Documento implements Auditable, Serializable {
         this.id = id;
     }
 
-    public BigInteger getIdtipo() {
-        return idtipo;
+    public ItemCatalogo getTipo() {
+        return tipo;
     }
 
-    public void setIdtipo(BigInteger idtipo) {
-        this.idtipo = idtipo;
+    public void setTipo(ItemCatalogo tipo) {
+        this.tipo = tipo;
     }
 
     public String getNumero() {

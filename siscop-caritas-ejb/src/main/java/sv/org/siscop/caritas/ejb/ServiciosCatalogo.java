@@ -6,6 +6,7 @@
 package sv.org.siscop.caritas.ejb;
 
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import sv.org.siscop.caritas.dao.CatalogoFacade;
@@ -19,11 +20,12 @@ import sv.org.siscop.caritas.entidades.ItemCatalogo;
  */
 @Stateless
 public class ServiciosCatalogo implements ServiciosCatalogoLocal {
+
     @EJB
     CatalogoFacade catalogoDao;
     @EJB
     ItemsCatalogoFacade itemsDao;
-    
+
     @Override
     public void addCatalogo(Catalogo c) {
         catalogoDao.create(c);
@@ -31,25 +33,34 @@ public class ServiciosCatalogo implements ServiciosCatalogoLocal {
 
     @Override
     public void editCatalogo(Catalogo c) {
-       catalogoDao.edit(c);
+        catalogoDao.edit(c);
         for (ItemCatalogo i : c.getItemCatalogoList()) {
-            i.setIdcatalogo(c);
+            i.setCatalogo(c);
             itemsDao.edit(i);
         }
     }
-    
-    @Override
-    public List<Catalogo> findCatalogoByAnyField(String field) {
-        List<Catalogo> c=catalogoDao.findCatalogoByAnyField(field);
-        return c;
-    }
-    
+
     @Override
     public List<Catalogo> getAllCatalogos() {
         return catalogoDao.findAll();
     }
 
- 
+    @Override
+    public List<Catalogo> findCatalogoByAnyField(Map params) {
+        List<Catalogo> c = catalogoDao.findCatalogoByAnyField(params);
+        return c;
+    }
 
-  
+    @Override
+    public Catalogo findCatalogoById(Integer id) {
+        Catalogo c = catalogoDao.find(id);
+        return c;
+    }
+
+    @Override
+    public ItemCatalogo findItemCatalogoById(Integer id) {
+        ItemCatalogo i = itemsDao.find(id);
+        return i;
+    }
+
 }

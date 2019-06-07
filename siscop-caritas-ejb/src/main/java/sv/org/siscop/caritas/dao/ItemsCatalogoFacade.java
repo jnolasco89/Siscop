@@ -15,10 +15,11 @@ import sv.org.siscop.caritas.entidades.ItemCatalogo;
  * @author Leonardo Martinez
  */
 @Stateless
-public class ItemsCatalogoFacade extends AbstractFacade<ItemCatalogo>{
-   @PersistenceContext(unitName = "siscop_pu")
+public class ItemsCatalogoFacade extends AbstractFacade<ItemCatalogo> {
+
+    @PersistenceContext(unitName = "siscop_pu")
     private EntityManager em;
-   
+
     public ItemsCatalogoFacade() {
         super(ItemCatalogo.class);
     }
@@ -27,5 +28,10 @@ public class ItemsCatalogoFacade extends AbstractFacade<ItemCatalogo>{
     protected EntityManager getEntityManager() {
         return this.em;
     }
-    
+
+    @Override
+    public ItemCatalogo find(Object id) {
+        return super.find(id);
+    }
+
 }

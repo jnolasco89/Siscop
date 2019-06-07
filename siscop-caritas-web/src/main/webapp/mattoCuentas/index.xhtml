@@ -1,0 +1,138 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-lg-12">
+                <p:layoutUnit position="center">
+                    <h3 style="margin-top:0">Mantenimiento de cuentas contables</h3>
+                    <h:form id="formTabs">
+                        <p:growl id="growl" 
+                                 showDetail="true" 
+                                 for="msgMttoCuentas"/>
+                        <p:tabView id="tabs" 
+                                   activeIndex="#{cuentasController.tabActivo}" 
+                                   >
+                            <p:tab id="busqueda" title="Búsqueda">
+                                <h:panelGrid>
+                                    <p:menubar>
+                                        <p:menuitem>
+                                            <p:inputText id="txtCampoBusqueda"/>
+                                        </p:menuitem>
+                                        <p:menuitem 
+                                            value="Buscar" 
+                                            icon="ui-icon-search"
+                                            actionListener="#{cuentasController.buscarCuenta()}"
+                                            />
+                                        <p:menuitem 
+                                            value="Limpiar" 
+                                            icon="ui-icon-refresh" 
+                                            actionListener="#{cuentasController.limpiar()}"
+                                            update=":formTabs"
+                                            />
+                                    </p:menubar>
+                                </h:panelGrid>
+                                <p:dataTable
+                                    id="tablaCuentas"   
+                                    var="cta" 
+                                    value="#{cuentasController.listaCuentasPadre}"
+                                    paginator="true" 
+                                    rows="5"
+                                    expandableRowGroups="true"
+                                    sortBy="#{cta.idctapadre.id}"
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    currentPageReportTemplate="(Mostrando del: {startRecord} al {endRecord} de {totalRecords})"
+                                    rowsPerPageTemplate="5,10,15" 
+                                    selectionMode="single" 
+                                    selection="#{cuentasController.ctaSeleccionada}"
+                                    rowKey="#{cta.codigo}"
+                                    lazy="true">
+                                    <p:ajax event="rowSelect" 
+                                            listener="#{cuentasController.evtFilaSeleccionada()}"
+                                            update=":formTabs"
+                                            />
+                                    <p:headerRow>
+                                        <p:column colspan="2">
+                                            <h:outputText value="#{cta.idctapadre.nombre}" />
+                                        </p:column>
+                                    </p:headerRow>
+                                    <p:column headerText="Codigo">
+                                        <h:outputText value="#{cta.codigo}"/>
+                                    </p:column>
+                                    <p:column headerText="Nombre">
+                                        <h:outputText value="#{cta.nombre}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:tab>
+                            <p:tab id="detalle" title="Detalle">
+                                <p:panelGrid>
+                                    <p:menubar>
+                                        <p:menuitem
+                                            value="Guardar"
+                                            icon="ui-icon-disk"
+                                            />
+                                        <p:menuitem
+                                            value="Limpiar"
+                                            icon="ui-icon-refresh"
+                                            action="#{cuentasController.limpiar()}"
+                                            update=":formTabs"
+                                            />
+
+                                    </p:menubar>
+
+                                </p:panelGrid>
+                                <p:panel
+                                    style="margin-top: 5px;" 
+                                    header="Catalogo">
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <p:outputLabel for="txtSubcuentaDe"
+                                                       value="Subcuenta de:"
+                                                       />
+                                        <p:inputText id="txtSubcuentaDe"
+                                                     value="#{cuentasController.codigoCuentaPadre}"
+                                                     />
+                                        <p:outputLabel for="txtCodigoCuenta" 
+                                                       value="Codigo: "
+                                                       />
+                                        <p:inputText id="txtCodigoCuenta" 
+                                                     value="#{cuentasController.ctaSeleccionada.codigo}"
+                                                     />
+                                        <p:outputLabel for="txtNombreCuenta"
+                                                       value="Nombre: "
+                                                       />
+                                        <p:inputText id="txtNombreCuenta"
+                                                     value="#{cuentasController.ctaSeleccionada.nombre}"
+                                                     />
+                                        <p:outputLabel for="txtDescripcionCuenta"
+                                                       value="Descripcion: "
+                                                       />
+                                        <p:inputTextarea id="txtDescripcionCuenta"
+                                                         rows="5" 
+                                                         cols="30"
+                                                         value="#{cuentasController.ctaSeleccionada.descripcion}"
+                                                         />
+                                    </h:panelGrid>
+                                </p:panel>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+                    <h:form id="a" enctype="multipart/form-data">
+                        <p:fileUpload fileUploadListener="#{cuentasController.handleFileUpload}" 
+                                      mode="advanced" 
+                                      dragDropSupport="false"
+                                      sizeLimit="100000" 
+                                      fileLimit="3" 
+                                      allowTypes="/(\.|\/)(xlsx|xls)$/" 
+                                      label="Buscar"
+                                      uploadLabel="Subir"
+                                      cancelLabel="Cancelar"/>
+                    </h:form>
+                </p:layoutUnit>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

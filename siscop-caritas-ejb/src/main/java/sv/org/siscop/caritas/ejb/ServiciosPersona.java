@@ -5,6 +5,8 @@
  */
 package sv.org.siscop.caritas.ejb;
 
+import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import sv.org.siscop.caritas.dao.PersonaFacade;
@@ -28,6 +30,11 @@ public class ServiciosPersona implements ServiciosPersonaLocal {
     @Override
     public void actualizarPersona(Persona c) {
         personaDao.edit(c);
+    }
+
+    @Override
+    public List<Persona> buscarPersonas(Map params) throws Exception {
+        return personaDao.buscarPersonas(params);
     }
 
 }

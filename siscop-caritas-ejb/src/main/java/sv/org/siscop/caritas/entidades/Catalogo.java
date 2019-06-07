@@ -7,22 +7,22 @@ package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -31,43 +31,42 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "catalogo")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Catalogo.findAll", query = "SELECT c FROM Catalogo c")
-    , @NamedQuery(name = "Catalogo.findById", query = "SELECT c FROM Catalogo c WHERE c.id = :id")
-    , @NamedQuery(name = "Catalogo.findByCodigo", query = "SELECT c FROM Catalogo c WHERE c.codigo = :codigo")
-    , @NamedQuery(name = "Catalogo.findByNombre", query = "SELECT c FROM Catalogo c WHERE c.nombre = :nombre")})
-public class Catalogo implements Serializable {
+@EntityListeners(AuditListener.class)
+public class Catalogo implements Auditable, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "autoinc_generator")
-    @SequenceGenerator(name="autoinc_generator", sequenceName = "seq_autoincrementables", allocationSize = 1)
     @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "catalogo_generator")
+    @SequenceGenerator(name = "catalogo_generator", sequenceName = "seq_catalogo", allocationSize = 1)
     @NotNull
     @Column(name = "id")
-    private Long id;
+    private Integer id;
     @Size(max = 10)
     @Column(name = "codigo")
     private String codigo;
     @Size(max = 50)
     @Column(name = "nombre")
     private String nombre;
-    @OneToMany(mappedBy = "idcatalogo", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @Column(name = "activo")
+    private Boolean estado;
+    @Embedded
+    private Audit audit;
+    @OneToMany(mappedBy = "catalogo", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<ItemCatalogo> itemCatalogoList;
 
     public Catalogo() {
     }
 
-    public Catalogo(Long id) {
+    public Catalogo(Integer id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -87,6 +86,24 @@ public class Catalogo implements Serializable {
         this.nombre = nombre;
     }
 
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
+    @Override
+    public Audit getAudit() {
+        return audit;
+    }
+
+    @Override
+    public void setAudit(Audit audit) {
+        this.audit = audit;
+    }
+
     @XmlTransient
     public List<ItemCatalogo> getItemCatalogoList() {
         return itemCatalogoList;
@@ -98,19 +115,24 @@ public class Catalogo implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Catalogo)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        Catalogo other = (Catalogo) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Catalogo other = (Catalogo) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
@@ -120,5 +142,5 @@ public class Catalogo implements Serializable {
     public String toString() {
         return "sv.org.siscop.caritas.entidades.Catalogo[ id=" + id + " ]";
     }
-    
+
 }

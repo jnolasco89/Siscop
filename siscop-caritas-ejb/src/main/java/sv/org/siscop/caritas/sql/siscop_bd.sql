@@ -5,6 +5,8 @@
 
 -- SECUENCIAS
 
+CREATE SEQUENCE seq_catalogo START 1;
+CREATE SEQUENCE seq_itemcatalogo START 1;
 CREATE SEQUENCE seq_persona START 1;
 CREATE SEQUENCE seq_telefono START 1;
 CREATE SEQUENCE seq_direccion START 1;

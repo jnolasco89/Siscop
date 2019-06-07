@@ -6,22 +6,22 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
+import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -29,44 +29,45 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "item_catalogo")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "ItemCatalogo.findAll", query = "SELECT i FROM ItemCatalogo i")
-    , @NamedQuery(name = "ItemCatalogo.findById", query = "SELECT i FROM ItemCatalogo i WHERE i.id = :id")
-    , @NamedQuery(name = "ItemCatalogo.findByCodigo", query = "SELECT i FROM ItemCatalogo i WHERE i.codigo = :codigo")
-    , @NamedQuery(name = "ItemCatalogo.findByDescripcion", query = "SELECT i FROM ItemCatalogo i WHERE i.descripcion = :descripcion")})
-public class ItemCatalogo implements Serializable {
+@EntityListeners(AuditListener.class)
+public class ItemCatalogo implements Auditable, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @Basic(optional = false)
-     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "autoinc_generator")
-    @SequenceGenerator(name="autoinc_generator", sequenceName = "seq_autoincrementables", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "itemCatalogo_generator")
+    @SequenceGenerator(name = "itemCatalogo_generator", sequenceName = "seq_itemcatalogo", allocationSize = 1)
     @NotNull
     @Column(name = "id")
-    private Long id;
+    private Integer id;
     @Size(max = 10)
     @Column(name = "codigo")
     private String codigo;
     @Size(max = 50)
     @Column(name = "descripcion")
     private String descripcion;
+    @Column(name = "activo")
+    private Boolean estado;
     @JoinColumn(name = "idcatalogo", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private Catalogo idcatalogo;
+    private Catalogo catalogo;
+    @Embedded
+    private Audit audit;
+
+    @Transient
+    private boolean mostrarEliminar;
 
     public ItemCatalogo() {
     }
 
-    public ItemCatalogo(Long id) {
+    public ItemCatalogo(Integer id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -86,29 +87,60 @@ public class ItemCatalogo implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Catalogo getIdcatalogo() {
-        return idcatalogo;
+    public Boolean getEstado() {
+        return estado;
     }
 
-    public void setIdcatalogo(Catalogo idcatalogo) {
-        this.idcatalogo = idcatalogo;
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+
+    public Catalogo getCatalogo() {
+        return catalogo;
+    }
+
+    public void setCatalogo(Catalogo catalogo) {
+        this.catalogo = catalogo;
+    }
+
+    @Override
+    public Audit getAudit() {
+        return audit;
+    }
+
+    @Override
+    public void setAudit(Audit audit) {
+        this.audit = audit;
+    }
+
+    public boolean isMostrarEliminar() {
+        return mostrarEliminar;
+    }
+
+    public void setMostrarEliminar(boolean mostrarEliminar) {
+        this.mostrarEliminar = mostrarEliminar;
     }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 73 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ItemCatalogo)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        ItemCatalogo other = (ItemCatalogo) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ItemCatalogo other = (ItemCatalogo) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
@@ -118,5 +150,5 @@ public class ItemCatalogo implements Serializable {
     public String toString() {
         return "sv.org.siscop.caritas.entidades.ItemCatalogo[ id=" + id + " ]";
     }
-    
+
 }

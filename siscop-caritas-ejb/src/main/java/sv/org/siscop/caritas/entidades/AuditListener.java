@@ -27,7 +27,10 @@ public class AuditListener {
     @PreUpdate
     public void setActualizar(Auditable auditable) {
         Audit audit = auditable.getAudit();
-
+        if (audit == null) {
+            audit = new Audit();
+            auditable.setAudit(audit);
+        }
         audit.setFechaMod(new Date());
         audit.setUserMod(LoggedUser.get());
     }

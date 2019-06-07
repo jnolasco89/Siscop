@@ -7,16 +7,22 @@ package sv.org.siscop.caritas.controllers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import org.primefaces.PrimeFaces;
 import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
 import sv.org.siscop.caritas.entidades.Catalogo;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
+import sv.org.siscop.caritas.entidades.LoggedUser;
+import sv.org.siscop.caritas.exceptions.ValidacionException;
 
 /**
  *
@@ -48,10 +54,16 @@ public class CatalogoController implements Serializable {
 
     @PostConstruct
     public void init() {
+        LoggedUser.logIn("Jnolasco89");
         tabActiva = 0;
         indexTablaItemsCatalogo = -1;
         listaCatalogos = servCat.getAllCatalogos();
-        modoAgregarOeditar=1;
+        modoAgregarOeditar = 1;
+        System.out.println("********************************");
+        System.out.println(this);
+        Calendar c = Calendar.getInstance();
+        System.out.println(c.getTime());
+        System.out.println("********************************");
     }
 
     //============== GETTER AND SETTER  ================
@@ -120,8 +132,8 @@ public class CatalogoController implements Serializable {
     }
 
     public String getCampoBusqueda() {
-        if(campoBusqueda==null){
-            campoBusqueda="";
+        if (campoBusqueda == null) {
+            campoBusqueda = "";
         }
         return campoBusqueda;
     }
@@ -129,37 +141,101 @@ public class CatalogoController implements Serializable {
     public void setCampoBusqueda(String campoBusqueda) {
         this.campoBusqueda = campoBusqueda;
     }
-    
-    
+
     //================= METODOS  ===================
-    public void guardarCatalago() {
-        String msjGrowl="";
-        //Para agregar0
-        if (modoAgregarOeditar == 1) {
-            System.out.println("INGRESA A AGREAGR");
-            //Preparando y agregando el catalogo
-            for (ItemCatalogo i : itemsCatalogo) {
-                i.setIdcatalogo(currentCatalog);
-            }
-            this.currentCatalog.setItemCatalogoList(itemsCatalogo);
-            servCat.addCatalogo(currentCatalog);
-            msjGrowl="Catalogo agregado";
-        } else if(modoAgregarOeditar==2){//Para editar
-            System.out.println("INGRESA A editar");
-            servCat.editCatalogo(currentCatalog);
-            msjGrowl="Catalogo editado";
+    public void validarCatalogo() throws ValidacionException {
+        List<String> listaValidaciones = new ArrayList<>();
+
+        if (currentCatalog.getCodigo().length() == 0) {
+            listaValidaciones.add("Codigo de catalogo requerido");
         }
 
-        //Actualizando la lista de catalogos
-        this.listaCatalogos = servCat.getAllCatalogos();
+        if (currentCatalog.getNombre().length() == 0) {
+            listaValidaciones.add("Nombre de catalogo requerido");
+        }
 
-        //Reiniciando los currents
-        this.currentCatalog = new Catalogo();
-        this.itemsCatalogo = new ArrayList<>();
-        this.modoAgregarOeditar=1;
+        if (!listaValidaciones.isEmpty()) {
+            throw new ValidacionException("Campo incorrecto", listaValidaciones);
+        }
+    }
 
-        //Mostrando el msj
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Operacion exitosa", msjGrowl));
+    public void validarAddItemCatalogo() throws ValidacionException {
+        List<String> listaValidaciones = new ArrayList<>();
+
+        if (currentAddItem.getCodigo().length() == 0) {
+            listaValidaciones.add("Codigo de item requerido");
+        }
+
+        if (currentAddItem.getDescripcion().length() == 0) {
+            listaValidaciones.add("Descripcion de item requerida");
+        }
+
+        if (!listaValidaciones.isEmpty()) {
+            throw new ValidacionException("Campo incorrecto", listaValidaciones);
+        }
+    }
+
+    public void validarEditItemCatalogo() throws ValidacionException {
+        List<String> listaValidaciones = new ArrayList<>();
+
+        if (currentEditItem.getCodigo().length() == 0) {
+            listaValidaciones.add("Codigo de item requerido");
+        }
+
+        if (currentEditItem.getDescripcion().length() == 0) {
+            listaValidaciones.add("Descripcion de item requerida");
+        }
+
+        if (!listaValidaciones.isEmpty()) {
+            throw new ValidacionException("Campo incorrecto", listaValidaciones);
+        }
+    }
+
+    public void guardarCatalago() {
+        try {
+            validarCatalogo();
+
+            String msjGrowl = "";
+            //Para agregar0
+            if (modoAgregarOeditar == 1) {
+                System.out.println("INGRESA A AGREAGR");
+                //Preparando y agregando el catalogo
+                for (ItemCatalogo i : itemsCatalogo) {
+                    i.setCatalogo(currentCatalog);
+                }
+                this.currentCatalog.setEstado(true);
+                this.currentCatalog.setItemCatalogoList(itemsCatalogo);
+                servCat.addCatalogo(currentCatalog);
+                msjGrowl = "Catalogo agregado";
+            } else if (modoAgregarOeditar == 2) {//Para editar
+                System.out.println("INGRESA A editar");
+                servCat.editCatalogo(currentCatalog);
+                msjGrowl = "Catalogo editado";
+            }
+
+            //Actualizando la lista de catalogos
+            this.listaCatalogos = servCat.getAllCatalogos();
+
+            //Reiniciando los currents
+            this.currentCatalog = new Catalogo();
+            this.itemsCatalogo = new ArrayList<>();
+            this.modoAgregarOeditar = 1;
+
+            //Mostrando el msj
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Operacion exitosa", msjGrowl));
+        } catch (ValidacionException ex) {
+            //Mostrando el msj
+            List<String> validaciones = ex.getMensajes();
+
+            for (String validacion : validaciones) {
+                FacesContext.getCurrentInstance().addMessage(
+                        "msgGrowl",
+                        new FacesMessage(
+                                FacesMessage.SEVERITY_WARN,
+                                ex.getMessage(),
+                                validacion));
+            }
+        }
 
     }
 
@@ -169,8 +245,31 @@ public class CatalogoController implements Serializable {
     }
 
     public void agregarItem() {
-        this.itemsCatalogo.add(currentAddItem);
-        this.currentAddItem = new ItemCatalogo();
+        try {
+            if (modoAgregarOeditar == 1) {
+                validarAddItemCatalogo();
+            } else if (modoAgregarOeditar == 2) {
+                validarEditItemCatalogo();
+            }
+
+            this.currentAddItem.setEstado(true);
+            this.currentAddItem.setMostrarEliminar(true);
+            this.itemsCatalogo.add(currentAddItem);
+            this.currentAddItem = new ItemCatalogo();
+
+            PrimeFaces.current().executeScript("PF('dialogAddItemCatalogo').hide()");
+        } catch (ValidacionException ex) {
+            List<String> validaciones = ex.getMensajes();
+
+            for (String validacion : validaciones) {
+                FacesContext.getCurrentInstance().addMessage(
+                        "msgGrowl",
+                        new FacesMessage(
+                                FacesMessage.SEVERITY_WARN,
+                                ex.getMessage(),
+                                validacion));
+            }
+        }
     }
 
     public void editarItem() {
@@ -202,19 +301,38 @@ public class CatalogoController implements Serializable {
     }
 
     public void buscar() {
-       listaCatalogos=servCat.findCatalogoByAnyField(this.campoBusqueda);
+        Map params = new HashMap();
+        params.put("codigo", this.campoBusqueda);
+        listaCatalogos = servCat.findCatalogoByAnyField(params);
     }
 
     public void limpiarBusqueda() {
         modoAgregarOeditar = 1;
         currentCatalog = new Catalogo();
         itemsCatalogo = new ArrayList<>();
-        campoBusqueda="";
-        listaCatalogos=servCat.getAllCatalogos();
+        campoBusqueda = "";
+        listaCatalogos = servCat.getAllCatalogos();
+    }
+
+    public String estadoToString(boolean estado) {
+        return estado ? "Activo" : "Inactivo";
+    }
+
+    public boolean renderColEstado() {
+        return modoAgregarOeditar == 2;
+    }
+
+    public boolean renderSelectActivo() {
+        return modoAgregarOeditar == 2;
+    }
+
+    public void cerrarModalAddItem() {
+        this.currentAddItem = new ItemCatalogo();
+        PrimeFaces.current().executeScript("PF('dialogAddItemCatalogo').hide()");
     }
 
     //========== METODOS DE PRUEBA ==================
-     public void print() {
+    public void print() {
         System.out.println("IMPRIMIENDO DESDE CONTROLLER");
 //        nb.print();
 
@@ -227,7 +345,7 @@ public class CatalogoController implements Serializable {
         ItemCatalogo a = new ItemCatalogo();
         a.setCodigo("IT1");
         a.setDescripcion("Item 1");
-        a.setIdcatalogo(c);
+        a.setCatalogo(c);
         items.add(a);
 
         c.setItemCatalogoList(items);

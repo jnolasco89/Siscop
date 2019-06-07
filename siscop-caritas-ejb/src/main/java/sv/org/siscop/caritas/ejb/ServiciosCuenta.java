@@ -123,9 +123,9 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
         List<Integer> codificacion = new ArrayList<>();
         codificacion.add(1);//Grupo
         codificacion.add(1);//Subgrupo
-        codificacion.add(2);//Rubro
-        codificacion.add(2);//Cuenta
-        codificacion.add(2);//Subcuenta
+        codificacion.add(1);//Rubro
+        codificacion.add(1);//Cuenta
+        codificacion.add(1);//Subcuenta
 
         int longitudCodigo = codigoHijo.length();
         int contadorDigitosCodigo = 0;
@@ -180,21 +180,8 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
         }
 
 //        cuentaDao.InsersionPorLotes(cuentas);
-        int x = 0;
         for (Cuenta c : cuentas) {
-            if (x < 2) {
-                System.out.println("----------------------------------------------");
-                System.out.println("Cuenta: " + c.getCodigo());
-                System.out.println("Nombre: " + c.getNombre());
-                if (c.getCodigoctapadre() == null) {
-                    System.out.println("Padre: NULL");
-                } else {
-                    System.out.println(c.getCodigoctapadre().getCodigo());
-                }
-
                 cuentaDao.create(c);
-            }
-            x++;
         }
     }
     // Add business logic below. (Right-click in editor and choose

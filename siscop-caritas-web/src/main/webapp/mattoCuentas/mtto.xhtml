@@ -36,8 +36,14 @@
                                             />
                                     </p:menubar>
                                 </h:panelGrid>
-                                <p:tree value="#{cuentasControllerTree.raiz}" var="nodo" dynamic="true">
-                                    <p:treeNode>
+                                <p:tree value="#{cuentasControllerTree.raiz}" 
+                                        var="nodo" 
+                                        selectionMode="single"
+                                        selection="#{cuentasControllerTree.nodoSeleccionado}"
+                                        dynamic="true"
+                                        >
+                                    <p:ajax event="select" update=":formTabs" listener="#{cuentasControllerTree.actualizarCuentaSeleccionada()}"/>
+                                    <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
                                         <h:outputText value="#{nodo}" />
                                     </p:treeNode>
                                 </p:tree>
@@ -67,7 +73,8 @@
                                                        value="Subcuenta de:"
                                                        />
                                         <p:inputText id="txtSubcuentaDe"
-                                                     value=""
+                                                     value="#{cuentasControllerTree.codigoCuentaPadre}"
+                                                     onclick="PF('dialogCuentas').show()"
                                                      />
                                         <p:outputLabel for="txtCodigoCuenta" 
                                                        value="Codigo: "
@@ -94,7 +101,8 @@
                             </p:tab>
                         </p:tabView>
                     </h:form>
-                    <h:form id="a" enctype="multipart/form-data">
+
+                    <h:form id="formSubirArchivo" enctype="multipart/form-data">
                         <p:fileUpload fileUploadListener="#{cuentasControllerTree.handleFileUpload}" 
                                       mode="advanced" 
                                       dragDropSupport="false"
@@ -104,6 +112,44 @@
                                       label="Buscar"
                                       uploadLabel="Subir"
                                       cancelLabel="Cancelar"/>
+                    </h:form>
+
+                    <h:form id="formDialogCuentas">
+                        <p:dialog id="dialogCuentas" 
+                                  widgetVar="dialogCuentas" 
+                                  modal="true" 
+                                  header="Cuentas" 
+                                  width="500" 
+                                  height="300"
+                                  resizable="false"
+
+                                  >
+                            <p:scrollPanel style="width: 450px;height: 250px;">
+                                <p:tree value="#{cuentasControllerTree.raiz}" 
+                                        var="nodo" 
+                                        selectionMode="single"
+                                        selection="#{cuentasControllerTree.nodoSeleccionado}"
+                                        dynamic="true"
+                                        >
+                                    <p:ajax event="select" 
+                                            update=":formTabs:tabs:detalle" 
+                                            listener="#{cuentasControllerTree.actualizarCuentaPadre()}"
+                                            oncomplete="PF('dialogCuentas').hide()"
+                                            />
+                                    <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
+                                        <h:outputText value="#{nodo}" />
+                                    </p:treeNode>
+                                </p:tree>
+                            </p:scrollPanel>
+                            <h:panelGrid columns="3">
+                                <p:commandButton 
+                                    value="Cancelar" 
+                                    type="button"
+                                    onclick="PF('dialogCuentas').hide()"
+
+                                    />
+                            </h:panelGrid>
+                        </p:dialog>
                     </h:form>
                 </p:layoutUnit>
             </div>

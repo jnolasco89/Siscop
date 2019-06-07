@@ -34,6 +34,7 @@ public class CuentasControllerTree implements Serializable {
     private ServiciosCuentaLocal servCtas;
     //Objetos cuenta
     private Cuenta ctaSeleccionada;
+    private TreeNode nodoSeleccionado;
     //Variables de control para la ui
     private int tabActivo;
     private UploadedFile archivo;
@@ -48,7 +49,7 @@ public class CuentasControllerTree implements Serializable {
 
     @PostConstruct
     public void init() {
-
+        ctaSeleccionada=new Cuenta();
         List<Cuenta> cuentas = servCtas.getCuentasPadres();
         raiz = new DefaultTreeNode("Raiz", null);
 
@@ -81,9 +82,9 @@ public class CuentasControllerTree implements Serializable {
     public String getCodigoCuentaPadre() {
         if (ctaSeleccionada.getCodigoctapadre() == null) {
             return "";
+        }else{
+            return ctaSeleccionada.getCodigoctapadre().getCodigo()+" - "+ctaSeleccionada.getCodigoctapadre().getNombre();
         }
-        return "";
-        //return ctaSeleccionada.getIdctapadre().getCodigo();
     }
 
     public void setCtaSeleccionada(Cuenta ctaSeleccionada) {
@@ -104,6 +105,14 @@ public class CuentasControllerTree implements Serializable {
 
     public void setRaiz(TreeNode raiz) {
         this.raiz = raiz;
+    }
+
+    public TreeNode getNodoSeleccionado() {
+        return nodoSeleccionado;
+    }
+
+    public void setNodoSeleccionado(TreeNode nodoSeleccionado) {
+        this.nodoSeleccionado = nodoSeleccionado;
     }
 
     //================ METODOS DE FUNCIONALIDAD ============
@@ -148,11 +157,30 @@ public class CuentasControllerTree implements Serializable {
 
     public void recorrerCuentas(List<Cuenta> cuentas, TreeNode padre) {
         for (Cuenta cuenta : cuentas) {
-            TreeNode nodo = new DefaultTreeNode(cuenta.getCodigo() + "-" + cuenta.getNombre(), padre);
+            TreeNode nodo = new DefaultTreeNode(cuenta, padre);
+
+            if (cuenta.getCodigoctapadre() == null) {
+                nodo.setExpanded(true);
+            }
 
             if (cuenta.getCuentaList().size() > 0) {
                 recorrerCuentas(cuenta.getCuentaList(), nodo);
             }
+        }
+    }
+
+    public void actualizarCuentaSeleccionada() {
+        if (nodoSeleccionado != null) {
+            Cuenta cta = (Cuenta) nodoSeleccionado.getData();
+            ctaSeleccionada = cta;
+            tabActivo=1;
+        }
+    }
+    
+    public void actualizarCuentaPadre(){
+        if (nodoSeleccionado != null) {
+            Cuenta cta = (Cuenta) nodoSeleccionado.getData();
+            ctaSeleccionada.setCodigoctapadre(cta);
         }
     }
 }

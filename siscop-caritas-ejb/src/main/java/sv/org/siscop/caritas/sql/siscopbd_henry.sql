@@ -5,7 +5,7 @@
 -- Dumped from database version 11.2
 -- Dumped by pg_dump version 11.2
 
--- Started on 2019-06-06 23:34:46
+-- Started on 2019-06-07 05:49:59
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -18,26 +18,23 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 2952 (class 1262 OID 16528)
--- Name: siscop; Type: DATABASE; Schema: -; Owner: siemp
+-- TOC entry 3 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE siscop WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'Spanish_El Salvador.1252' LC_CTYPE = 'Spanish_El Salvador.1252';
+CREATE SCHEMA public;
 
 
-ALTER DATABASE siscop OWNER TO siemp;
+ALTER SCHEMA public OWNER TO postgres;
 
-\connect siscop
+--
+-- TOC entry 2937 (class 0 OID 0)
+-- Dependencies: 3
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
+--
 
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET client_min_messages = warning;
-SET row_security = off;
+COMMENT ON SCHEMA public IS 'standard public schema';
+
 
 SET default_tablespace = '';
 
@@ -94,7 +91,7 @@ CREATE TABLE public.catalogo (
 ALTER TABLE public.catalogo OWNER TO postgres;
 
 --
--- TOC entry 216 (class 1259 OID 16760)
+-- TOC entry 214 (class 1259 OID 16760)
 -- Name: cuenta; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -136,7 +133,7 @@ ALTER TABLE public.direccion OWNER TO postgres;
 CREATE TABLE public.documento (
     id bigint NOT NULL,
     idpersona bigint,
-    idtipo bigint,
+    idtipo integer,
     numero character varying(20),
     fechaexpedicion date,
     fechavence date,
@@ -148,19 +145,6 @@ CREATE TABLE public.documento (
 
 
 ALTER TABLE public.documento OWNER TO postgres;
-
---
--- TOC entry 209 (class 1259 OID 16720)
--- Name: item; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.item (
-    id bigint NOT NULL,
-    nombre character varying(10)
-);
-
-
-ALTER TABLE public.item OWNER TO postgres;
 
 --
 -- TOC entry 197 (class 1259 OID 16532)
@@ -211,19 +195,6 @@ CREATE TABLE public.persona (
 ALTER TABLE public.persona OWNER TO siemp;
 
 --
--- TOC entry 208 (class 1259 OID 16715)
--- Name: persona2; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.persona2 (
-    id bigint NOT NULL,
-    idtipo bigint
-);
-
-
-ALTER TABLE public.persona2 OWNER TO postgres;
-
---
 -- TOC entry 207 (class 1259 OID 16673)
 -- Name: proyecto; Type: TABLE; Schema: public; Owner: postgres
 --
@@ -245,7 +216,7 @@ CREATE TABLE public.proyecto (
 ALTER TABLE public.proyecto OWNER TO postgres;
 
 --
--- TOC entry 217 (class 1259 OID 16763)
+-- TOC entry 215 (class 1259 OID 16763)
 -- Name: seq_catalogo; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -260,7 +231,7 @@ CREATE SEQUENCE public.seq_catalogo
 ALTER TABLE public.seq_catalogo OWNER TO postgres;
 
 --
--- TOC entry 212 (class 1259 OID 16734)
+-- TOC entry 210 (class 1259 OID 16734)
 -- Name: seq_direccion; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -275,7 +246,7 @@ CREATE SEQUENCE public.seq_direccion
 ALTER TABLE public.seq_direccion OWNER TO postgres;
 
 --
--- TOC entry 213 (class 1259 OID 16736)
+-- TOC entry 211 (class 1259 OID 16736)
 -- Name: seq_documento; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -290,7 +261,7 @@ CREATE SEQUENCE public.seq_documento
 ALTER TABLE public.seq_documento OWNER TO postgres;
 
 --
--- TOC entry 218 (class 1259 OID 16765)
+-- TOC entry 216 (class 1259 OID 16765)
 -- Name: seq_itemcatalogo; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -305,7 +276,7 @@ CREATE SEQUENCE public.seq_itemcatalogo
 ALTER TABLE public.seq_itemcatalogo OWNER TO postgres;
 
 --
--- TOC entry 210 (class 1259 OID 16730)
+-- TOC entry 208 (class 1259 OID 16730)
 -- Name: seq_persona; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -320,7 +291,7 @@ CREATE SEQUENCE public.seq_persona
 ALTER TABLE public.seq_persona OWNER TO postgres;
 
 --
--- TOC entry 215 (class 1259 OID 16740)
+-- TOC entry 213 (class 1259 OID 16740)
 -- Name: seq_proyecto; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -335,7 +306,7 @@ CREATE SEQUENCE public.seq_proyecto
 ALTER TABLE public.seq_proyecto OWNER TO postgres;
 
 --
--- TOC entry 211 (class 1259 OID 16732)
+-- TOC entry 209 (class 1259 OID 16732)
 -- Name: seq_telefono; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -350,7 +321,7 @@ CREATE SEQUENCE public.seq_telefono
 ALTER TABLE public.seq_telefono OWNER TO postgres;
 
 --
--- TOC entry 214 (class 1259 OID 16738)
+-- TOC entry 212 (class 1259 OID 16738)
 -- Name: seq_usuario; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -372,7 +343,7 @@ ALTER TABLE public.seq_usuario OWNER TO postgres;
 CREATE TABLE public.telefono (
     id bigint NOT NULL,
     idpersona bigint,
-    idtipo bigint,
+    idtipo integer,
     extension character varying(4),
     numero character varying(15),
     fechacrea timestamp(4) without time zone,
@@ -438,39 +409,39 @@ CREATE TABLE public.usuario (
 ALTER TABLE public.usuario OWNER TO postgres;
 
 --
--- TOC entry 2928 (class 0 OID 16551)
+-- TOC entry 2915 (class 0 OID 16551)
 -- Dependencies: 200
 -- Data for Name: account; Type: TABLE DATA; Schema: public; Owner: siemp
 --
 
-INSERT INTO public.account (id, username, password, email, active) VALUES (1, 'hzometa', 'PBKDF2WithHmacSHA512:3072:jyoZ4+LdCQcj2/DGzdR6lTE0Q1XTL7zeaE71JmcPuNe7ao+nc29+rAIKXu5rLq/0pEwSVVhCARnImGtkMytFQA==:lzr7Q30zcnOXrNAUxvxxNIEf3UdpVQAbmOLPIfVZv+0=', 'henryzometa@gmail.com', true);
+INSERT INTO public.account VALUES (1, 'hzometa', 'PBKDF2WithHmacSHA512:3072:jyoZ4+LdCQcj2/DGzdR6lTE0Q1XTL7zeaE71JmcPuNe7ao+nc29+rAIKXu5rLq/0pEwSVVhCARnImGtkMytFQA==:lzr7Q30zcnOXrNAUxvxxNIEf3UdpVQAbmOLPIfVZv+0=', 'henryzometa@gmail.com', true);
 
 
 --
--- TOC entry 2924 (class 0 OID 16529)
+-- TOC entry 2911 (class 0 OID 16529)
 -- Dependencies: 196
 -- Data for Name: catalogo; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.catalogo (id, codigo, nombre, activo, fechacrea, usercrea, fechamod, usermod) VALUES (58, 'asd       ', 'asd                                               ', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.catalogo (id, codigo, nombre, activo, fechacrea, usercrea, fechamod, usermod) VALUES (59, 'asdsa     ', 'sdsdff                                            ', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.catalogo (id, codigo, nombre, activo, fechacrea, usercrea, fechamod, usermod) VALUES (60, 'dfd       ', 'dsfsdf                                            ', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.catalogo (id, codigo, nombre, activo, fechacrea, usercrea, fechamod, usermod) VALUES (61, 'hhhhh     ', 'hhhhhh                                            ', NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.catalogo (id, codigo, nombre, activo, fechacrea, usercrea, fechamod, usermod) VALUES (1, '1         ', 'Profesiones                                       ', true, '23:09:21.946', NULL, NULL, NULL);
-INSERT INTO public.catalogo (id, codigo, nombre, activo, fechacrea, usercrea, fechamod, usermod) VALUES (3, 'PR2       ', 'Catalogo de prueba 2                              ', NULL, '23:10:35.611', NULL, NULL, NULL);
-INSERT INTO public.catalogo (id, codigo, nombre, activo, fechacrea, usercrea, fechamod, usermod) VALUES (4, 'PR2       ', 'Catalogo de prueba 2                              ', NULL, '23:10:44.6', NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (58, 'asd       ', 'asd                                               ', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (59, 'asdsa     ', 'sdsdff                                            ', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (60, 'dfd       ', 'dsfsdf                                            ', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (61, 'hhhhh     ', 'hhhhhh                                            ', NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (1, '1         ', 'Profesiones                                       ', true, '23:09:21.946', NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (3, 'PR2       ', 'Catalogo de prueba 2                              ', NULL, '23:10:35.611', NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (4, 'PR2       ', 'Catalogo de prueba 2                              ', NULL, '23:10:44.6', NULL, NULL, NULL);
 
 
 --
--- TOC entry 2944 (class 0 OID 16760)
--- Dependencies: 216
+-- TOC entry 2929 (class 0 OID 16760)
+-- Dependencies: 214
 -- Data for Name: cuenta; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 
 
 --
--- TOC entry 2932 (class 0 OID 16589)
+-- TOC entry 2919 (class 0 OID 16589)
 -- Dependencies: 204
 -- Data for Name: direccion; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -478,7 +449,7 @@ INSERT INTO public.catalogo (id, codigo, nombre, activo, fechacrea, usercrea, fe
 
 
 --
--- TOC entry 2931 (class 0 OID 16577)
+-- TOC entry 2918 (class 0 OID 16577)
 -- Dependencies: 203
 -- Data for Name: documento; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -486,28 +457,20 @@ INSERT INTO public.catalogo (id, codigo, nombre, activo, fechacrea, usercrea, fe
 
 
 --
--- TOC entry 2937 (class 0 OID 16720)
--- Dependencies: 209
--- Data for Name: item; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-
-
---
--- TOC entry 2925 (class 0 OID 16532)
+-- TOC entry 2912 (class 0 OID 16532)
 -- Dependencies: 197
 -- Data for Name: item_catalogo; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, fechacrea, usercrea, fechamod, usermod) VALUES (63, '          ', 'Hola                                              ', 59, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, fechacrea, usercrea, fechamod, usermod) VALUES (65, '4         ', 'Prueba                                            ', 59, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, fechacrea, usercrea, fechamod, usermod) VALUES (67, '3         ', '1                                                 ', 59, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, fechacrea, usercrea, fechamod, usermod) VALUES (1, 'IT1       ', 'Item 1                                            ', 3, NULL, '23:10:35.613', NULL, NULL, NULL);
-INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, fechacrea, usercrea, fechamod, usermod) VALUES (2, 'IT1       ', 'Item 1                                            ', 4, NULL, '23:10:44.601', NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (63, '          ', 'Hola                                              ', 59, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (65, '4         ', 'Prueba                                            ', 59, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (67, '3         ', '1                                                 ', 59, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (1, 'IT1       ', 'Item 1                                            ', 3, NULL, '23:10:35.613', NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (2, 'IT1       ', 'Item 1                                            ', 4, NULL, '23:10:44.601', NULL, NULL, NULL);
 
 
 --
--- TOC entry 2926 (class 0 OID 16546)
+-- TOC entry 2913 (class 0 OID 16546)
 -- Dependencies: 198
 -- Data for Name: persona; Type: TABLE DATA; Schema: public; Owner: siemp
 --
@@ -515,15 +478,7 @@ INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, f
 
 
 --
--- TOC entry 2936 (class 0 OID 16715)
--- Dependencies: 208
--- Data for Name: persona2; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-
-
---
--- TOC entry 2935 (class 0 OID 16673)
+-- TOC entry 2922 (class 0 OID 16673)
 -- Dependencies: 207
 -- Data for Name: proyecto; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -531,7 +486,7 @@ INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, f
 
 
 --
--- TOC entry 2933 (class 0 OID 16606)
+-- TOC entry 2920 (class 0 OID 16606)
 -- Dependencies: 205
 -- Data for Name: telefono; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -539,7 +494,7 @@ INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, f
 
 
 --
--- TOC entry 2930 (class 0 OID 16562)
+-- TOC entry 2917 (class 0 OID 16562)
 -- Dependencies: 202
 -- Data for Name: token; Type: TABLE DATA; Schema: public; Owner: siemp
 --
@@ -547,7 +502,7 @@ INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, f
 
 
 --
--- TOC entry 2934 (class 0 OID 16616)
+-- TOC entry 2921 (class 0 OID 16616)
 -- Dependencies: 206
 -- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -555,7 +510,7 @@ INSERT INTO public.item_catalogo (id, codigo, descripcion, idcatalogo, activo, f
 
 
 --
--- TOC entry 2953 (class 0 OID 0)
+-- TOC entry 2938 (class 0 OID 0)
 -- Dependencies: 199
 -- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: siemp
 --
@@ -564,8 +519,8 @@ SELECT pg_catalog.setval('public.account_id_seq', 1, true);
 
 
 --
--- TOC entry 2954 (class 0 OID 0)
--- Dependencies: 217
+-- TOC entry 2939 (class 0 OID 0)
+-- Dependencies: 215
 -- Name: seq_catalogo; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -573,8 +528,8 @@ SELECT pg_catalog.setval('public.seq_catalogo', 4, true);
 
 
 --
--- TOC entry 2955 (class 0 OID 0)
--- Dependencies: 212
+-- TOC entry 2940 (class 0 OID 0)
+-- Dependencies: 210
 -- Name: seq_direccion; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -582,8 +537,8 @@ SELECT pg_catalog.setval('public.seq_direccion', 1, false);
 
 
 --
--- TOC entry 2956 (class 0 OID 0)
--- Dependencies: 213
+-- TOC entry 2941 (class 0 OID 0)
+-- Dependencies: 211
 -- Name: seq_documento; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -591,8 +546,8 @@ SELECT pg_catalog.setval('public.seq_documento', 1, false);
 
 
 --
--- TOC entry 2957 (class 0 OID 0)
--- Dependencies: 218
+-- TOC entry 2942 (class 0 OID 0)
+-- Dependencies: 216
 -- Name: seq_itemcatalogo; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -600,8 +555,8 @@ SELECT pg_catalog.setval('public.seq_itemcatalogo', 2, true);
 
 
 --
--- TOC entry 2958 (class 0 OID 0)
--- Dependencies: 210
+-- TOC entry 2943 (class 0 OID 0)
+-- Dependencies: 208
 -- Name: seq_persona; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -609,8 +564,8 @@ SELECT pg_catalog.setval('public.seq_persona', 1, true);
 
 
 --
--- TOC entry 2959 (class 0 OID 0)
--- Dependencies: 215
+-- TOC entry 2944 (class 0 OID 0)
+-- Dependencies: 213
 -- Name: seq_proyecto; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -618,8 +573,8 @@ SELECT pg_catalog.setval('public.seq_proyecto', 1, false);
 
 
 --
--- TOC entry 2960 (class 0 OID 0)
--- Dependencies: 211
+-- TOC entry 2945 (class 0 OID 0)
+-- Dependencies: 209
 -- Name: seq_telefono; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -627,8 +582,8 @@ SELECT pg_catalog.setval('public.seq_telefono', 1, false);
 
 
 --
--- TOC entry 2961 (class 0 OID 0)
--- Dependencies: 214
+-- TOC entry 2946 (class 0 OID 0)
+-- Dependencies: 212
 -- Name: seq_usuario; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -636,7 +591,7 @@ SELECT pg_catalog.setval('public.seq_usuario', 1, false);
 
 
 --
--- TOC entry 2962 (class 0 OID 0)
+-- TOC entry 2947 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: siemp
 --
@@ -645,7 +600,7 @@ SELECT pg_catalog.setval('public.token_id_seq', 1, false);
 
 
 --
--- TOC entry 2759 (class 2606 OID 16559)
+-- TOC entry 2751 (class 2606 OID 16559)
 -- Name: account account_email_key; Type: CONSTRAINT; Schema: public; Owner: siemp
 --
 
@@ -654,7 +609,7 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 2761 (class 2606 OID 16555)
+-- TOC entry 2753 (class 2606 OID 16555)
 -- Name: account account_pkey; Type: CONSTRAINT; Schema: public; Owner: siemp
 --
 
@@ -663,7 +618,7 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 2763 (class 2606 OID 16557)
+-- TOC entry 2755 (class 2606 OID 16557)
 -- Name: account account_username_key; Type: CONSTRAINT; Schema: public; Owner: siemp
 --
 
@@ -672,7 +627,7 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 2753 (class 2606 OID 16803)
+-- TOC entry 2745 (class 2606 OID 16803)
 -- Name: catalogo catalogo_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -681,7 +636,7 @@ ALTER TABLE ONLY public.catalogo
 
 
 --
--- TOC entry 2773 (class 2606 OID 16598)
+-- TOC entry 2765 (class 2606 OID 16598)
 -- Name: direccion direccion_persona_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -690,7 +645,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2775 (class 2606 OID 16596)
+-- TOC entry 2767 (class 2606 OID 16596)
 -- Name: direccion direccion_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -699,7 +654,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2767 (class 2606 OID 16605)
+-- TOC entry 2759 (class 2606 OID 16814)
 -- Name: documento documento_numero_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -708,8 +663,8 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2963 (class 0 OID 0)
--- Dependencies: 2767
+-- TOC entry 2948 (class 0 OID 0)
+-- Dependencies: 2759
 -- Name: CONSTRAINT documento_numero_unique ON documento; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -717,7 +672,7 @@ COMMENT ON CONSTRAINT documento_numero_unique ON public.documento IS 'No puede r
 
 
 --
--- TOC entry 2769 (class 2606 OID 16583)
+-- TOC entry 2761 (class 2606 OID 16816)
 -- Name: documento documento_persona_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -726,8 +681,8 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2964 (class 0 OID 0)
--- Dependencies: 2769
+-- TOC entry 2949 (class 0 OID 0)
+-- Dependencies: 2761
 -- Name: CONSTRAINT documento_persona_unique ON documento; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -735,7 +690,7 @@ COMMENT ON CONSTRAINT documento_persona_unique ON public.documento IS 'No puede 
 
 
 --
--- TOC entry 2771 (class 2606 OID 16581)
+-- TOC entry 2763 (class 2606 OID 16581)
 -- Name: documento documento_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -744,7 +699,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2755 (class 2606 OID 16768)
+-- TOC entry 2747 (class 2606 OID 16768)
 -- Name: item_catalogo item_catalogo_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -753,25 +708,7 @@ ALTER TABLE ONLY public.item_catalogo
 
 
 --
--- TOC entry 2791 (class 2606 OID 16724)
--- Name: item item_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.item
-    ADD CONSTRAINT item_pk PRIMARY KEY (id);
-
-
---
--- TOC entry 2789 (class 2606 OID 16719)
--- Name: persona2 persona2_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.persona2
-    ADD CONSTRAINT persona2_pk PRIMARY KEY (id);
-
-
---
--- TOC entry 2757 (class 2606 OID 16576)
+-- TOC entry 2749 (class 2606 OID 16576)
 -- Name: persona persona_pk; Type: CONSTRAINT; Schema: public; Owner: siemp
 --
 
@@ -780,7 +717,7 @@ ALTER TABLE ONLY public.persona
 
 
 --
--- TOC entry 2785 (class 2606 OID 16679)
+-- TOC entry 2777 (class 2606 OID 16679)
 -- Name: proyecto proyecto_codigo_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -789,7 +726,7 @@ ALTER TABLE ONLY public.proyecto
 
 
 --
--- TOC entry 2787 (class 2606 OID 16677)
+-- TOC entry 2779 (class 2606 OID 16677)
 -- Name: proyecto proyecto_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -798,7 +735,7 @@ ALTER TABLE ONLY public.proyecto
 
 
 --
--- TOC entry 2777 (class 2606 OID 16615)
+-- TOC entry 2769 (class 2606 OID 16829)
 -- Name: telefono telefono_persona_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -807,7 +744,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2779 (class 2606 OID 16613)
+-- TOC entry 2771 (class 2606 OID 16613)
 -- Name: telefono telefono_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -816,7 +753,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2765 (class 2606 OID 16569)
+-- TOC entry 2757 (class 2606 OID 16569)
 -- Name: token token_pkey; Type: CONSTRAINT; Schema: public; Owner: siemp
 --
 
@@ -825,7 +762,7 @@ ALTER TABLE ONLY public.token
 
 
 --
--- TOC entry 2781 (class 2606 OID 16620)
+-- TOC entry 2773 (class 2606 OID 16620)
 -- Name: usuario usuario_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -834,7 +771,7 @@ ALTER TABLE ONLY public.usuario
 
 
 --
--- TOC entry 2783 (class 2606 OID 16622)
+-- TOC entry 2775 (class 2606 OID 16622)
 -- Name: usuario usuario_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -843,7 +780,7 @@ ALTER TABLE ONLY public.usuario
 
 
 --
--- TOC entry 2798 (class 2606 OID 16774)
+-- TOC entry 2786 (class 2606 OID 16774)
 -- Name: direccion direccion_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -852,7 +789,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2797 (class 2606 OID 16599)
+-- TOC entry 2785 (class 2606 OID 16599)
 -- Name: direccion direccion_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -861,7 +798,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2796 (class 2606 OID 16779)
+-- TOC entry 2784 (class 2606 OID 16817)
 -- Name: documento documento_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -870,7 +807,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2795 (class 2606 OID 16584)
+-- TOC entry 2783 (class 2606 OID 16584)
 -- Name: documento documento_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -879,8 +816,8 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2965 (class 0 OID 0)
--- Dependencies: 2795
+-- TOC entry 2950 (class 0 OID 0)
+-- Dependencies: 2783
 -- Name: CONSTRAINT documento_persona_fk ON documento; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -888,7 +825,7 @@ COMMENT ON CONSTRAINT documento_persona_fk ON public.documento IS 'd';
 
 
 --
--- TOC entry 2792 (class 2606 OID 16804)
+-- TOC entry 2780 (class 2606 OID 16804)
 -- Name: item_catalogo item_catalogo_catalogo_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -897,16 +834,7 @@ ALTER TABLE ONLY public.item_catalogo
 
 
 --
--- TOC entry 2802 (class 2606 OID 16725)
--- Name: persona2 persona2_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.persona2
-    ADD CONSTRAINT persona2_item_fk FOREIGN KEY (idtipo) REFERENCES public.item(id);
-
-
---
--- TOC entry 2793 (class 2606 OID 16769)
+-- TOC entry 2781 (class 2606 OID 16769)
 -- Name: persona persona_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: siemp
 --
 
@@ -915,7 +843,7 @@ ALTER TABLE ONLY public.persona
 
 
 --
--- TOC entry 2800 (class 2606 OID 16784)
+-- TOC entry 2788 (class 2606 OID 16830)
 -- Name: telefono telefono_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -924,7 +852,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2799 (class 2606 OID 16685)
+-- TOC entry 2787 (class 2606 OID 16685)
 -- Name: telefono telefono_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -933,7 +861,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2794 (class 2606 OID 16570)
+-- TOC entry 2782 (class 2606 OID 16570)
 -- Name: token token_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: siemp
 --
 
@@ -942,7 +870,7 @@ ALTER TABLE ONLY public.token
 
 
 --
--- TOC entry 2801 (class 2606 OID 16623)
+-- TOC entry 2789 (class 2606 OID 16623)
 -- Name: usuario usuario_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -950,7 +878,7 @@ ALTER TABLE ONLY public.usuario
     ADD CONSTRAINT usuario_persona_fk FOREIGN KEY (idpersona) REFERENCES public.persona(id);
 
 
--- Completed on 2019-06-06 23:34:46
+-- Completed on 2019-06-07 05:50:00
 
 --
 -- PostgreSQL database dump complete

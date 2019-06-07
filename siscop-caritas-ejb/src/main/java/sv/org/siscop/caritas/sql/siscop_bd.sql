@@ -18,17 +18,22 @@ CREATE SEQUENCE seq_proyecto START 1;
 
 CREATE TABLE public.persona (
 	id int8 NOT NULL,
-	idtipo int8 NULL,
+	idtipo int4 NULL,
 	nomcom varchar(50) NULL,
 	razsocial varchar(50) NULL,
 	nombre1 varchar(15) NULL,
 	nombre2 varchar(15) NULL,
 	nombre3 varchar(15) NULL,
+	apellido1 varchar(15) NULL,
+	apellido2 varchar(15) NULL,
 	apecasada varchar(15) NULL,
 	fechacrea timestamp NULL,
 	usercrea varchar(15) NULL,
 	fechamod timestamp NULL,
 	usermod varchar(15) NULL,
+	fechanac date NULL,
+	sexo varchar(1) NULL,
+	idestadocivil int4 NULL,
 	CONSTRAINT persona_pk PRIMARY KEY (id),
 	CONSTRAINT persona_item_fk FOREIGN KEY (idtipo) REFERENCES item_catalogo(id)
 );

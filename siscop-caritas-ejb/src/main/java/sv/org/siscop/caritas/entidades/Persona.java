@@ -6,6 +6,7 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -19,6 +20,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 /**
@@ -55,12 +58,29 @@ public class Persona implements Auditable, Serializable {
     @Column(name = "nombre3")
     private String nombre3;
     @Size(max = 15)
+    @Column(name = "apellido1")
+    private String apellido1;
+    @Size(max = 15)
+    @Column(name = "apellido2")
+    private String apellido2;
+    @Size(max = 15)
     @Column(name = "apecasada")
     private String apecasada;
+    @Column(name = "fechanac")
+    @Temporal(TemporalType.DATE)
+    private Date fechanac;
+    @Size(max = 1)
+    @Column(name = "sexo")
+    private String sexo;
+    @JoinColumn(name = "idestadocivil", referencedColumnName = "id")
+    @ManyToOne
+    private ItemCatalogo estadoCivil;
     @OneToMany(mappedBy = "persona")
     private List<Direccion> direccionList;
     @OneToMany(mappedBy = "persona")
     private List<Documento> documentoList;
+    @OneToMany(mappedBy = "persona")
+    private List<Telefono> telefonoList;
     @Embedded
     private Audit audit;
 
@@ -127,12 +147,52 @@ public class Persona implements Auditable, Serializable {
         this.nombre3 = nombre3;
     }
 
+    public String getApellido1() {
+        return apellido1;
+    }
+
+    public void setApellido1(String apellido1) {
+        this.apellido1 = apellido1;
+    }
+
+    public String getApellido2() {
+        return apellido2;
+    }
+
+    public void setApellido2(String apellido2) {
+        this.apellido2 = apellido2;
+    }
+
     public String getApecasada() {
         return apecasada;
     }
 
     public void setApecasada(String apecasada) {
         this.apecasada = apecasada;
+    }
+
+    public Date getFechanac() {
+        return fechanac;
+    }
+
+    public void setFechanac(Date fechanac) {
+        this.fechanac = fechanac;
+    }
+
+    public String getSexo() {
+        return sexo;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
+
+    public ItemCatalogo getEstadoCivil() {
+        return estadoCivil;
+    }
+
+    public void setEstadoCivil(ItemCatalogo estadoCivil) {
+        this.estadoCivil = estadoCivil;
     }
 
     @Override
@@ -159,6 +219,14 @@ public class Persona implements Auditable, Serializable {
 
     public void setDocumentoList(List<Documento> documentoList) {
         this.documentoList = documentoList;
+    }
+
+    public List<Telefono> getTelefonoList() {
+        return telefonoList;
+    }
+
+    public void setTelefonoList(List<Telefono> telefonoList) {
+        this.telefonoList = telefonoList;
     }
 
     @Override

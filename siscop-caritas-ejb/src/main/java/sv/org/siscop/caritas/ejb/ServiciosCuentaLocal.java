@@ -23,4 +23,5 @@ public interface ServiciosCuentaLocal {
     void procesarArchivo(InputStream archivo);
     Cuenta getCuenta(Long id);
     List<Cuenta> getCuentasPadres();
+    List<Cuenta> getTodasLasCuentas();
 }

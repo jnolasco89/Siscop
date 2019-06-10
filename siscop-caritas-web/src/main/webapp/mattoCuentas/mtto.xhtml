@@ -15,7 +15,7 @@
                                  showDetail="true" 
                                  for="msgMttoCuentas"/>
                         <p:tabView id="tabs" 
-                                   activeIndex="#{cuentasControllerTree.tabActivo}" 
+                                   activeIndex="#{cuentasControllerTree.tabActiva}" 
                                    >
                             <p:tab id="busqueda" title="Búsqueda">
                                 <h:panelGrid>
@@ -26,23 +26,23 @@
                                         <p:menuitem 
                                             value="Buscar" 
                                             icon="ui-icon-search"
-                                            actionListener="#{cuentasControllerTree.buscarCuenta()}"
                                             />
                                         <p:menuitem 
                                             value="Limpiar" 
                                             icon="ui-icon-refresh" 
-                                            actionListener="#{cuentasControllerTree.limpiar()}"
                                             update=":formTabs"
                                             />
                                     </p:menubar>
                                 </h:panelGrid>
-                                <p:tree value="#{cuentasControllerTree.raiz}" 
+                                <p:tree value="#{cuentasControllerTree.arbolCuentas}" 
                                         var="nodo" 
                                         selectionMode="single"
-                                        selection="#{cuentasControllerTree.nodoSeleccionado}"
+                                        selection="#{cuentasControllerTree.nodoActual}"
                                         dynamic="true"
                                         >
-                                    <p:ajax event="select" update=":formTabs" listener="#{cuentasControllerTree.actualizarCuentaSeleccionada()}"/>
+                                    <p:ajax event="select" 
+                                            update=":formTabs" 
+                                            listener="#{cuentasControllerTree.cargarCuentaSeleccionada()}"/>
                                     <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
                                         <h:outputText value="#{nodo}" />
                                     </p:treeNode>
@@ -58,60 +58,72 @@
                                         <p:menuitem
                                             value="Limpiar"
                                             icon="ui-icon-refresh"
-                                            action="#{cuentasControllerTree.limpiar()}"
                                             update=":formTabs"
                                             />
-
                                     </p:menubar>
-
                                 </p:panelGrid>
                                 <p:panel
                                     style="margin-top: 5px;" 
                                     header="Catalogo">
-                                    <h:panelGrid columns="2" cellpadding="5">
-                                        <p:outputLabel for="txtSubcuentaDe"
-                                                       value="Subcuenta de:"
-                                                       />
-                                        <p:inputText id="txtSubcuentaDe"
-                                                     value="#{cuentasControllerTree.codigoCuentaPadre}"
-                                                     onclick="PF('dialogCuentas').show()"
-                                                     />
-                                        <p:outputLabel for="txtCodigoCuenta" 
-                                                       value="Codigo: "
-                                                       />
-                                        <p:inputText id="txtCodigoCuenta" 
-                                                     value="#{cuentasControllerTree.ctaSeleccionada.codigo}"
-                                                     />
-                                        <p:outputLabel for="txtNombreCuenta"
-                                                       value="Nombre: "
-                                                       />
-                                        <p:inputText id="txtNombreCuenta"
-                                                     value="#{cuentasControllerTree.ctaSeleccionada.nombre}"
-                                                     />
-                                        <p:outputLabel for="txtDescripcionCuenta"
-                                                       value="Descripcion: "
-                                                       />
-                                        <p:inputTextarea id="txtDescripcionCuenta"
-                                                         rows="5" 
-                                                         cols="30"
-                                                         value="#{cuentasControllerTree.ctaSeleccionada.descripcion}"
+
+                                    <div class="ui-g" style="width: 700px;">
+                                        <div class="ui-md-6">
+                                            <p:outputLabel for="txtSubcuentaDe"
+                                                           value="Subcuenta de:"
+                                                           />
+                                        </div>
+                                        <div class="ui-md-6">
+                                            <div class="ui-inputgroup">
+                                                <p:inputText id="txtSubcuentaDe"
+                                                             value="#{cuentasControllerTree.cuentaPadreActual.codigo}"
+                                                             />
+                                                <p:commandButton icon="ui-icon-search"  
+                                                                 styleClass="white-button"
+                                                                 onclick="PF('dialogCuentas').show()"/>  
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g" style="width: 700px;">
+                                        <div class="ui-md-6">
+                                            <p:outputLabel for="txtCodigoCuenta" 
+                                                           value="Codigo: "
+                                                           />
+                                        </div>
+                                        <div class="ui-md-6">
+                                            <p:inputText id="txtCodigoCuenta" 
+                                                         value="#{cuentasControllerTree.cuentaActual.codigo}"
                                                          />
-                                    </h:panelGrid>
+                                        </div>
+                                    </div>
+                                    <div class="ui-g" style="width: 700px;">
+                                        <div class="ui-md-6">
+                                            <p:outputLabel for="txtNombreCuenta"
+                                                           value="Nombre: "
+                                                           />
+                                        </div>
+                                        <div class="ui-md-6">
+                                            <p:inputText id="txtNombreCuenta"
+                                                         value="#{cuentasControllerTree.cuentaActual.nombre}"
+                                                         />
+                                        </div>
+                                    </div>
+                                    <div class="ui-g" style="width: 700px;">
+                                        <div class="ui-md-6">
+                                            <p:outputLabel for="txtDescripcionCuenta"
+                                                           value="Descripcion: "
+                                                           />
+                                        </div>
+                                        <div class="ui-md-6">
+                                            <p:inputTextarea id="txtDescripcionCuenta"
+                                                             rows="5" 
+                                                             cols="30"
+                                                             value="#{cuentasControllerTree.cuentaActual.descripcion}"
+                                                             />
+                                        </div>
+                                    </div>
                                 </p:panel>
                             </p:tab>
                         </p:tabView>
-                    </h:form>
-
-                    <h:form id="formSubirArchivo" enctype="multipart/form-data">
-                        <p:fileUpload fileUploadListener="#{cuentasControllerTree.handleFileUpload}" 
-                                      mode="advanced" 
-                                      dragDropSupport="false"
-                                      sizeLimit="100000" 
-                                      fileLimit="3" 
-                                      allowTypes="/(\.|\/)(xlsx|xls)$/" 
-                                      label="Buscar"
-                                      uploadLabel="Subir"
-                                      cancelLabel="Cancelar"/>
                     </h:form>
 
                     <h:form id="formDialogCuentas">
@@ -125,16 +137,16 @@
 
                                   >
                             <p:scrollPanel style="width: 450px;height: 250px;">
-                                <p:tree value="#{cuentasControllerTree.raiz}" 
+                                <p:tree value="#{cuentasControllerTree.arbolCuentas}" 
                                         var="nodo" 
                                         selectionMode="single"
-                                        selection="#{cuentasControllerTree.nodoSeleccionado}"
+                                        selection="#{cuentasControllerTree.nodoActual}"
                                         dynamic="true"
                                         >
                                     <p:ajax event="select" 
-                                            update=":formTabs:tabs:detalle" 
                                             listener="#{cuentasControllerTree.actualizarCuentaPadre()}"
                                             oncomplete="PF('dialogCuentas').hide()"
+                                            update="formTabs:tabs:txtSubcuentaDe"
                                             />
                                     <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
                                         <h:outputText value="#{nodo}" />

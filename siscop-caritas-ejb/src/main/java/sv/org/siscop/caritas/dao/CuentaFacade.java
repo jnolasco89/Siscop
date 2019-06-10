@@ -36,7 +36,7 @@ public class CuentaFacade extends AbstractFacade<Cuenta> {
     }
 
     public List<Cuenta> getCuentasPrincipales() {
-        Query q = em.createQuery("SELECT c FROM Cuenta c WHERE c.codigoctapadre IS NULL");
+        Query q = em.createQuery("SELECT c FROM Cuenta c WHERE c.codigoctapadre IS NULL ORDER BY c.codigo");
         List<Cuenta> cuentas = q.getResultList();
         return cuentas;
     }

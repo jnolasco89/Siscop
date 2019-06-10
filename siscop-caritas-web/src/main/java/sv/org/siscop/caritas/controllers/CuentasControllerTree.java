@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.bean.ManagedProperty;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import org.primefaces.event.FileUploadEvent;
@@ -32,13 +33,14 @@ public class CuentasControllerTree implements Serializable {
     //Servicios
     @EJB
     private ServiciosCuentaLocal servCtas;
-    //Objetos cuenta
-    private Cuenta ctaSeleccionada;
-    private TreeNode nodoSeleccionado;
-    //Variables de control para la ui
-    private int tabActivo;
-    private UploadedFile archivo;
-    private TreeNode raiz;
+
+    private int tabActiva;
+    
+    private Cuenta cuentaActual;
+    private Cuenta cuentaPadreActual;
+    
+    private TreeNode arbolCuentas;
+    private TreeNode nodoActual;
 
     /**
      * Creates a new instance of CuentasControllerTree
@@ -49,112 +51,75 @@ public class CuentasControllerTree implements Serializable {
 
     @PostConstruct
     public void init() {
-        ctaSeleccionada=new Cuenta();
+        tabActiva=0;
         List<Cuenta> cuentas = servCtas.getCuentasPadres();
-        raiz = new DefaultTreeNode("Raiz", null);
+        arbolCuentas = new DefaultTreeNode("Raiz", null);
 
-        recorrerCuentas(cuentas, raiz);
+        recorrerCuentas(cuentas, arbolCuentas);
 
     }
     //================ METODOS GET Y SET =================
 
-    public int getTabActivo() {
-        return tabActivo;
+    public TreeNode getArbolCuentas() {
+        return arbolCuentas;
     }
 
-    public void setTabActivo(int tabActivo) {
-        this.tabActivo = tabActivo;
+    public void setArbolCuentas(TreeNode arbolCuentas) {
+        this.arbolCuentas = arbolCuentas;
     }
 
-    public Cuenta getCtaSeleccionada() {
-        if (ctaSeleccionada == null) {
-            ctaSeleccionada = new Cuenta();
+    public TreeNode getNodoActual() {
+        return nodoActual;
+    }
+
+    public void setNodoActual(TreeNode nodoActual) {
+        this.nodoActual = nodoActual;
+    }
+
+    public Cuenta getCuentaActual() {
+        if(cuentaActual==null){
+            cuentaActual=new Cuenta();
         }
-        return ctaSeleccionada;
+        return cuentaActual;
     }
 
-    public void setCodigoCuentaPadre(String codigo) {
-        Cuenta ctaPadre = new Cuenta();
-        ctaPadre.setCodigo(codigo);
-        ctaSeleccionada.setCodigoctapadre(ctaPadre);
+    public void setCuentaActual(Cuenta cuentaActual) {
+        this.cuentaActual = cuentaActual;
     }
 
-    public String getCodigoCuentaPadre() {
-        if (ctaSeleccionada.getCodigoctapadre() == null) {
-            return "";
-        }else{
-            return ctaSeleccionada.getCodigoctapadre().getCodigo()+" - "+ctaSeleccionada.getCodigoctapadre().getNombre();
+    public Cuenta getCuentaPadreActual() {
+        if(cuentaPadreActual==null){
+            cuentaPadreActual=new Cuenta();
         }
+        return cuentaPadreActual;
     }
 
-    public void setCtaSeleccionada(Cuenta ctaSeleccionada) {
-        this.ctaSeleccionada = ctaSeleccionada;
+    public void setCuentaPadreActual(Cuenta cuentaPadreActual) {
+        this.cuentaPadreActual = cuentaPadreActual;
     }
 
-    public UploadedFile getArchivo() {
-        return archivo;
+    public int getTabActiva() {
+        return tabActiva;
     }
 
-    public void setArchivo(UploadedFile archivo) {
-        this.archivo = archivo;
+    public void setTabActiva(int tabActiva) {
+        this.tabActiva = tabActiva;
     }
-
-    public TreeNode getRaiz() {
-        return raiz;
-    }
-
-    public void setRaiz(TreeNode raiz) {
-        this.raiz = raiz;
-    }
-
-    public TreeNode getNodoSeleccionado() {
-        return nodoSeleccionado;
-    }
-
-    public void setNodoSeleccionado(TreeNode nodoSeleccionado) {
-        this.nodoSeleccionado = nodoSeleccionado;
-    }
-
+    
+    
     //================ METODOS DE FUNCIONALIDAD ============
-    public void buscarCuenta() {
-        if (ctaSeleccionada != null) {
-            System.out.println("Codigo: " + ctaSeleccionada.getCodigo());
-            System.out.println("Nombre: " + ctaSeleccionada.getNombre());
-            System.out.println("Descripcion: " + ctaSeleccionada.getDescripcion());
-        }
+    public void cargarCuentaSeleccionada(){
+        cuentaActual= (Cuenta) nodoActual.getData();
+        cuentaPadreActual=cuentaActual.getCodigoctapadre();
+        tabActiva=1;
     }
-
-    public void limpiar() {
-        tabActivo = 0;
-        ctaSeleccionada = new Cuenta();
+    
+    public void actualizarCuentaPadre(){
+        cuentaPadreActual=(Cuenta)nodoActual.getData();
+        System.out.println("************ "+cuentaPadreActual.getCodigo());
+        //cuentaActual.setCodigoctapadre(cuentaActual);
     }
-
-    public void procesarArchivo() {
-        if (archivo != null) {
-            System.out.println(archivo.getFileName());
-        } else {
-            System.out.println("ARCHIVO NULL");
-        }
-    }
-
-    public void handleFileUpload(FileUploadEvent event) {
-        try {
-            //File a=(File) event.getFile();
-            servCtas.procesarArchivo(event.getFile().getInputstream());
-
-            System.out.println(event.getFile().getFileName() + " is uploaded.");
-        } catch (IOException ex) {
-            Logger.getLogger(CuentasController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    //Eventos para los componentes------
-
-    //Evento para seleccion de una fila en la tabla
-    //que muestra las cuentas existentes.
-    public void evtFilaSeleccionada() {
-        tabActivo = 1;
-    }
-
+    
     public void recorrerCuentas(List<Cuenta> cuentas, TreeNode padre) {
         for (Cuenta cuenta : cuentas) {
             TreeNode nodo = new DefaultTreeNode(cuenta, padre);
@@ -164,23 +129,26 @@ public class CuentasControllerTree implements Serializable {
             }
 
             if (cuenta.getCuentaList().size() > 0) {
+                //Ordenando las subcuentas por codigo
+                for (int i = 0; i < cuenta.getCuentaList().size() - 1; i++) {
+
+                    for (int j = 0; j < cuenta.getCuentaList().size() - 1; j++) {
+                        int codigoPos1 = Integer.parseInt(cuenta.getCuentaList().get(j).getCodigo());
+                        int codigoPos2 = Integer.parseInt(cuenta.getCuentaList().get(j + 1).getCodigo());
+                        if (codigoPos1 > codigoPos2) {
+
+                            Cuenta tmp = cuenta.getCuentaList().get(j + 1);
+
+                            cuenta.getCuentaList().set(j + 1, cuenta.getCuentaList().get(j));
+
+                            cuenta.getCuentaList().set(j, tmp);
+                        }
+                    }
+                }
+
                 recorrerCuentas(cuenta.getCuentaList(), nodo);
             }
         }
     }
 
-    public void actualizarCuentaSeleccionada() {
-        if (nodoSeleccionado != null) {
-            Cuenta cta = (Cuenta) nodoSeleccionado.getData();
-            ctaSeleccionada = cta;
-            tabActivo=1;
-        }
-    }
-    
-    public void actualizarCuentaPadre(){
-        if (nodoSeleccionado != null) {
-            Cuenta cta = (Cuenta) nodoSeleccionado.getData();
-            ctaSeleccionada.setCodigoctapadre(cta);
-        }
-    }
 }

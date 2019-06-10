@@ -7,7 +7,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 import sv.org.siscop.caritas.entidades.Audit;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 
-@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2019-06-07T14:43:52")
+@Generated(value="EclipseLink-2.5.2.v20140319-rNA", date="2019-06-09T16:55:47")
 @StaticMetamodel(Catalogo.class)
 public class Catalogo_ { 
 

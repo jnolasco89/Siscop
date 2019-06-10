@@ -54,6 +54,11 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
     public List<Cuenta> getCuentasPadres() {
         return cuentaDao.getCuentasPrincipales();
     }
+    
+    @Override
+    public List<Cuenta> getTodasLasCuentas(){
+        return cuentaDao.findAll();
+    }
 
     @Override
     public void procesarArchivo(InputStream archivo) {

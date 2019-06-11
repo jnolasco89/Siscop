@@ -12,33 +12,23 @@
                     <h3 style="margin-top:0">Mantenimiento de cuentas contables</h3>
                     <h:form id="formTabs">
                         <p:growl id="growl" 
-                                 showDetail="true" 
-                                 for="msgMttoCuentas"/>
+                                 showDetail="true"
+                                 for="msgGrowl"
+                                 />
                         <p:tabView id="tabs" 
                                    activeIndex="#{cuentasControllerTree.tabActiva}" 
                                    >
                             <p:tab id="busqueda" title="Búsqueda">
-                                <h:panelGrid>
-                                    <p:menubar>
-                                        <p:menuitem>
-                                            <p:inputText id="txtCampoBusqueda"/>
-                                        </p:menuitem>
-                                        <p:menuitem 
-                                            value="Buscar" 
-                                            icon="ui-icon-search"
-                                            />
-                                        <p:menuitem 
-                                            value="Limpiar" 
-                                            icon="ui-icon-refresh" 
-                                            update=":formTabs"
-                                            />
-                                    </p:menubar>
-                                </h:panelGrid>
-                                <p:tree value="#{cuentasControllerTree.arbolCuentas}" 
+                              
+                                <p:tree
+                                        id="tree-catalogo-cuentas" 
+                                        value="#{cuentasControllerTree.arbolCuentas}" 
                                         var="nodo" 
                                         selectionMode="single"
                                         selection="#{cuentasControllerTree.nodoActual}"
-                                        dynamic="true"
+                                        filterBy="#{nodo}"
+                                        animate="true"
+                                        styleClass="tree-cuentas"
                                         >
                                     <p:ajax event="select" 
                                             update=":formTabs" 
@@ -54,6 +44,9 @@
                                         <p:menuitem
                                             value="Guardar"
                                             icon="ui-icon-disk"
+                                            process="@parent"
+                                            actionListener="#{cuentasControllerTree.guardarCuenta()}"
+                                            update=":formTabs:growl, :formTabs:tabs"
                                             />
                                         <p:menuitem
                                             value="Limpiar"
@@ -63,8 +56,9 @@
                                     </p:menubar>
                                 </p:panelGrid>
                                 <p:panel
+                                    id="panel-cuenta"
                                     style="margin-top: 5px;" 
-                                    header="Catalogo">
+                                    header="Cuenta">
 
                                     <div class="ui-g" style="width: 700px;">
                                         <div class="ui-md-6">
@@ -73,12 +67,14 @@
                                                            />
                                         </div>
                                         <div class="ui-md-6">
-                                            <div class="ui-inputgroup">
+                                            <div class="ui-inputgroup input-cta-padre">
                                                 <p:inputText id="txtSubcuentaDe"
-                                                             value="#{cuentasControllerTree.cuentaPadreActual.codigo}"
+                                                             value="#{cuentasControllerTree.cuentaPadreActual}"
+                                                             disabled="true"
                                                              />
                                                 <p:commandButton icon="ui-icon-search"  
                                                                  styleClass="white-button"
+                                                                 process="@this"
                                                                  onclick="PF('dialogCuentas').show()"/>  
                                             </div>
                                         </div>
@@ -141,7 +137,8 @@
                                         var="nodo" 
                                         selectionMode="single"
                                         selection="#{cuentasControllerTree.nodoActual}"
-                                        dynamic="true"
+                                        filterBy="#{nodo}"
+                                        animate="true"
                                         >
                                     <p:ajax event="select" 
                                             listener="#{cuentasControllerTree.actualizarCuentaPadre()}"

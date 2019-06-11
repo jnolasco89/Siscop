@@ -137,7 +137,10 @@ public class Cuenta implements Serializable {
     @Override
     public String toString() {
         //return "sv.org.siscop.caritas.entidades.Cuenta[ codigo=" + codigo + " ]";
-        return codigo + " - "+nombre;
+        if(codigo!=null && nombre!=null){
+            return codigo + " - "+nombre;
+        }
+        return "";
     }
 
 }

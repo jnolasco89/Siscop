@@ -59,11 +59,6 @@ public class CatalogoController implements Serializable {
         indexTablaItemsCatalogo = -1;
         listaCatalogos = servCat.getAllCatalogos();
         modoAgregarOeditar = 1;
-        System.out.println("********************************");
-        System.out.println(this);
-        Calendar c = Calendar.getInstance();
-        System.out.println(c.getTime());
-        System.out.println("********************************");
     }
 
     //============== GETTER AND SETTER  ================

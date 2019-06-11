@@ -5,22 +5,23 @@
  */
 package sv.org.siscop.caritas.controllers;
 
-import java.io.IOException;
+import java.awt.BorderLayout;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.faces.bean.ManagedProperty;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
-import org.primefaces.model.UploadedFile;
 import sv.org.siscop.caritas.ejb.ServiciosCuentaLocal;
 import sv.org.siscop.caritas.entidades.Cuenta;
+import sv.org.siscop.caritas.exceptions.ValidacionException;
 
 /**
  *
@@ -52,6 +53,10 @@ public class CuentasControllerTree implements Serializable {
     @PostConstruct
     public void init() {
         tabActiva=0;
+        cuentaActual=new Cuenta();
+        cuentaPadreActual=new Cuenta();
+        
+        
         List<Cuenta> cuentas = servCtas.getCuentasPadres();
         arbolCuentas = new DefaultTreeNode("Raiz", null);
 
@@ -77,9 +82,6 @@ public class CuentasControllerTree implements Serializable {
     }
 
     public Cuenta getCuentaActual() {
-        if(cuentaActual==null){
-            cuentaActual=new Cuenta();
-        }
         return cuentaActual;
     }
 
@@ -88,9 +90,6 @@ public class CuentasControllerTree implements Serializable {
     }
 
     public Cuenta getCuentaPadreActual() {
-        if(cuentaPadreActual==null){
-            cuentaPadreActual=new Cuenta();
-        }
         return cuentaPadreActual;
     }
 
@@ -108,6 +107,48 @@ public class CuentasControllerTree implements Serializable {
     
     
     //================ METODOS DE FUNCIONALIDAD ============
+    public void validarCuenta() throws ValidacionException{
+        List<String> listaValidaciones = new ArrayList<>();
+        
+        if (cuentaActual.getCodigo() == null) {
+            listaValidaciones.add("Codigo de cuenta requerido");
+        }
+
+        if (cuentaActual.getNombre() == null) {
+            listaValidaciones.add("Nombre de cuenta requerido");
+        }
+        
+        if (!listaValidaciones.isEmpty()) {
+            throw new ValidacionException("Campo incorrecto", listaValidaciones);
+        }
+    }
+    
+    public void guardarCuenta(){
+        try {
+            System.out.println("LLEGA AL METODO GUARDAR CUENTA");
+            validarCuenta();
+            
+            cuentaActual.setCodigoctapadre(cuentaPadreActual);
+            
+            System.out.println("DATOS CUENTA");
+            System.out.println("PADRE: "+cuentaActual.getCodigoctapadre().getCodigo());
+            System.out.println("CODIGO: "+cuentaActual.getCodigo());
+            System.out.println("NOMBRE: "+cuentaActual.getNombre());
+            System.out.println("DSC: "+cuentaActual.getDescripcion());
+            
+        } catch (ValidacionException ex) {
+            System.out.println("LLEGA AL CATCH..........");
+            List<String> validaciones=ex.getMensajes();
+            for (String validacion : validaciones) {
+                FacesContext.getCurrentInstance().addMessage("msgGrowl", 
+                        new FacesMessage(
+                                FacesMessage.SEVERITY_WARN, 
+                                ex.getMessage(), 
+                                validacion));
+            }
+        }
+    }
+    
     public void cargarCuentaSeleccionada(){
         cuentaActual= (Cuenta) nodoActual.getData();
         cuentaPadreActual=cuentaActual.getCodigoctapadre();
@@ -116,8 +157,6 @@ public class CuentasControllerTree implements Serializable {
     
     public void actualizarCuentaPadre(){
         cuentaPadreActual=(Cuenta)nodoActual.getData();
-        System.out.println("************ "+cuentaPadreActual.getCodigo());
-        //cuentaActual.setCodigoctapadre(cuentaActual);
     }
     
     public void recorrerCuentas(List<Cuenta> cuentas, TreeNode padre) {

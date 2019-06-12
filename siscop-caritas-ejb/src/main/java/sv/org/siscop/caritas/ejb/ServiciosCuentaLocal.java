@@ -18,6 +18,7 @@ import sv.org.siscop.caritas.entidades.Cuenta;
  */
 @Local
 public interface ServiciosCuentaLocal {
+    public void agregarCuenta(Cuenta c);
     public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros);
     int contarTodo();
     void procesarArchivo(InputStream archivo);

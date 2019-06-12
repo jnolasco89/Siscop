@@ -50,7 +50,7 @@ public class Cuenta implements Serializable {
     @OneToMany(mappedBy = "codigoctapadre", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Cuenta> cuentaList;
     @JoinColumn(name = "codigoctapadre", referencedColumnName = "codigo")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Cuenta codigoctapadre;
 
     public Cuenta() {

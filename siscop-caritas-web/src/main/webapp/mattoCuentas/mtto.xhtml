@@ -44,9 +44,10 @@
                                         <p:menuitem
                                             value="Guardar"
                                             icon="ui-icon-disk"
-                                            process="@parent"
                                             actionListener="#{cuentasControllerTree.guardarCuenta()}"
-                                            update=":formTabs:growl, :formTabs:tabs"
+                                            update=":formTabs:growl 
+                                            :formTabs:tabs:panel-cuenta 
+                                            :formTabs:tabs:tree-catalogo-cuentas"
                                             />
                                         <p:menuitem
                                             value="Limpiar"
@@ -71,10 +72,11 @@
                                                 <p:inputText id="txtSubcuentaDe"
                                                              value="#{cuentasControllerTree.cuentaPadreActual}"
                                                              disabled="true"
-                                                             />
+                                                             >
+                                                </p:inputText>
                                                 <p:commandButton icon="ui-icon-search"  
                                                                  styleClass="white-button"
-                                                                 process="@this"
+                                                                 type="button"
                                                                  onclick="PF('dialogCuentas').show()"/>  
                                             </div>
                                         </div>
@@ -88,7 +90,10 @@
                                         <div class="ui-md-6">
                                             <p:inputText id="txtCodigoCuenta" 
                                                          value="#{cuentasControllerTree.cuentaActual.codigo}"
-                                                         />
+                                                         validator="#{cuentasControllerTree.validaciones.validarCodigoCuenta}"
+                                                         >
+                                                <p:message for="txtCodigoCuenta"/>
+                                            </p:inputText>
                                         </div>
                                     </div>
                                     <div class="ui-g" style="width: 700px;">
@@ -100,7 +105,10 @@
                                         <div class="ui-md-6">
                                             <p:inputText id="txtNombreCuenta"
                                                          value="#{cuentasControllerTree.cuentaActual.nombre}"
-                                                         />
+                                                         validator="#{cuentasControllerTree.validaciones.validarNombreCuenta}"
+                                                         >
+                                                <p:message for="txtNombreCuenta"/>
+                                            </p:inputText>
                                         </div>
                                     </div>
                                     <div class="ui-g" style="width: 700px;">

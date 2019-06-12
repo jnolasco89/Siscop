@@ -33,6 +33,11 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
 
     @EJB
     private CuentaFacade cuentaDao;
+    
+    @Override
+    public void agregarCuenta(Cuenta c){
+        cuentaDao.create(c);
+    }
 
     @Override
     public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros) {

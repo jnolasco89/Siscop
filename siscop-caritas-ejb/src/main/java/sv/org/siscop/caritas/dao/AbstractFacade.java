@@ -10,6 +10,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 
 /**
  *
@@ -27,7 +29,15 @@ public abstract class AbstractFacade<T> {
     protected abstract EntityManager getEntityManager();
 
     public void create(T entity) {
-        getEntityManager().persist(entity);
+        try {
+            getEntityManager().persist(entity);
+        } catch (ConstraintViolationException e) {
+            // Aqui tira los errores de constraint
+            for (ConstraintViolation actual : e.getConstraintViolations()) {
+                System.out.println(actual.toString());
+            }
+        }
+        
     }
 
     public void edit(T entity) {

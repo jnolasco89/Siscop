@@ -7,7 +7,6 @@ package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -16,6 +15,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -30,6 +31,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "cuenta")
 @XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Cuenta.findAll", query = "SELECT c FROM Cuenta c")})
 public class Cuenta implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +53,7 @@ public class Cuenta implements Serializable {
     @OneToMany(mappedBy = "codigoctapadre", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Cuenta> cuentaList;
     @JoinColumn(name = "codigoctapadre", referencedColumnName = "codigo")
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Cuenta codigoctapadre;
 
     public Cuenta() {
@@ -111,24 +114,19 @@ public class Cuenta implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 47 * hash + Objects.hashCode(this.codigo);
+        int hash = 0;
+        hash += (codigo != null ? codigo.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Cuenta)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Cuenta other = (Cuenta) obj;
-        if (!Objects.equals(this.codigo, other.codigo)) {
+        Cuenta other = (Cuenta) object;
+        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
             return false;
         }
         return true;
@@ -137,10 +135,11 @@ public class Cuenta implements Serializable {
     @Override
     public String toString() {
         //return "sv.org.siscop.caritas.entidades.Cuenta[ codigo=" + codigo + " ]";
-        if(codigo!=null && nombre!=null){
-            return codigo + " - "+nombre;
+        if(this.codigo!=null && this.nombre!=null){
+            return this.codigo+" - "+this.nombre;
         }
+        
         return "";
     }
-
+    
 }

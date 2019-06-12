@@ -40,14 +40,16 @@
                             </p:tab>
                             <p:tab id="detalle" title="Detalle">
                                 <p:panelGrid>
+                                    
                                     <p:menubar>
                                         <p:menuitem
                                             value="Guardar"
                                             icon="ui-icon-disk"
-                                            actionListener="#{cuentasControllerTree.guardarCuenta()}"
+                                            actionListener="#{cuentasControllerTree.accionBtnGuardar()}"
                                             update=":formTabs:growl 
                                             :formTabs:tabs:panel-cuenta 
-                                            :formTabs:tabs:tree-catalogo-cuentas"
+                                            :formTabs:tabs:tree-catalogo-cuentas 
+                                            :formDialogCuentas:contenedor-tree-dialog"
                                             />
                                         <p:menuitem
                                             value="Limpiar"
@@ -126,6 +128,15 @@
                                         </div>
                                     </div>
                                 </p:panel>
+                                 <p:fileUpload fileUploadListener="#{cuentasControllerTree.subirYprocesarArchivo}" 
+                                      mode="advanced" 
+                                      dragDropSupport="false"
+                                      sizeLimit="10000000" 
+                                      fileLimit="1" 
+                                      allowTypes="/(\.|\/)(xlsx|xls)$/" 
+                                      label="Buscar"
+                                      uploadLabel="Subir"
+                                      cancelLabel="Cancelar"/>
                             </p:tab>
                         </p:tabView>
                     </h:form>
@@ -140,7 +151,7 @@
                                   resizable="false"
 
                                   >
-                            <p:scrollPanel style="width: 450px;height: 250px;">
+                            <p:scrollPanel id="contenedor-tree-dialog" style="width: 450px;height: 250px;">
                                 <p:tree value="#{cuentasControllerTree.arbolCuentas}" 
                                         var="nodo" 
                                         selectionMode="single"

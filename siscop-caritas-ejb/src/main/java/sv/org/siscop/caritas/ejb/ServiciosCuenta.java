@@ -33,10 +33,25 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
 
     @EJB
     private CuentaFacade cuentaDao;
-    
+
     @Override
-    public void agregarCuenta(Cuenta c){
-        cuentaDao.create(c);
+    public void agregarCuenta(Cuenta c) throws Exception {
+        Cuenta ctaEnBd = cuentaDao.find(c.getCodigo());
+        if (ctaEnBd == null) {
+            cuentaDao.create(c);
+        } else {
+            throw new Exception("El codigo de cuenta ingresado ya se encuentra registrado");
+        }
+    }
+
+    @Override
+    public void editarCuenta(String codigoOriginalCta, Cuenta c) throws Exception {
+        Cuenta ctaEnBd = cuentaDao.find(c.getCodigo());
+        if (ctaEnBd.getCodigo().equals(codigoOriginalCta)) {
+            cuentaDao.edit(c);
+        } else {
+            throw new Exception("El codigo de cuenta ingresado ya se encuentra registrado");
+        }
     }
 
     @Override
@@ -59,9 +74,9 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
     public List<Cuenta> getCuentasPadres() {
         return cuentaDao.getCuentasPrincipales();
     }
-    
+
     @Override
-    public List<Cuenta> getTodasLasCuentas(){
+    public List<Cuenta> getTodasLasCuentas() {
         return cuentaDao.findAll();
     }
 
@@ -84,15 +99,13 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
                 Row fila = filasHoja.next();
 
                 if (indexFila > 0) {
-                    Iterator<Cell> celdas = fila.cellIterator();
-
                     Cuenta cuenta = new Cuenta();
-                    int indexCelda = 0;
-                    while (celdas.hasNext()) {
-                        Cell celda = celdas.next();
+
+                    for (int i = 0; i < 1; i++) {
+                        Cell celda = fila.getCell(i);
                         celda.setCellType(CellType.STRING);
 
-                        switch (indexCelda) {
+                        switch (i) {
                             case 0:
                                 cuenta.setNombre(celda.getStringCellValue());
                                 break;
@@ -100,8 +113,6 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
                                 cuenta.setCodigo(celda.getStringCellValue());
                                 break;
                         }
-
-                        indexCelda++;
                     }
 
                     String codigoCtaPadre = obtenerCodigoPadre(cuenta.getCodigo());
@@ -112,6 +123,35 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
                     }
                     cuenta.setEstado(true);
                     cuentas.add(cuenta);
+
+//                    Iterator<Cell> celdas = fila.cellIterator();
+//
+//                    Cuenta cuenta = new Cuenta();
+//                    int indexCelda = 0;
+//                    while (celdas.hasNext()) {
+//                        Cell celda = celdas.next();
+//                        celda.setCellType(CellType.STRING);
+//
+//                        switch (indexCelda) {
+//                            case 0:
+//                                cuenta.setNombre(celda.getStringCellValue());
+//                                break;
+//                            case 1:
+//                                cuenta.setCodigo(celda.getStringCellValue());
+//                                break;
+//                        }
+//
+//                        indexCelda++;
+//                    }
+//
+//                    String codigoCtaPadre = obtenerCodigoPadre(cuenta.getCodigo());
+//                    if (codigoCtaPadre == null) {
+//                        cuenta.setCodigoctapadre(null);
+//                    } else {
+//                        cuenta.setCodigoctapadre(new Cuenta(codigoCtaPadre));
+//                    }
+//                    cuenta.setEstado(true);
+//                    cuentas.add(cuenta);
                 }
 
                 indexFila++;
@@ -189,10 +229,10 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
             }
         }
 
-//        cuentaDao.InsersionPorLotes(cuentas);
-        for (Cuenta c : cuentas) {
-                cuentaDao.create(c);
-        }
+        cuentaDao.InsersionPorLotes(cuentas);
+//        for (Cuenta c : cuentas) {
+//            cuentaDao.create(c);
+//        }
     }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")

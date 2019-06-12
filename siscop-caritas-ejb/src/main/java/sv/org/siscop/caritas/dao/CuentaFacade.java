@@ -56,6 +56,7 @@ public class CuentaFacade extends AbstractFacade<Cuenta> {
             }
         }
         em.getTransaction().commit();
+        
     }
 
     public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros) {

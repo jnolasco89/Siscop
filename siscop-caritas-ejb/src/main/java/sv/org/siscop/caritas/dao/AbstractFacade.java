@@ -6,6 +6,7 @@
 package sv.org.siscop.caritas.dao;
 
 import java.util.List;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
@@ -31,12 +32,16 @@ public abstract class AbstractFacade<T> {
     public void create(T entity) {
         try {
             getEntityManager().persist(entity);
-        } catch (ConstraintViolationException e) {
-            // Aqui tira los errores de constraint
-            for (ConstraintViolation actual : e.getConstraintViolations()) {
-                System.out.println(actual.toString());
-            }
+        }catch(EntityExistsException ex){
+            System.out.println("ELA ENTIDAD YA EXISTE");
         }
+        
+//        catch (ConstraintViolationException e) {
+//            // Aqui tira los errores de constraint
+//            for (ConstraintViolation actual : e.getConstraintViolations()) {
+//                System.out.println(actual.toString());
+//            }
+//        }
         
     }
 

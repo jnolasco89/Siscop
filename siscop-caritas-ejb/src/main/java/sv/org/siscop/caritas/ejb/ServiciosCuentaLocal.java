@@ -5,7 +5,6 @@
  */
 package sv.org.siscop.caritas.ejb;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,8 @@ import sv.org.siscop.caritas.entidades.Cuenta;
  */
 @Local
 public interface ServiciosCuentaLocal {
-    public void agregarCuenta(Cuenta c);
+    public void agregarCuenta(Cuenta c) throws Exception;
+    public void editarCuenta(String codigoOriginalCta, Cuenta c) throws Exception;
     public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros);
     int contarTodo();
     void procesarArchivo(InputStream archivo);

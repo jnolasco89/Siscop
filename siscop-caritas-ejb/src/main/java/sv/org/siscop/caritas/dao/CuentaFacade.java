@@ -14,6 +14,9 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
+import org.eclipse.persistence.sessions.Session;
 import sv.org.siscop.caritas.entidades.Cuenta;
 
 /**
@@ -22,7 +25,6 @@ import sv.org.siscop.caritas.entidades.Cuenta;
  */
 @Stateless
 public class CuentaFacade extends AbstractFacade<Cuenta> {
-
     @PersistenceContext(unitName = "siscop_pu")
     private EntityManager em;
 
@@ -41,6 +43,32 @@ public class CuentaFacade extends AbstractFacade<Cuenta> {
         return cuentas;
     }
 
+    public void insertarDesdeArchivoPorNativeQuery(List<Cuenta> cuentas) throws NotSupportedException, SystemException {
+
+        Query q = em.createNativeQuery("INSERT INTO cuenta (codigo,nombre,descripcion,codigoctapadre,estado) VALUES(?,?,?,?,?)");
+        
+        Session sesion=em.unwrap(Session.class);
+//        utx.begin();
+        
+        for (Cuenta cuenta : cuentas) {
+            q.setParameter(1, cuenta.getCodigo());
+            q.setParameter(2, cuenta.getNombre());
+            q.setParameter(3, cuenta.getDescripcion());
+            if (cuenta.getCodigoctapadre() != null) {
+                q.setParameter(4, cuenta.getCodigoctapadre().getCodigo());
+            } else {
+                q.setParameter(4, null);
+            }
+
+            q.setParameter(5, true);
+
+            q.executeUpdate();
+            
+            em.flush();
+        }
+
+    }
+
     public void InsersionPorLotes(List<Cuenta> cuentas) {
         int batchSize = 30;
 
@@ -56,7 +84,7 @@ public class CuentaFacade extends AbstractFacade<Cuenta> {
             }
         }
         em.getTransaction().commit();
-        
+
     }
 
     public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros) {

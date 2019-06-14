@@ -141,9 +141,9 @@ public class CatalogoController implements Serializable {
     public void validarCatalogo() throws ValidacionException {
         List<String> listaValidaciones = new ArrayList<>();
 
-        if (currentCatalog.getCodigo().length() == 0) {
-            listaValidaciones.add("Codigo de catalogo requerido");
-        }
+//        if (currentCatalog.getCodigo.length() == 0) {
+//            listaValidaciones.add("Codigo de catalogo requerido");
+//        }
 
         if (currentCatalog.getNombre().length() == 0) {
             listaValidaciones.add("Nombre de catalogo requerido");
@@ -157,9 +157,9 @@ public class CatalogoController implements Serializable {
     public void validarAddItemCatalogo() throws ValidacionException {
         List<String> listaValidaciones = new ArrayList<>();
 
-        if (currentAddItem.getCodigo().length() == 0) {
-            listaValidaciones.add("Codigo de item requerido");
-        }
+//        if (currentAddItem.getCodigo().length() == 0) {
+//            listaValidaciones.add("Codigo de item requerido");
+//        }
 
         if (currentAddItem.getDescripcion().length() == 0) {
             listaValidaciones.add("Descripcion de item requerida");
@@ -173,9 +173,9 @@ public class CatalogoController implements Serializable {
     public void validarEditItemCatalogo() throws ValidacionException {
         List<String> listaValidaciones = new ArrayList<>();
 
-        if (currentEditItem.getCodigo().length() == 0) {
-            listaValidaciones.add("Codigo de item requerido");
-        }
+//        if (currentEditItem.getCodigo().length() == 0) {
+//            listaValidaciones.add("Codigo de item requerido");
+//        }
 
         if (currentEditItem.getDescripcion().length() == 0) {
             listaValidaciones.add("Descripcion de item requerida");
@@ -196,9 +196,9 @@ public class CatalogoController implements Serializable {
                 System.out.println("INGRESA A AGREAGR");
                 //Preparando y agregando el catalogo
                 for (ItemCatalogo i : itemsCatalogo) {
-                    i.setCatalogo(currentCatalog);
+//                    i.setCatalogo(currentCatalog);
                 }
-                this.currentCatalog.setEstado(true);
+//                this.currentCatalog.setEstado(true);
                 this.currentCatalog.setItemCatalogoList(itemsCatalogo);
                 servCat.addCatalogo(currentCatalog);
                 msjGrowl = "Catalogo agregado";
@@ -247,8 +247,8 @@ public class CatalogoController implements Serializable {
                 validarEditItemCatalogo();
             }
 
-            this.currentAddItem.setEstado(true);
-            this.currentAddItem.setMostrarEliminar(true);
+//            this.currentAddItem.setEstado(true);
+//            this.currentAddItem.setMostrarEliminar(true);
             this.itemsCatalogo.add(currentAddItem);
             this.currentAddItem = new ItemCatalogo();
 
@@ -269,7 +269,7 @@ public class CatalogoController implements Serializable {
 
     public void editarItem() {
         if (indexTablaItemsCatalogo > -1) {
-            itemsCatalogo.get(indexTablaItemsCatalogo).setCodigo(currentEditItem.getCodigo());
+//            itemsCatalogo.get(indexTablaItemsCatalogo).setCodigo(currentEditItem.getCodigo());
             itemsCatalogo.get(indexTablaItemsCatalogo).setDescripcion(currentEditItem.getDescripcion());
         }
     }
@@ -298,7 +298,7 @@ public class CatalogoController implements Serializable {
     public void buscar() {
         Map params = new HashMap();
         params.put("codigo", this.campoBusqueda);
-        listaCatalogos = servCat.findCatalogoByAnyField(params);
+        listaCatalogos = servCat.buscarCatalogoPorCualquierCampo(params);
     }
 
     public void limpiarBusqueda() {
@@ -333,14 +333,14 @@ public class CatalogoController implements Serializable {
 
         Catalogo c = new Catalogo();
 //        c.setId(0L);
-        c.setCodigo("PR2");
+//        c.setCodigo("PR2");
         c.setNombre("Catalogo de prueba 2");
 
         List<ItemCatalogo> items = new ArrayList<>();
         ItemCatalogo a = new ItemCatalogo();
-        a.setCodigo("IT1");
+//        a.setCodigo("IT1");
         a.setDescripcion("Item 1");
-        a.setCatalogo(c);
+//        a.setCatalogo(c);
         items.add(a);
 
         c.setItemCatalogoList(items);
@@ -352,12 +352,12 @@ public class CatalogoController implements Serializable {
     private void printCatalogo() {
         System.out.println("DATOS CATALOGO---------");
         //System.out.println("ID: "+this.currentCatalog.getId());
-        System.out.println("CODIGO: " + this.currentCatalog.getCodigo());
+//        System.out.println("CODIGO: " + this.currentCatalog.getCodigo());
         System.out.println("NOMBRE: " + this.currentCatalog.getNombre());
         System.out.println("ITEMS:");
         for (ItemCatalogo i : currentCatalog.getItemCatalogoList()) {
             //  System.out.println("id: "+i.getId());
-            System.out.println("codigo: " + i.getCodigo());
+//            System.out.println("codigo: " + i.getCodigo());
             System.out.println("descripcion " + i.getDescripcion());
         }
     }

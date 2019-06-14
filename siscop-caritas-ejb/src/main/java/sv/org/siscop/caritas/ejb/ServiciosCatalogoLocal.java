@@ -22,7 +22,7 @@ public interface ServiciosCatalogoLocal {
 
     public void editCatalogo(Catalogo c);
 
-    public List<Catalogo> findCatalogoByAnyField(Map params);
+    public List<Catalogo> buscarCatalogoPorCualquierCampo(Map campos);
 
     public List<Catalogo> getAllCatalogos();
 

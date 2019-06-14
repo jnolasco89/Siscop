@@ -260,7 +260,7 @@ public class MttoPersona implements Serializable {
             tipotelLst.clear();
 
             for (ItemCatalogo item : this.servCat.findCatalogoById(3).getItemCatalogoList()) {
-                tipotelLst.add(new SelectItem(item.getCodigo(), item.getDescripcion()));
+                tipotelLst.add(new SelectItem(item.getId(), item.getDescripcion()));
             }
 
         } catch (Exception ex) {
@@ -274,7 +274,7 @@ public class MttoPersona implements Serializable {
         try {
             tipoDireccLst.clear();
             for (ItemCatalogo item : this.servCat.findCatalogoById(4).getItemCatalogoList()) {
-                tipoDireccLst.add(new SelectItem(item.getCodigo(), item.getDescripcion()));
+                tipoDireccLst.add(new SelectItem(item.getId(), item.getDescripcion()));
             }
         } catch (Exception ex) {
             Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
@@ -288,7 +288,7 @@ public class MttoPersona implements Serializable {
         try {
             tipoDocLst.clear();
             for (ItemCatalogo item : this.servCat.findCatalogoById(5).getItemCatalogoList()) {
-                tipoDocLst.add(new SelectItem(item.getCodigo(), item.getDescripcion()));
+                tipoDocLst.add(new SelectItem(item.getId(), item.getDescripcion()));
             }
         } catch (Exception ex) {
             Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
@@ -301,7 +301,7 @@ public class MttoPersona implements Serializable {
         try {
             estadoCivilLst.clear();
             for (ItemCatalogo item : this.servCat.findCatalogoById(6).getItemCatalogoList()) {
-                estadoCivilLst.add(new SelectItem(item.getCodigo(), item.getDescripcion()));
+                estadoCivilLst.add(new SelectItem(item.getId(), item.getDescripcion()));
             }
         } catch (Exception ex) {
             Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);

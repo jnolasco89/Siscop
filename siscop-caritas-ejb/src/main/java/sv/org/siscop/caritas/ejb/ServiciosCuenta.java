@@ -83,7 +83,6 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
     @Override
     public void procesarArchivo(InputStream archivo) {
         try {
-
             //FileInputStream fis=new FileInputStream(archivo);
             XSSFWorkbook libro = new XSSFWorkbook(archivo);
 
@@ -101,7 +100,7 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
                 if (indexFila > 0) {
                     Cuenta cuenta = new Cuenta();
 
-                    for (int i = 0; i < 1; i++) {
+                    for (int i = 0; i <= 1; i++) {
                         Cell celda = fila.getCell(i);
                         celda.setCellType(CellType.STRING);
 
@@ -229,10 +228,11 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
             }
         }
 
-        cuentaDao.InsersionPorLotes(cuentas);
-//        for (Cuenta c : cuentas) {
-//            cuentaDao.create(c);
-//        }
+        //cuentaDao.InsersionPorLotes(cuentas);
+//        cuentaDao.insertarDesdeArchivoPorNativeQuery(cuentas);
+        for (Cuenta c : cuentas) {
+            cuentaDao.create(c);
+        }
     }
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")

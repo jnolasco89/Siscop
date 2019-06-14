@@ -35,7 +35,7 @@ public class ServiciosCatalogo implements ServiciosCatalogoLocal {
     public void editCatalogo(Catalogo c) {
         catalogoDao.edit(c);
         for (ItemCatalogo i : c.getItemCatalogoList()) {
-            i.setCatalogo(c);
+            i.setIdcatalogo(c);
             itemsDao.edit(i);
         }
     }
@@ -46,8 +46,8 @@ public class ServiciosCatalogo implements ServiciosCatalogoLocal {
     }
 
     @Override
-    public List<Catalogo> findCatalogoByAnyField(Map params) {
-        List<Catalogo> c = catalogoDao.findCatalogoByAnyField(params);
+    public List<Catalogo> buscarCatalogoPorCualquierCampo(Map campos) {
+        List<Catalogo> c = catalogoDao.buscarCatalogoPorCualquierCampo(campos);
         return c;
     }
 

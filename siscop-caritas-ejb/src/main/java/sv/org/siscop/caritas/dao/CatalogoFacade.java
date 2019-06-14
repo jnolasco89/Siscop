@@ -33,22 +33,23 @@ public class CatalogoFacade extends AbstractFacade<Catalogo> {
         return this.em;
     }
 
-    public List<Catalogo> findCatalogoByAnyField(Map params) {
+    public List<Catalogo> buscarCatalogoPorCualquierCampo(Map campos) {
         List<Catalogo> catalogos = new ArrayList<>();
+        
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT c FROM Catalogo c WHERE 1 = 1 ");
-        if (params.containsKey("codigo")) {
-            sb.append("AND UPPER(c.codigo) = UPPER(:codigo) ");
+        if (campos.containsKey("id")) {
+            sb.append("AND c.id = :id ");
         }
-        if (params.containsKey("nombre")) {
-            sb.append("AND UPPER(c.nombre) LIKE CONCAT('%',UPPER(:parametro),'%') ");
+        if (campos.containsKey("nombre")) {
+            sb.append("AND UPPER(c.nombre) LIKE CONCAT('%',UPPER(:nombre),'%') ");
         }
         Query query = em.createQuery(sb.toString());
-        if (params.containsKey("codigo")) {
-            query.setParameter("codigo", params.get("codigo"));
+        if (campos.containsKey("id")) {
+            query.setParameter("id", campos.get("id"));
         }
-        if (params.containsKey("nombre")) {
-            query.setParameter("nombre", params.get("nombre"));
+        if (campos.containsKey("nombre")) {
+            query.setParameter("nombre", campos.get("nombre"));
         }
         catalogos = query.getResultList();
         return catalogos;

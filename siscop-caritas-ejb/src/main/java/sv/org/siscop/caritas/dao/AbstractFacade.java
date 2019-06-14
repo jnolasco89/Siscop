@@ -30,11 +30,8 @@ public abstract class AbstractFacade<T> {
     protected abstract EntityManager getEntityManager();
 
     public void create(T entity) {
-        try {
             getEntityManager().persist(entity);
-        }catch(EntityExistsException ex){
-            System.out.println("ELA ENTIDAD YA EXISTE");
-        }
+   
         
 //        catch (ConstraintViolationException e) {
 //            // Aqui tira los errores de constraint

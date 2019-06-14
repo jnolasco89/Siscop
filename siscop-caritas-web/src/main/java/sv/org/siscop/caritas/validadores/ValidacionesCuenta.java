@@ -67,7 +67,7 @@ public class ValidacionesCuenta {
                     new FacesMessage(
                             FacesMessage.SEVERITY_WARN,
                             "Error",
-                            "Formato de codigo invalido")
+                            "Nombre de cuenta invalido")
             );
         }
 

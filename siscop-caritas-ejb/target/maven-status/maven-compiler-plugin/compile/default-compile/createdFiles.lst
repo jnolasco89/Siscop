@@ -29,7 +29,6 @@ sv\org\siscop\caritas\entidades\Telefono.class
 sv\org\siscop\caritas\dao\PersonaFacade.class
 sv\org\siscop\caritas\entidades\Direccion.class
 sv\org\siscop\caritas\entidades\Cuenta_.class
-sv\org\siscop\caritas\ejb\NewSessionBean.class
 sv\org\siscop\caritas\entidades\Audit.class
 sv\org\siscop\caritas\entidades\Documento.class
 sv\org\siscop\caritas\ejb\ServiciosCuentaLocal.class

@@ -1,0 +1,116 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-lg-12">
+                <div class="card">
+                    <h1 style="margin-top:0">Proyectos</h1>
+                    <h:form id="principal">
+                        <p:growl id="growl" showSummary="true" globalOnly="true" showDetail="true" for="msgGrowl" life="6000"/>
+
+
+                        <p:tabView id="tabs" activeIndex="#{mttoProyecto.tabindex}">
+                            <div class="card">
+                                <p:tab id="busqueda" title="Búsqueda">
+                                    <p:menubar>
+                                        <p:menuitem value="Buscar" actionListener="#{mttoProyecto.buscarProyectos()}" 
+                                                    icon="ui-icon-search" update="@form"  />
+                                        <p:menuitem value="Limpiar" action="#{mttoProyecto.limpiarBusquedaProyectos()}"
+                                                    update="tabs lista" icon="ui-icon-refresh" />
+                                    </p:menubar>
+                                    <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                                 styleClass="ui-panelgrid-blank">
+                                        <p:outputLabel for="txtNombreB" value="Nombre" />
+                                        <p:inputText id="txtNombreB" value="#{mttoProyecto.nombreB}"                                                     
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:outputLabel for="txtNombreCortoB" value="Nombre Corto" />
+                                        <p:inputText id="txtNombreCortoB" value="#{mttoProyecto.nombreCortoB}"
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:outputLabel for="txtCodigo" value="Código" />
+                                        <p:inputText id="txtCodigo" value="#{mttoProyecto.codigoB}"/>
+
+                                    </p:panelGrid>
+                                    <div class="card">
+                                        <p:dataTable id="lista" var = "proy" value="#{mttoProyecto.proyectosList}"
+                                                     selectionMode="single"
+                                                     selection="#{mttoProyecto.proyectoB}"
+                                                     rowKey="#{proy.id}"
+                                                     paginator="true"
+                                                     rows ="10"
+                                                     paginatorPosition="bottom"
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     rowsPerPageTemplate="10,20,50">
+                                            <p:ajax event="rowSelect" listener="#{mttoProyecto.onRowSelect(event)}"
+                                                    update="principal" />
+                                            <p:column headerText="Id" width="10%">
+                                                <h:outputText value="#{proy.id}" />
+                                            </p:column>
+                                            <p:column headerText="Persona">
+                                                <h:outputText value="#{proy.nombreCorto}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:tab>
+                            </div>
+                            <div class="card">
+                                <p:tab id="detalle" title="Detalle">
+                                    <p:menubar>
+                                        <p:menuitem value="Nuevo" action="#{mttoProyecto.nuevoProyecto()}"
+                                                    icon="ui-icon-search"
+                                                    update="lista datosper 
+                                                    otraInfo
+                                                    :principal:growl"
+                                                    />
+                                        <p:menuitem value="Guardar" action="#{mttoProyecto.guardarProyecto()}" icon="ui-icon-refresh"                                                
+                                                    update="lista :principal:growl otraInfo" />
+                                    </p:menubar>
+                                    <p:panelGrid id="datosper" columns="4" styleClass="ui-panelgrid-blank">
+                                        <p:inputText id="txtNombre" value="#{mttoProyecto.nombre}"
+                                                     placeholder="Nombre"
+                                                     title="Nombre"
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:inputText id="txtNombreCorto" value="#{mttoProyecto.nombreCorto}"
+                                                     placeholder="Nombre Corto"
+                                                     title="Nombre Corto"
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:inputText id="txtApellido1P" value="#{mttoProyecto.codigoProyecto}"
+                                                     placeholder="Código"
+                                                     title="Código"
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:calendar id="fechaIni" value="#{mttoProyecto.fechaInicio}" 
+                                                    placeholder="Fecha de Inicio"
+                                                    title="Fecha de Inicio"
+                                                    pattern="dd-MM-yyyy" mask="true"/>
+                                        <p:calendar id="fechaFin" value="#{mttoProyecto.fechaInicio}" 
+                                                    placeholder="Fecha de Finalización"
+                                                    title="Fecha de Finalización"
+                                                    pattern="dd-MM-yyyy" mask="true"/>                                        
+                                    </p:panelGrid>
+
+                                    <p:tabView id="otraInfo">
+
+                                        <p:tab id="catalogo" title="Catálogo Contable">
+
+                                        </p:tab>
+
+                                        <p:tab id="personal" title="Personal">
+                                            <p:panelGrid id="datosTel" columns="5" styleClass="ui-panelgrid-blank">
+                                            </p:panelGrid>
+
+                                        </p:tab>                                       
+                                    </p:tabView>
+                                </p:tab>
+                            </div>
+                        </p:tabView>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>

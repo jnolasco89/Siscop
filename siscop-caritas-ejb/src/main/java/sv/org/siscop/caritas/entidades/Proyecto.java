@@ -44,7 +44,10 @@ public class Proyecto implements Auditable, Serializable {
     private String nombre;
     @Size(max = 20)
     @Column(name = "nombrecorto")
-    private String nombrecorto;
+    private String nombreCorto;
+    @Size(max = 300)
+    @Column(name = "descripcion")
+    private String descripcion;
     @Column(name = "fechaini")
     @Temporal(TemporalType.DATE)
     private Date fechaini;
@@ -85,12 +88,20 @@ public class Proyecto implements Auditable, Serializable {
         this.nombre = nombre;
     }
 
-    public String getNombrecorto() {
-        return nombrecorto;
+    public String getNombreCorto() {
+        return nombreCorto;
     }
 
-    public void setNombrecorto(String nombrecorto) {
-        this.nombrecorto = nombrecorto;
+    public void setNombreCorto(String nombreCorto) {
+        this.nombreCorto = nombreCorto;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public Date getFechaini() {

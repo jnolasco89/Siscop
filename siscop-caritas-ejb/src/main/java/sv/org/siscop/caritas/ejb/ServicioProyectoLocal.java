@@ -8,19 +8,19 @@ package sv.org.siscop.caritas.ejb;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Local;
-import sv.org.siscop.caritas.entidades.Persona;
+import sv.org.siscop.caritas.entidades.Proyecto;
 
 /**
  *
  * @author Henry
  */
 @Local
-public interface ServiciosPersonaLocal {
+public interface ServicioProyectoLocal {
 
-    public void nuevaPersona(Persona c);
+    public void nuevoProyecto(Proyecto c);
 
-    public Persona actualizarPersona(Persona c);
+    public Proyecto actualizarProyecto(Proyecto c);
 
-    public List<Persona> buscarPersonas(Map params) throws Exception;
+    public List<Proyecto> buscarProyectos(Map params) throws Exception;
 
 }

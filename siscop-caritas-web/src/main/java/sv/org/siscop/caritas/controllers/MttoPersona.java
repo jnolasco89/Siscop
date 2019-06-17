@@ -26,7 +26,6 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.UnselectEvent;
 import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
-import sv.org.siscop.caritas.ejb.ServiciosPersonaLocal;
 import sv.org.siscop.caritas.entidades.Direccion;
 import sv.org.siscop.caritas.entidades.Documento;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
@@ -34,6 +33,7 @@ import sv.org.siscop.caritas.entidades.Persona;
 import sv.org.siscop.caritas.entidades.Telefono;
 import sv.org.siscop.caritas.entidades.Usuario;
 import sv.org.siscop.caritas.util.Catalogos;
+import sv.org.siscop.caritas.ejb.ServicioPersonaLocal;
 
 /**
  *
@@ -46,7 +46,7 @@ public class MttoPersona implements Serializable {
     @EJB
     private ServiciosCatalogoLocal servCat;
     @EJB
-    private ServiciosPersonaLocal servPersona;
+    private ServicioPersonaLocal servPersona;
 
     private final static Logger logger = Logger.getLogger(MttoPersona.class.getName());
 

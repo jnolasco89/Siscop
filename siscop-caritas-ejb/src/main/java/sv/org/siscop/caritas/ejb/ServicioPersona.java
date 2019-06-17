@@ -17,7 +17,7 @@ import sv.org.siscop.caritas.entidades.Persona;
  * @author Henry
  */
 @Stateless
-public class ServiciosPersona implements ServiciosPersonaLocal {
+public class ServicioPersona implements ServicioPersonaLocal {
 
     @EJB
     PersonaFacade personaDao;

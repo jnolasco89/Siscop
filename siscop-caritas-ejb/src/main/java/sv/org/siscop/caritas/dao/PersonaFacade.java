@@ -38,10 +38,7 @@ public class PersonaFacade extends AbstractFacade<Persona> {
             String dui = null;
             StringBuilder sql = new StringBuilder("SELECT object(a) FROM  Persona a ");
             sql.append("WHERE 1=1 ");
-            if (filtro.containsKey("codper")) {
-                codper = (Integer) filtro.get("codper");
-                sql.append("AND a.codper = :codper ");
-            }
+
             if (filtro.containsKey("nombre1")) {
                 sql.append("AND UPPER(a.nombre1) like :nombre1 ");
             }
@@ -55,12 +52,10 @@ public class PersonaFacade extends AbstractFacade<Persona> {
                 sql.append("AND UPPER(a.apellido2) like :apellido2 ");
             }
 
-            sql.append(" ORDER BY a.codper");
+            sql.append(" ORDER BY a.id");
 
             Query q = em.createQuery(sql.toString());
-            if (filtro.containsKey("codper")) {
-                q.setParameter("codper", codper);
-            }
+
             if (filtro.containsKey("nombre1")) {
                 q.setParameter("nombre1",
                         "%" + filtro.get("nombre1").toString().toUpperCase() + "%");
@@ -93,10 +88,6 @@ public class PersonaFacade extends AbstractFacade<Persona> {
             String dui = null;
             StringBuilder sql = new StringBuilder("SELECT object(a) FROM  Persona a , IN(a.personadocList) as v ");
             sql.append("WHERE 1=1 ");
-            if (filtro.containsKey("codper")) {
-                codper = (Integer) filtro.get("codper");
-                sql.append("AND a.codper = :codper ");
-            }
             if (filtro.containsKey("nombre1")) {
                 sql.append("AND UPPER(a.nombre1) like :nombre1 ");
             }
@@ -109,13 +100,10 @@ public class PersonaFacade extends AbstractFacade<Persona> {
                 sql.append(" AND v.numero like '").append(dui).append("'");
             }
 
-            sql.append(" GROUP BY a.codper ");
-            sql.append(" ORDER BY a.codper");
+            sql.append(" GROUP BY a.id ");
+            sql.append(" ORDER BY a.id");
 
             Query q = em.createQuery(sql.toString());
-            if (filtro.containsKey("codper")) {
-                q.setParameter("codper", codper);
-            }
 
             if (filtro.containsKey("nombre1")) {
                 q.setParameter("nombre1",

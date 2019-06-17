@@ -778,8 +778,8 @@ public class MttoPersona implements Serializable {
                 this.showMessage(FacesMessage.SEVERITY_INFO,
                         "Seleccione tipo de documento.", null);
             }
-            boolean yaExiste = telefonosList.stream()
-                    .anyMatch(documento -> tipoDir.equals(documento.getTipo().getId()));
+            boolean yaExiste = documentosList.stream()
+                    .anyMatch(documento -> tipoDoc.equals(documento.getTipo().getId()));
             if (yaExiste) {
                 hay = true;
                 this.showMessage(FacesMessage.SEVERITY_WARN,

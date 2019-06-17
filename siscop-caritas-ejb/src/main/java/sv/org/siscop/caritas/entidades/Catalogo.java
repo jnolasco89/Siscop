@@ -50,7 +50,7 @@ public class Catalogo implements Auditable, Serializable {
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
-    @OneToMany(mappedBy = "idcatalogo", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "catalogo", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<ItemCatalogo> itemCatalogoList;
     @Embedded
     private Audit audit;

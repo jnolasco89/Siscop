@@ -46,7 +46,7 @@ public class ItemCatalogo implements Auditable, Serializable {
     @Column(name = "descripcion")
     private String descripcion;
     @Column(name = "activo")
-    private Boolean activo;
+    private Boolean estado;
     @JoinColumn(name = "idcatalogo", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Catalogo catalogo;
@@ -87,12 +87,12 @@ public class ItemCatalogo implements Auditable, Serializable {
         this.descripcion = descripcion;
     }
 
-    public Boolean getActivo() {
-        return activo;
+    public Boolean getEstado() {
+        return estado;
     }
 
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
     }
 
     public Catalogo getCatalogo() {

@@ -11,7 +11,8 @@
                 <div class="card">
                     <h1 style="margin-top:0">Proyectos</h1>
                     <h:form id="principal">
-                        <p:growl id="growl" showSummary="true" globalOnly="true" showDetail="true" for="msgGrowl" life="6000"/>
+                        <p:growl id="growl" showSummary="true" globalOnly="true"
+                                 sticky="true" showDetail="true" for="msgGrowl"/>
 
 
                         <p:tabView id="tabs" activeIndex="#{mttoProyecto.tabindex}">
@@ -50,7 +51,7 @@
                                             <p:column headerText="Id" width="10%">
                                                 <h:outputText value="#{proy.id}" />
                                             </p:column>
-                                            <p:column headerText="Persona">
+                                            <p:column headerText="Proyecto">
                                                 <h:outputText value="#{proy.nombreCorto}" />
                                             </p:column>
                                         </p:dataTable>
@@ -69,27 +70,36 @@
                                         <p:menuitem value="Guardar" action="#{mttoProyecto.guardarProyecto()}" icon="ui-icon-refresh"                                                
                                                     update="lista :principal:growl otraInfo" />
                                     </p:menubar>
-                                    <p:panelGrid id="datosper" columns="4" styleClass="ui-panelgrid-blank">
+                                    <p:panelGrid id="datosper" columns="6" styleClass="ui-panelgrid-blank">
+                                        <p:outputLabel value="Nombre:" for="txtNombre" />
                                         <p:inputText id="txtNombre" value="#{mttoProyecto.nombre}"
-                                                     placeholder="Nombre"
                                                      title="Nombre"
                                                      onkeyup="this.value = this.value.toUpperCase();"/>
+
+                                        <p:outputLabel value="Nombre Corto:" for="txtNombreCorto" />
                                         <p:inputText id="txtNombreCorto" value="#{mttoProyecto.nombreCorto}"
-                                                     placeholder="Nombre Corto"
                                                      title="Nombre Corto"
                                                      onkeyup="this.value = this.value.toUpperCase();"/>
+
+                                        <p:outputLabel value="Código:" for="txtApellido1P" />
                                         <p:inputText id="txtApellido1P" value="#{mttoProyecto.codigoProyecto}"
-                                                     placeholder="Código"
                                                      title="Código"
                                                      onkeyup="this.value = this.value.toUpperCase();"/>
-                                        <p:calendar id="fechaIni" value="#{mttoProyecto.fechaInicio}" 
-                                                    placeholder="Fecha de Inicio"
+
+                                        <p:outputLabel value="Fecha de Inicio:" for="fechaIni" />
+                                        <p:calendar id="fechaIni" value="#{mttoProyecto.fechaInicio}"
                                                     title="Fecha de Inicio"
                                                     pattern="dd-MM-yyyy" mask="true"/>
-                                        <p:calendar id="fechaFin" value="#{mttoProyecto.fechaInicio}" 
-                                                    placeholder="Fecha de Finalización"
+
+                                        <p:outputLabel value="Fecha de Finalización:" for="fechaFin" />
+                                        <p:calendar id="fechaFin" value="#{mttoProyecto.fechaInicio}"
                                                     title="Fecha de Finalización"
-                                                    pattern="dd-MM-yyyy" mask="true"/>                                        
+                                                    pattern="dd-MM-yyyy" mask="true"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid id="pnlDesc" columns="4" styleClass="ui-panelgrid-blank">
+                                        <p:inputTextarea rows="2" placeholder="Descripción"
+                                                         value="#{mttoProyecto.descripcion}"
+                                                         autoResize="false"/>
                                     </p:panelGrid>
 
                                     <p:tabView id="otraInfo">

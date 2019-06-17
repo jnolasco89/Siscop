@@ -231,7 +231,6 @@ public class MttoProyecto implements Serializable {
     public void limpiarProyecto() {
 
         proyectoActual = new Proyecto();
-        proyectoB = new Proyecto();
         esProyNuevo = false;
         nombre = "";
         nombreCorto = "";
@@ -301,7 +300,7 @@ public class MttoProyecto implements Serializable {
 
             String camposFaltan = campos.stream().collect(Collectors.joining(", "));
             if (!camposFaltan.isEmpty()) {
-                mensajes.add("Verifique los siguientes campo: " + camposFaltan);
+                mensajes.add("Verifique los siguientes campos: " + camposFaltan);
             }
 
             for (String msj : mensajes) {

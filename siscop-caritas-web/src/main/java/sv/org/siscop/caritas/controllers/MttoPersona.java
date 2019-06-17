@@ -22,7 +22,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.TabView;
-//import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.UnselectEvent;
@@ -34,10 +33,11 @@ import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.Persona;
 import sv.org.siscop.caritas.entidades.Telefono;
 import sv.org.siscop.caritas.entidades.Usuario;
+import sv.org.siscop.caritas.util.Catalogos;
 
 /**
  *
- * @author jos
+ * @author Henry
  */
 @Named(value = "mttoPersona")
 @SessionScoped
@@ -48,9 +48,8 @@ public class MttoPersona implements Serializable {
     @EJB
     private ServiciosPersonaLocal servPersona;
 
-    /**
-     * Creates a new instance of MttoPersonas
-     */
+    private final static Logger logger = Logger.getLogger(MttoPersona.class.getName());
+
     public MttoPersona() {
     }
 
@@ -70,49 +69,37 @@ public class MttoPersona implements Serializable {
     private Integer tipoDir;
     private Integer tipoDoc;
     private Integer estCivil;
-    private Telefono telefono;
-    private Direccion nuevaDireccion;
 
-    private Long codper;
-    private String nombre1P;
-    private String nombre2P;
-    private String apellido1P;
-    private String apellido2P;
-    private String apecasada2P;
+    //Propiedades persona
+    private String nombre1;
+    private String nombre2;
+    private String apellido1;
+    private String apellido2;
+    private String apecasada;
     private String numeroDoc;
     private String numeroTel;
     private String nuevaDirecc;
-    Date fechaNacP;
-    Integer codperNew;
-    String sexo;
-    Integer tipoPer;
+    private Date fechaNacimiento;
+    private String sexo;
+    private Integer tipoPer;
 
     int tabindex = 0;
 
-    List<SelectItem> tipotelLst = new ArrayList<>();
-    List<SelectItem> tipoDireccLst = new ArrayList<>();
-    List<SelectItem> tipoDocLst = new ArrayList<>();
-    List<SelectItem> estadoCivilLst = new ArrayList<>();
-    List<Telefono> personaTelList = new ArrayList<>();
-    List<Direccion> personaDireccList = new ArrayList<>();
-    List<Documento> personaDocList = new ArrayList<>();
-
+    //Listas
     private List<Persona> lstPersonas = new ArrayList<>();
+    private List<Telefono> telefonosList = new ArrayList<>();
+    private List<Direccion> direccionesList = new ArrayList<>();
+    private List<Documento> documentosList = new ArrayList<>();
 
-    public String getDuiB() {
-        return duiB;
-    }
+    //SelectItems
+    private final List<SelectItem> tipoPerList = new ArrayList<>();
+    private final List<SelectItem> estadoCivilLst = new ArrayList<>();
+    private final List<SelectItem> tipotelLst = new ArrayList<>();
+    private final List<SelectItem> tipoDireccLst = new ArrayList<>();
+    private final List<SelectItem> tipoDocLst = new ArrayList<>();
 
-    public void setDuiB(String duiB) {
-        this.duiB = duiB;
-    }
-
-    public Long getCodper() {
-        return codper;
-    }
-
-    public void setCodper(Long codper) {
-        this.codper = codper;
+    public void onTabChange(TabChangeEvent event) {
+        this.tabindex = ((TabView) event.getSource()).getIndex();
     }
 
     public Persona getPersonaActual() {
@@ -163,6 +150,14 @@ public class MttoPersona implements Serializable {
         this.apellido2B = apellido2B;
     }
 
+    public String getDuiB() {
+        return duiB;
+    }
+
+    public void setDuiB(String duiB) {
+        this.duiB = duiB;
+    }
+
     public List<Persona> getLstPersonas() {
         return lstPersonas;
     }
@@ -181,22 +176,6 @@ public class MttoPersona implements Serializable {
 
     public boolean isNuevaPersona() {
         return nuevaPersona;
-    }
-
-    public Telefono getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(Telefono telefono) {
-        this.telefono = telefono;
-    }
-
-    public Direccion getNuevaDireccion() {
-        return nuevaDireccion;
-    }
-
-    public void setNuevaDireccion(Direccion nuevaDireccion) {
-        this.nuevaDireccion = nuevaDireccion;
     }
 
     public Integer getTipoTel() {
@@ -259,12 +238,13 @@ public class MttoPersona implements Serializable {
         try {
             tipotelLst.clear();
 
-            for (ItemCatalogo item : this.servCat.findCatalogoById(3).getItemCatalogoList()) {
+            for (ItemCatalogo item : this.servCat
+                    .findCatalogoById(Catalogos.TIPO_TEL.getCodigo()).getItemCatalogoList()) {
                 tipotelLst.add(new SelectItem(item.getId(), item.getDescripcion()));
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         return tipotelLst;
     }
@@ -273,11 +253,12 @@ public class MttoPersona implements Serializable {
 
         try {
             tipoDireccLst.clear();
-            for (ItemCatalogo item : this.servCat.findCatalogoById(4).getItemCatalogoList()) {
+            for (ItemCatalogo item : this.servCat
+                    .findCatalogoById(Catalogos.TIPO_DIRECC.getCodigo()).getItemCatalogoList()) {
                 tipoDireccLst.add(new SelectItem(item.getId(), item.getDescripcion()));
             }
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
 
         return tipoDireccLst;
@@ -287,83 +268,90 @@ public class MttoPersona implements Serializable {
 
         try {
             tipoDocLst.clear();
-            for (ItemCatalogo item : this.servCat.findCatalogoById(5).getItemCatalogoList()) {
+            for (ItemCatalogo item : this.servCat
+                    .findCatalogoById(Catalogos.TIPO_DOC.getCodigo()).getItemCatalogoList()) {
                 tipoDocLst.add(new SelectItem(item.getId(), item.getDescripcion()));
             }
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
 
         return tipoDocLst;
     }
 
+    public List<SelectItem> getTipoPerList() {
+        try {
+            tipoPerList.clear();
+            for (ItemCatalogo item : this.servCat
+                    .findCatalogoById(Catalogos.TIPO_PERSON.getCodigo()).getItemCatalogoList()) {
+                tipoPerList.add(new SelectItem(item.getId(), item.getDescripcion()));
+            }
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+
+        return tipoPerList;
+    }
+
     public List<SelectItem> getEstadoCivilLst() {
         try {
             estadoCivilLst.clear();
-            for (ItemCatalogo item : this.servCat.findCatalogoById(6).getItemCatalogoList()) {
+            for (ItemCatalogo item : this.servCat.findCatalogoById(2).getItemCatalogoList()) {
                 estadoCivilLst.add(new SelectItem(item.getId(), item.getDescripcion()));
             }
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
 
         return estadoCivilLst;
     }
 
-    public String getNombre1P() {
-        return nombre1P;
+    public String getNombre1() {
+        return nombre1;
     }
 
-    public void setNombre1P(String nombre1P) {
-        this.nombre1P = nombre1P;
+    public void setNombre1(String nombre1) {
+        this.nombre1 = nombre1;
     }
 
-    public String getNombre2P() {
-        return nombre2P;
+    public String getNombre2() {
+        return nombre2;
     }
 
-    public void setNombre2P(String nombre2P) {
-        this.nombre2P = nombre2P;
+    public void setNombre2(String nombre2) {
+        this.nombre2 = nombre2;
     }
 
-    public String getApellido1P() {
-        return apellido1P;
+    public String getApellido1() {
+        return apellido1;
     }
 
-    public void setApellido1P(String apellido1P) {
-        this.apellido1P = apellido1P;
+    public void setApellido1(String apellido1) {
+        this.apellido1 = apellido1;
     }
 
-    public String getApellido2P() {
-        return apellido2P;
+    public String getApellido2() {
+        return apellido2;
     }
 
-    public void setApellido2P(String apellido2P) {
-        this.apellido2P = apellido2P;
+    public void setApellido2(String apellido2) {
+        this.apellido2 = apellido2;
     }
 
-    public String getApecasada2P() {
-        return apecasada2P;
+    public String getApecasada() {
+        return apecasada;
     }
 
-    public void setApecasada2P(String apecasada2P) {
-        this.apecasada2P = apecasada2P;
+    public void setApecasada(String apecasada) {
+        this.apecasada = apecasada;
     }
 
-    public Date getFechaNacP() {
-        return fechaNacP;
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
     }
 
-    public void setFechaNacP(Date fechaNacP) {
-        this.fechaNacP = fechaNacP;
-    }
-
-    public Integer getCodperNew() {
-        return codperNew;
-    }
-
-    public void setCodperNew(Integer codperNew) {
-        this.codperNew = codperNew;
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 
     public String getSexo() {
@@ -382,32 +370,28 @@ public class MttoPersona implements Serializable {
         this.tipoPer = tipoPer;
     }
 
-    public void setTipotelLst(List<SelectItem> tipotelLst) {
-        this.tipotelLst = tipotelLst;
+    public List<Telefono> getTelefonosList() {
+        return telefonosList;
     }
 
-    public List<Telefono> getPersonaTelList() {
-        return personaTelList;
+    public void setTelefonosList(List<Telefono> telefonosList) {
+        this.telefonosList = telefonosList;
     }
 
-    public void setPersonaTelList(List<Telefono> personaTelList) {
-        this.personaTelList = personaTelList;
+    public List<Direccion> getDireccionesList() {
+        return direccionesList;
     }
 
-    public List<Direccion> getPersonaDireccList() {
-        return personaDireccList;
+    public void setDireccionesList(List<Direccion> direccionesList) {
+        this.direccionesList = direccionesList;
     }
 
-    public void setPersonaDireccList(List<Direccion> personaDireccList) {
-        this.personaDireccList = personaDireccList;
+    public List<Documento> getDocumentosList() {
+        return documentosList;
     }
 
-    public List<Documento> getPersonaDocList() {
-        return personaDocList;
-    }
-
-    public void setPersonaDocList(List<Documento> personaDocList) {
-        this.personaDocList = personaDocList;
+    public void setDocumentosList(List<Documento> documentosList) {
+        this.documentosList = documentosList;
     }
 
     public void buscar() {
@@ -447,7 +431,7 @@ public class MttoPersona implements Serializable {
 
             if (hayDui) {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
-                        "No se encontrO metodo.", null);
+                        "No se encontró metodo.", null);
             } else {
                 lstPersonas = servPersona.buscarPersonas(filtro);
             }
@@ -458,7 +442,7 @@ public class MttoPersona implements Serializable {
             }
 
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
 
     }
@@ -473,27 +457,42 @@ public class MttoPersona implements Serializable {
     }
 
     public void limpiarPersona() {
-        this.personaTelList = new ArrayList<>();
-        this.personaDireccList = new ArrayList<>();
-        this.personaDocList = new ArrayList<>();
-        codper = null;
-        nombre1P = new String();
-        nombre2P = new String();
-        apellido1P = new String();
-        apellido2P = new String();
-        apecasada2P = new String();
-        fechaNacP = null;
-
-        tipoDir = 0;
-        tipoTel = 0;
-        tipoPer = null;
-        tipoDoc = 0;
-        estCivil = 0;
+        nombre1 = new String();
+        nombre2 = new String();
+        apellido1 = new String();
+        apellido2 = new String();
+        apecasada = new String();
+        fechaNacimiento = null;
         sexo = new String();
-        nuevaDirecc = new String();
-        numeroTel = new String();
-        numeroDoc = new String();
+        tipoPer = 0;
+        estCivil = 0;
 
+        this.telefonosList = new ArrayList<>();
+        this.direccionesList = new ArrayList<>();
+        this.documentosList = new ArrayList<>();
+        limpiarTelefono();
+        limpiarDireccion();
+        limpiarDocumento();
+
+    }
+
+    public void limpiarTelefono() {
+        tipoTel = 0;
+        numeroTel = new String();
+    }
+
+    public void limpiarDireccion() {
+        tipoDir = 0;
+        nuevaDirecc = new String();
+    }
+
+    public void limpiarDocumento() {
+        tipoDoc = 0;
+        numeroDoc = new String();
+    }
+
+    public void onRowUnselect(UnselectEvent event) {
+        personaActual = new Persona();
     }
 
     public void onRowSelect(SelectEvent event) throws IOException {
@@ -504,27 +503,23 @@ public class MttoPersona implements Serializable {
 
             personaActual = personaSelB;
 
-            codper = personaActual.getId();
-            nombre1P = personaActual.getNombre1();
-            nombre2P = personaActual.getNombre2();
-            apellido1P = personaActual.getNombre1();
-            apellido2P = personaActual.getApellido2();
-            apecasada2P = personaActual.getApecasada();
-            fechaNacP = personaActual.getFechanac();
+            nombre1 = personaActual.getNombre1();
+            nombre2 = personaActual.getNombre2();
+            apellido1 = personaActual.getApellido1();
+            apellido2 = personaActual.getApellido2();
+            apecasada = personaActual.getApecasada();
+            fechaNacimiento = personaActual.getFechanac();
             sexo = personaActual.getSexo();
             tipoPer = personaActual.getTipo().getId();
-            personaTelList = personaActual.getTelefonoList();
-            personaDireccList = personaActual.getDireccionList();
-            personaDocList = personaActual.getDocumentoList();
+            telefonosList = personaActual.getTelefonoList();
+            direccionesList = personaActual.getDireccionList();
+            documentosList = personaActual.getDocumentoList();
             tabindex = 1;
-            numeroDoc = null;
-            numeroTel = null;
-            nuevaDirecc = null;
             if (personaActual.getEstadoCivil() != null) {
                 estCivil = personaActual.getEstadoCivil().getId();
             }
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -533,16 +528,13 @@ public class MttoPersona implements Serializable {
             limpiarPersona();
             nuevaPersona = true;
             this.personaActual = new Persona();
-            facesContext = FacesContext.getCurrentInstance();
             Usuario user = (Usuario) facesContext.getExternalContext().getSessionMap().get("usuario");
-//            codper = this.procBMT.getCorr("CODPE", "MttoServicio", user.getUsuario());
-//            personaActual.setCodper(codper);
 
             this.showMessage(FacesMessage.SEVERITY_WARN,
                     "Agregue información requerida.", null);
 
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -551,20 +543,19 @@ public class MttoPersona implements Serializable {
         try {
             List<String> mensajes = new ArrayList<>();
 
-            if (tipoPer.equals("0")) {
+            if (tipoPer == 0) {
                 mensajes.add("Seleccione tipo de persona.");
             }
-            if (nombre1P.isEmpty()) {
+            if (nombre1.isEmpty()) {
                 mensajes.add("Digite primer nombre.");
             }
-            if (apellido1P.isEmpty()) {
+            if (apellido1.isEmpty()) {
                 mensajes.add("Digite primer apellido.");
             }
             if (sexo == null || sexo.isEmpty()) {
                 mensajes.add("Seleccione sexo.");
             }
-
-            if (fechaNacP == null) {
+            if (fechaNacimiento == null) {
                 mensajes.add("Seleccione fecha de nacimiento.");
             }
 
@@ -576,7 +567,7 @@ public class MttoPersona implements Serializable {
         } catch (Exception ex) {
             this.showMessage(FacesMessage.SEVERITY_WARN,
                     "Error al validar persona.", ex.getLocalizedMessage());
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
         return hay;
     }
@@ -586,39 +577,44 @@ public class MttoPersona implements Serializable {
             if (validarPersona()) {
                 return;
             }
-//
-//            if (newPerson) {
-//                this.personaActual = new Persona();
-//                this.personaActual.setCodper(codper);
-//            }
-            this.personaActual.setNombre1(nombre1P);
-            this.personaActual.setNombre2(nombre2P);
-            this.personaActual.setApellido1(apellido1P);
-            this.personaActual.setApellido2(apellido2P);
-            this.personaActual.setApecasada(apecasada2P);
-            this.personaActual.setFechanac(fechaNacP);
-            this.personaActual.setTipo(servCat.findItemCatalogoById(tipoPer));
+
+            this.personaActual.setNombre1(nombre1);
+            this.personaActual.setNombre2(nombre2);
+            this.personaActual.setApellido1(apellido1);
+            this.personaActual.setApellido2(apellido2);
+            this.personaActual.setApecasada(apecasada);
+            this.personaActual.setFechanac(fechaNacimiento);
             this.personaActual.setSexo(sexo);
-            this.personaActual.setNomcom(personaActual.getNombre1() + " "
-                    + personaActual.getNombre2() + " " + personaActual.getApellido1()
-                    + " " + personaActual.getApellido2());
-
-            this.personaActual.setDireccionList(personaDireccList);
-            this.personaActual.setTelefonoList(personaTelList);
-            this.personaActual.setDocumentoList(personaDocList);
-
+            this.personaActual.setTipo(servCat.findItemCatalogoById(tipoPer));
             this.personaActual.setEstadoCivil(servCat.findItemCatalogoById(estCivil));
+            String nomcom = nombre1.concat(" ").concat(nombre2);
+            nomcom = nomcom.concat(" ").concat(apellido1);
+            nomcom = nomcom.concat(" ").concat(apecasada != null ? (" DE " + apecasada) : apellido2);
+            this.personaActual.setNomcom(nomcom);
 
-            this.servPersona.nuevaPersona(personaActual);
+            this.personaActual.setDireccionList(direccionesList);
+            this.personaActual.setTelefonoList(telefonosList);
+            this.personaActual.setDocumentoList(documentosList);
+
+            if (nuevaPersona) {
+                this.servPersona.nuevaPersona(personaActual);
+            } else {
+                personaActual = this.servPersona.actualizarPersona(personaActual);
+            }
+
+            // Actualizar docs para actualizar id's
+            telefonosList = personaActual.getTelefonoList();
+            direccionesList = personaActual.getDireccionList();
+            documentosList = personaActual.getDocumentoList();
+
             this.showMessage(FacesMessage.SEVERITY_INFO, "Persona guardada exitosamente.", null);
 
             nuevaPersona = false;
 
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
-            showMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar la persona.", ex.getLocalizedMessage());
+            logger.log(Level.SEVERE, null, ex);
+            showMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar persona.", ex.getLocalizedMessage());
         }
-
     }
 
     public void agregarTelefono() {
@@ -628,20 +624,20 @@ public class MttoPersona implements Serializable {
                 return;
             }
 
-            telefono = new Telefono();
+            Telefono telefono = new Telefono();
             telefono.setPersona(personaActual);
             telefono.setTipo(servCat.findItemCatalogoById(tipoTel));
             telefono.setNumero(numeroTel);
-            if (!personaTelList.contains(telefono)) {
-                personaTelList.add(telefono);
-                tipoTel = 0;
-                numeroTel = "";
+
+            if (!telefonosList.contains(telefono)) {
+                telefonosList.add(telefono);
+                limpiarTelefono();
             } else {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "Ya existe este tipo de teléfono en la lista.", null);
             }
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -658,6 +654,13 @@ public class MttoPersona implements Serializable {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "Seleccione tipo de teléfono.", null);
             }
+            boolean yaExiste = telefonosList.stream()
+                    .anyMatch(telefono -> tipoTel.equals(telefono.getTipo().getId()));
+            if (yaExiste) {
+                hay = true;
+                this.showMessage(FacesMessage.SEVERITY_WARN,
+                        "Tipo de teléfono ya existe.", null);
+            }
         } catch (Exception ex) {
 
         }
@@ -666,13 +669,12 @@ public class MttoPersona implements Serializable {
 
     public void eliminarTelefono(Telefono tel) {
         try {
-//            personaTelList.remove(tel);
-//            this.procGen.eliminarEntidad(tel);
-//            this.showMessage(FacesMessage.SEVERITY_INFO,
-//                    "Eliminado de la lista.", null);
-
+            tel.setPersona(null);
+            telefonosList.remove(tel);
+            this.showMessage(FacesMessage.SEVERITY_INFO,
+                    "Eliminado de la lista.", null);
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
 
     }
@@ -688,17 +690,15 @@ public class MttoPersona implements Serializable {
             dir.setPersona(personaActual);
             dir.setTipo(servCat.findItemCatalogoById(tipoDir));
             dir.setDireccion(nuevaDirecc);
-            if (!personaDireccList.contains(dir)) {
-                personaDireccList.add(dir);
-                nuevaDirecc = null;
-                tipoDir = 0;
-                nuevaDirecc = "";
+            if (!direccionesList.contains(dir)) {
+                direccionesList.add(dir);
+                limpiarDireccion();
             } else {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "Ya existe este tipo de dirección..", null);
             }
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -715,6 +715,15 @@ public class MttoPersona implements Serializable {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "Seleccione tipo de dirección.", null);
             }
+
+            boolean yaExiste = direccionesList.stream()
+                    .anyMatch(direccion -> tipoDir.equals(direccion.getTipo().getId()));
+            if (yaExiste) {
+                hay = true;
+                this.showMessage(FacesMessage.SEVERITY_WARN,
+                        "Tipo de dirección ya existe.", null);
+            }
+
         } catch (Exception ex) {
 
         }
@@ -723,12 +732,12 @@ public class MttoPersona implements Serializable {
 
     public void eliminarDireccion(Direccion dir) {
         try {
-//            personaDireccList.remove(dir);
-//            this.procGen.eliminarEntidad(dir);
-//            this.showMessage(FacesMessage.SEVERITY_INFO,
-//                    "Eliminado de la lista.", null);
+            dir.setPersona(null);
+            direccionesList.remove(dir);
+            this.showMessage(FacesMessage.SEVERITY_INFO,
+                    "Eliminado de la lista.", null);
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -741,19 +750,18 @@ public class MttoPersona implements Serializable {
 
             Documento doc = new Documento();
             doc.setPersona(personaActual);
-            doc.setPersona(personaActual);
             doc.setTipo(servCat.findItemCatalogoById(tipoDoc));
             doc.setNumero(numeroDoc);
-            if (!personaDocList.contains(doc)) {
-                personaDocList.add(doc);
-                tipoDoc = 0;
-                numeroDoc = "";
+
+            if (!documentosList.contains(doc)) {
+                documentosList.add(doc);
+                limpiarDocumento();
             } else {
                 this.showMessage(FacesMessage.SEVERITY_INFO,
                         "Ya existe este tipo de documento.", null);
             }
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
@@ -770,6 +778,13 @@ public class MttoPersona implements Serializable {
                 this.showMessage(FacesMessage.SEVERITY_INFO,
                         "Seleccione tipo de documento.", null);
             }
+            boolean yaExiste = telefonosList.stream()
+                    .anyMatch(documento -> tipoDir.equals(documento.getTipo().getId()));
+            if (yaExiste) {
+                hay = true;
+                this.showMessage(FacesMessage.SEVERITY_WARN,
+                        "Tipo de documento ya existe.", null);
+            }
         } catch (Exception ex) {
 
         }
@@ -778,28 +793,19 @@ public class MttoPersona implements Serializable {
 
     public void eliminarDocumento(Documento doc) {
         try {
-//            personaDocList.remove(doc);
-//            this.procGen.eliminarEntidad(doc);
-//
-//            this.showMessage(FacesMessage.SEVERITY_INFO, "Eliminado de la lista.", null);
+            doc.setPersona(null);
+            documentosList.remove(doc);
+            this.showMessage(FacesMessage.SEVERITY_INFO, "Eliminado de la lista.", null);
 
         } catch (Exception ex) {
-            Logger.getLogger(MttoPersona.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, null, ex);
         }
     }
 
-    public void onRowUnselect(UnselectEvent event) {
-        personaActual = new Persona();
-    }
-
-    public void onTabChange(TabChangeEvent event) {
-        this.tabindex = ((TabView) event.getSource()).getIndex();
-    }
-
     public void showMessage(FacesMessage.Severity severidad, String error, String desc) {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
+        FacesContext context = FacesContext.getCurrentInstance();
         FacesMessage mensaje = new FacesMessage(severidad, error, desc);
-        facesContext.addMessage(null, mensaje);
+        context.addMessage("msgGrowl", mensaje);
     }
 
     public void showDialogo(String mensaje) {

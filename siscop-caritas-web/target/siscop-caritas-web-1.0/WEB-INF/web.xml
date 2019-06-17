@@ -29,6 +29,6 @@
         <param-value>omega</param-value>
     </context-param>
     <welcome-file-list>
-        <welcome-file>mattoCatalogos/index.xhtml</welcome-file>
+        <welcome-file>MttoPersonas.xhtml</welcome-file>
     </welcome-file-list>
 </web-app>

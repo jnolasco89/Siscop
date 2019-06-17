@@ -19,7 +19,7 @@ public interface ServiciosPersonaLocal {
 
     public void nuevaPersona(Persona c);
 
-    public void actualizarPersona(Persona c);
+    public Persona actualizarPersona(Persona c);
 
     public List<Persona> buscarPersonas(Map params) throws Exception;
 

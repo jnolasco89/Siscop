@@ -28,8 +28,8 @@ public class ServiciosPersona implements ServiciosPersonaLocal {
     }
 
     @Override
-    public void actualizarPersona(Persona c) {
-        personaDao.edit(c);
+    public Persona actualizarPersona(Persona c) {
+       return personaDao.edit(c);
     }
 
     @Override

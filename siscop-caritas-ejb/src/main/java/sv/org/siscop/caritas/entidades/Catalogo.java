@@ -6,11 +6,11 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -21,8 +21,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,7 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Catalogo.findAll", query = "SELECT c FROM Catalogo c")})
-public class Catalogo implements Serializable {
+public class Catalogo implements Auditable, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -52,20 +50,10 @@ public class Catalogo implements Serializable {
     private String nombre;
     @Column(name = "activo")
     private Boolean activo;
-    @Column(name = "fechacrea")
-    @Temporal(TemporalType.TIME)
-    private Date fechacrea;
-    @Size(max = 15)
-    @Column(name = "usercrea")
-    private String usercrea;
-    @Column(name = "fechamod")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechamod;
-    @Size(max = 15)
-    @Column(name = "usermod")
-    private String usermod;
     @OneToMany(mappedBy = "idcatalogo", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<ItemCatalogo> itemCatalogoList;
+    @Embedded
+    private Audit audit;
 
     public Catalogo() {
     }
@@ -98,36 +86,14 @@ public class Catalogo implements Serializable {
         this.activo = activo;
     }
 
-    public Date getFechacrea() {
-        return fechacrea;
+    @Override
+    public Audit getAudit() {
+        return audit;
     }
 
-    public void setFechacrea(Date fechacrea) {
-        this.fechacrea = fechacrea;
-    }
-
-    public String getUsercrea() {
-        return usercrea;
-    }
-
-    public void setUsercrea(String usercrea) {
-        this.usercrea = usercrea;
-    }
-
-    public Date getFechamod() {
-        return fechamod;
-    }
-
-    public void setFechamod(Date fechamod) {
-        this.fechamod = fechamod;
-    }
-
-    public String getUsermod() {
-        return usermod;
-    }
-
-    public void setUsermod(String usermod) {
-        this.usermod = usermod;
+    @Override
+    public void setAudit(Audit audit) {
+        this.audit = audit;
     }
 
     @XmlTransient
@@ -163,5 +129,5 @@ public class Catalogo implements Serializable {
     public String toString() {
         return "sv.org.siscop.caritas.entidades.Catalogo[ id=" + id + " ]";
     }
-    
+
 }

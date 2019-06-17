@@ -8,6 +8,7 @@ package sv.org.siscop.caritas.entidades;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -75,11 +76,11 @@ public class Persona implements Auditable, Serializable {
     @JoinColumn(name = "idestadocivil", referencedColumnName = "id")
     @ManyToOne
     private ItemCatalogo estadoCivil;
-    @OneToMany(mappedBy = "persona")
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Direccion> direccionList;
-    @OneToMany(mappedBy = "persona")
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Documento> documentoList;
-    @OneToMany(mappedBy = "persona")
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Telefono> telefonoList;
     @Embedded
     private Audit audit;

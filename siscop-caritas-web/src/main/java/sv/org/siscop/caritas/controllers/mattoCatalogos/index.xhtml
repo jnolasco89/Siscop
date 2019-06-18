@@ -104,7 +104,7 @@
                                             <p:column headerText="Nombre">
                                                 <h:outputText value="#{item.descripcion}" />
                                             </p:column>
-                                            <p:column headerText="Estado" rendered="#{mttoCatalogo.renderColumnaEstado()}">
+                                            <p:column headerText="Estado">
                                                 <h:outputText value="#{mttoCatalogo.estadoEnString(item.activo)}"/>
                                             </p:column>
                                             <p:column headerText="Opciones" style="text-align: center;">
@@ -114,7 +114,6 @@
                                                     action="#{mttoCatalogo.eliminarItem(index)}" 
                                                     update=":formTabs:tabs:itemsCatalogo"
                                                     process="@this"
-                                                    rendered="#{item.verEliminar}"
                                                     />
                                                 <p:commandButton 
                                                     icon="ui-icon-pencil" 
@@ -148,15 +147,7 @@
                                                  validator="#{mttoCatalogo.validaciones.validarNombre}"
                                                  >
                                         <p:message for="txtNombreItem"/>
-                                    </p:inputText>
-                                    <p:outputLabel for="estadoItem" value="Estado:"
-                                                   rendered="#{ mttoCatalogo.renderListEstado() }"/>
-                                    <p:selectOneMenu id="estadoItem" 
-                                                     value="#{mttoCatalogo.itemActual.activo}"
-                                                     rendered="#{mttoCatalogo.renderListEstado()}">
-                                        <f:selectItem itemLabel="Activo" itemValue="true"/>
-                                        <f:selectItem itemLabel="Inactivo" itemValue="false"/>
-                                    </p:selectOneMenu>
+                                    </p:inputText>    
                                 </h:panelGrid>
                                 <h:panelGrid columns="2">
                                     <p:commandButton 
@@ -166,7 +157,7 @@
                                         actionListener="#{mttoCatalogo.accionModal()}"
                                         update=":formModal:dialogItemCatalogo"
                                         oncomplete="handleLoginRequest(xhr, status, args)"
-
+                                        
                                         />
                                     <p:commandButton 
                                         id="btnModalCancelar"

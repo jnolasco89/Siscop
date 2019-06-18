@@ -36,6 +36,7 @@ public class MttoCatalogo implements Serializable {
     //Propiedades para la logica de la ui
     private int tabActiva;
     private int tipoModal;
+    private int accionDetalle;
     private String tituloModal;
     private String tituloBtnModal;
     private String campoBusqueda;
@@ -57,6 +58,7 @@ public class MttoCatalogo implements Serializable {
     public void init() {
         tabActiva = 0;
         tipoModal = 1;//1 para agregar y 2 para editar
+        accionDetalle = 1;//1 para agregar y 2 para editar
         tituloModal = "Agregar item";
         tituloBtnModal = "Agregar";
         campoBusqueda = "";
@@ -176,28 +178,76 @@ public class MttoCatalogo implements Serializable {
 
     public void cargarCatalogoSeleccionado() {
         tabActiva = 1;
+        accionDetalle = 2;
+        itemsActuales = catalogoActual.getItemCatalogoList();
     }
 
     //Para pestaña detalles -------------
     public void guardarCatalogo() {
-        System.out.println("Guardar el catalogo");
+        String msjGrwol = null;
+
+        if (accionDetalle == 1) {
+            for (ItemCatalogo i : itemsActuales) {
+                i.setIdcatalogo(catalogoActual);
+                i.setActivo(true);
+            }
+            catalogoActual.setActivo(true);
+            catalogoActual.setItemCatalogoList(itemsActuales);
+            servCat.addCatalogo(catalogoActual);
+            
+            msjGrwol = "Se creo el catalogo correctamente";
+        } else if (accionDetalle == 2) {
+            for (ItemCatalogo i : itemsActuales) {
+                if (i.getIdcatalogo() == null) {
+                    i.setIdcatalogo(catalogoActual);
+                    i.setActivo(true);
+                }
+            }
+            catalogoActual.setItemCatalogoList(itemsActuales);
+            servCat.editCatalogo(catalogoActual);
+            
+            msjGrwol="Se edito el catalogo correctamente";
+        }
+
+        accionDetalle = 1;
+        catalogoActual = new Catalogo();
+        itemsActuales = new ArrayList<>();
+        
+        PrimeFaces.current().ajax().update(":formTabs");
+        FacesContext.getCurrentInstance()
+                .addMessage("msgGrowl",
+                        new FacesMessage(
+                                FacesMessage.SEVERITY_INFO,
+                                "Operacion exitosa",
+                                msjGrwol));
     }
 
     public void limpiarFormularioYbusqueda() {
         catalogoActual = new Catalogo();
         itemsActuales = new ArrayList<>();
-        tabActiva = 0;
+        tabActiva = 1;
+        accionDetalle = 1;
+        PrimeFaces.current().resetInputs(":formTabs:tabs:txtNombre");
     }
 
     public void agregarItem() {
-            itemsActuales.add(itemActual);
-            itemActual = new ItemCatalogo();
+        tabActiva = 1;
+        itemActual.setVerEliminar(true);
+        itemActual.setActivo(true);
+        itemActual.setVerEliminar(true);
+        itemsActuales.add(itemActual);
+        itemActual = new ItemCatalogo();
+        PrimeFaces.current().ajax().update(":formTabs:tabs:itemsCatalogo");
     }
 
     public void editarItem() {
-        itemsActuales.get(itemActual.getId()).setId(null);
+        if(accionDetalle==1){
+            itemsActuales.get(itemActual.getId()).setId(null);
+        }
         itemsActuales.get(itemActual.getId()).setDescripcion(itemActual.getDescripcion());
+        itemsActuales.get(itemActual.getId()).setActivo(itemActual.getActivo());
         itemActual = new ItemCatalogo();
+        PrimeFaces.current().ajax().update(":formTabs:tabs:itemsCatalogo");
     }
 
     public void eliminarItem(int index) {
@@ -208,6 +258,7 @@ public class MttoCatalogo implements Serializable {
         tipoModal = 1;
         tituloModal = "Agregar item";
         tituloBtnModal = "Agregar";
+        PrimeFaces.current().ajax().update(":formModal");
         PrimeFaces.current().executeScript("PF('dialogItemCatalogo').show();");
     }
 
@@ -217,7 +268,10 @@ public class MttoCatalogo implements Serializable {
         tituloBtnModal = "Editar";
         itemActual.setId(index);
         itemActual.setDescripcion(itemsActuales.get(index).getDescripcion());
+        itemActual.setActivo(itemsActuales.get(index).getActivo());
+        itemActual.setVerEliminar(itemsActuales.get(index).isVerEliminar());
 
+        PrimeFaces.current().ajax().update(":formModal");
         PrimeFaces.current().executeScript("PF('dialogItemCatalogo').show();");
     }
 
@@ -231,5 +285,22 @@ public class MttoCatalogo implements Serializable {
 
     public void limpiarModal() {
         itemActual = new ItemCatalogo();
+        PrimeFaces.current().resetInputs("formModal:txtNombreItem");
+    }
+
+    public boolean renderColumnaEstado() {
+        return accionDetalle != 1;
+    }
+
+    public boolean renderListEstado() {
+        if (accionDetalle == 2 && tipoModal == 2 && !itemActual.isVerEliminar()) {
+            return true;
+        } else if (accionDetalle == 2 && tipoModal == 1 && !itemActual.isVerEliminar()) {
+            return false;
+        } else if (accionDetalle == 2 && tipoModal == 2 && itemActual.isVerEliminar()) {
+            return false;
+        }
+
+        return false;
     }
 }

@@ -35,7 +35,7 @@ public class ServiciosCatalogo implements ServiciosCatalogoLocal {
     public void editCatalogo(Catalogo c) {
         catalogoDao.edit(c);
         for (ItemCatalogo i : c.getItemCatalogoList()) {
-            i.setCatalogo(c);
+//            i.setIdcatalogo(c);
             itemsDao.edit(i);
         }
     }

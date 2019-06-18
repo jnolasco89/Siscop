@@ -6,22 +6,26 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.Date;
+import javax.persistence.Basic;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -29,33 +33,42 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "item_catalogo")
-@EntityListeners(AuditListener.class)
-public class ItemCatalogo implements Auditable, Serializable {
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "ItemCatalogo.findAll", query = "SELECT i FROM ItemCatalogo i")})
+public class ItemCatalogo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "itemCatalogo_generator")
     @SequenceGenerator(name = "itemCatalogo_generator", sequenceName = "seq_itemcatalogo", allocationSize = 1)
+    @Basic(optional = false)
     @NotNull
     @Column(name = "id")
     private Integer id;
-    @Size(max = 10)
-    @Column(name = "codigo")
-    private String codigo;
     @Size(max = 50)
     @Column(name = "descripcion")
     private String descripcion;
     @Column(name = "activo")
-    private Boolean estado;
+    private Boolean activo;
+    @Column(name = "fechacrea")
+    @Temporal(TemporalType.TIME)
+    private Date fechacrea;
+    @Size(max = 15)
+    @Column(name = "usercrea")
+    private String usercrea;
+    @Column(name = "fechamod")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechamod;
+    @Size(max = 15)
+    @Column(name = "usermod")
+    private String usermod;
     @JoinColumn(name = "idcatalogo", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
-    private Catalogo catalogo;
-    @Embedded
-    private Audit audit;
-
+    private Catalogo idcatalogo;
     @Transient
-    private boolean mostrarEliminar;
-
+    private boolean verEliminar;
+    
     public ItemCatalogo() {
     }
 
@@ -71,14 +84,6 @@ public class ItemCatalogo implements Auditable, Serializable {
         this.id = id;
     }
 
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
     public String getDescripcion() {
         return descripcion;
     }
@@ -87,60 +92,77 @@ public class ItemCatalogo implements Auditable, Serializable {
         this.descripcion = descripcion;
     }
 
-    public Boolean getEstado() {
-        return estado;
+    public Boolean getActivo() {
+        return activo;
     }
 
-    public void setEstado(Boolean estado) {
-        this.estado = estado;
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 
-    public Catalogo getCatalogo() {
-        return catalogo;
+    public Date getFechacrea() {
+        return fechacrea;
     }
 
-    public void setCatalogo(Catalogo catalogo) {
-        this.catalogo = catalogo;
+    public void setFechacrea(Date fechacrea) {
+        this.fechacrea = fechacrea;
     }
 
-    @Override
-    public Audit getAudit() {
-        return audit;
+    public String getUsercrea() {
+        return usercrea;
     }
 
-    @Override
-    public void setAudit(Audit audit) {
-        this.audit = audit;
+    public void setUsercrea(String usercrea) {
+        this.usercrea = usercrea;
     }
 
-    public boolean isMostrarEliminar() {
-        return mostrarEliminar;
+    public Date getFechamod() {
+        return fechamod;
     }
 
-    public void setMostrarEliminar(boolean mostrarEliminar) {
-        this.mostrarEliminar = mostrarEliminar;
+    public void setFechamod(Date fechamod) {
+        this.fechamod = fechamod;
+    }
+
+    public String getUsermod() {
+        return usermod;
+    }
+
+    public void setUsermod(String usermod) {
+        this.usermod = usermod;
+    }
+
+    public Catalogo getIdcatalogo() {
+        return idcatalogo;
+    }
+
+    public void setIdcatalogo(Catalogo idcatalogo) {
+        this.idcatalogo = idcatalogo;
+    }
+
+    public boolean isVerEliminar() {
+        return verEliminar;
+    }
+
+    public void setVerEliminar(boolean verEliminar) {
+        this.verEliminar = verEliminar;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 73 * hash + Objects.hashCode(this.id);
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof ItemCatalogo)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ItemCatalogo other = (ItemCatalogo) obj;
-        if (!Objects.equals(this.id, other.id)) {
+        ItemCatalogo other = (ItemCatalogo) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;

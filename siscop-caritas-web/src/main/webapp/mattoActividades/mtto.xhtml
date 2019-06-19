@@ -1,0 +1,117 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-lg-12">
+                <p:layoutUnit position="center">
+                    <h3 style="margin-top:0">Mantenimiento de actividades</h3>
+
+                    <h:form id="formTabs">
+                        <p:growl id="growl" showDetail="true" for="msgGrowl"/>
+                        <p:tabView id="tabs" activeIndex="#{mttoActividades.tabActiva}">
+                            <p:tab id="busqueda" title="Búsqueda">
+                                <h:panelGrid>
+                                    <p:menubar>
+                                        <p:menuitem>
+                                            <p:inputText id="txtCampoBusqueda" value="#{mttoActividades.campoBusqueda}"/>
+                                        </p:menuitem>
+                                        <p:menuitem 
+                                            value="Buscar" 
+                                            actionListener="#{mttoActividades.buscarActividad()}" 
+                                            icon="ui-icon-search"
+                                            update="tablaActividades"/>
+                                        <p:menuitem 
+                                            value="Limpiar" 
+                                            action="#{mttoActividades.limpiarBusqueda()}" 
+                                            update=":formTabs:tabs"
+                                            icon="ui-icon-refresh" />
+                                    </p:menubar>
+                                    <p:dataTable id="tablaActividades" var = "act" 
+                                                 widgetVar="tablaActividades"
+                                                 value="#{mttoActividades.actividades}"
+                                                 selectionMode="single"
+                                                 selection="#{mttoActividades.actividadActual}"
+                                                 rowKey="#{act.id}"
+                                                 emptyMessage="Sin registros">
+                                        <p:ajax event="rowSelect"
+                                                listener="#{mttoActividades.cargarActividadSeleccionada()}"
+                                                update=":formTabs:tabs"
+                                                />
+                                        <p:column headerText="Código">
+                                            <h:outputText value="#{act.id}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre">
+                                            <h:outputText value="#{act.nombre}" />
+                                        </p:column>
+                                        <p:column headerText="Fecha inicio">
+                                            <h:outputText value="#{act.fechaInicio}" />
+                                        </p:column>
+                                        <p:column headerText="Fecha finalizacion">
+                                            <h:outputText value="#{act.fechaFin}" />
+                                        </p:column>
+                                        <p:column headerText="Estado">
+                                            <h:outputText value="#{act.estado}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:tab>
+                            <p:tab id="actividad" title="Actividad">
+                                <p:panelGrid>
+                                    <p:menubar>
+                                        <p:menuitem 
+                                            value="Guardar" 
+                                            action="#{mttoActividades.guardarActividad()}" 
+                                            icon="ui-icon-disk" 
+                                            update=":formTabs:tabs:datosActividad"
+                                            >
+                                        </p:menuitem>
+                                        <p:menuitem 
+                                            value="Limpiar" 
+                                            action="#{mttoActividades.limpiarFormularioActividadYbusqueda()}" 
+                                            update=":formTabs"
+                                            icon="ui-icon-refresh" process="@this"/>
+                                    </p:menubar>
+                                </p:panelGrid>
+                                <p:panel style="margin-top: 5px;" >
+                                    <h:panelGrid id="datosActividad" columns="6" cellpadding="5">
+                                        <p:outputLabel for="txtNombre" value="Nombre:"/>
+                                        <p:inputText id="txtNombre" 
+                                                     value="#{mttoActividades.actividadActual.nombre}"
+                                                     validator="#{mttoActividades.validaciones.validarNombre}"
+                                                     >
+                                            <p:message for="txtNombre"/>
+                                        </p:inputText>
+                                        <p:outputLabel for="txtDescripcion" value="Descripcion:"/>
+                                        <p:inputTextarea id="txtDescripcion" 
+                                                         value="#{mttoActividades.actividadActual.descripcion}"
+                                                         >
+                                        </p:inputTextarea>
+                                        <p:outputLabel for="fechaInicio" value="Fecha inicio:" />
+                                        <p:datePicker id="fechaInicio" 
+                                                      value="#{mttoActividades.actividadActual.fechaInicio}" 
+                                                      locale="es" 
+                                                      monthNavigator="true" 
+                                                      pattern="yyyy-MMM-dd"/>
+                                        <p:outputLabel for="fechaFin" value="Fecha fin:" />
+                                        <p:datePicker id="fechaFin" 
+                                                      value="#{mttoActividades.actividadActual.fechaFin}" 
+                                                      locale="es" 
+                                                      monthNavigator="true" 
+                                                      pattern="yyyy-MMM-dd"/>
+                                    </h:panelGrid>
+                                </p:panel>
+                               
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+
+                </p:layoutUnit>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

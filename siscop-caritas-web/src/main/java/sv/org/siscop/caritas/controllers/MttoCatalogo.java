@@ -213,7 +213,7 @@ public class MttoCatalogo implements Serializable {
         catalogoActual = new Catalogo();
         itemsActuales = new ArrayList<>();
         
-        PrimeFaces.current().ajax().update(":formTabs");
+        PrimeFaces.current().ajax().update(":formTabs:tabs");
         FacesContext.getCurrentInstance()
                 .addMessage("msgGrowl",
                         new FacesMessage(

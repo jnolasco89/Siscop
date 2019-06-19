@@ -11,6 +11,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
+import org.primefaces.PrimeFaces;
 
 /**
  *
@@ -25,6 +26,7 @@ public class ValidacionesCatalogo {
         String codigo = value.toString();
 
         if (codigo.length() == 0) {
+            PrimeFaces.current().ajax().addCallbackParam("validacion", false);
             throw new ValidatorException(
                     new FacesMessage(
                             FacesMessage.SEVERITY_WARN,
@@ -37,6 +39,7 @@ public class ValidacionesCatalogo {
         Matcher encaja = patron.matcher(codigo);
 
         if (!encaja.find()) {
+            PrimeFaces.current().ajax().addCallbackParam("validacion", false);
             throw new ValidatorException(
                     new FacesMessage(
                             FacesMessage.SEVERITY_WARN,
@@ -45,5 +48,6 @@ public class ValidacionesCatalogo {
             );
         }
 
+        PrimeFaces.current().ajax().addCallbackParam("validacion", true);
     }
 }

@@ -40,26 +40,24 @@
                                         <p:outputLabel for="txtDui" value="DUI" />
                                         <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoPersona.duiB}"/>
                                     </p:panelGrid>
-                                    <div class="card">
-                                        <p:dataTable id="lista" var = "per" value="#{mttoPersona.lstPersonas}"
-                                                     selectionMode="single"
-                                                     selection="#{mttoPersona.personaSelB}"
-                                                     rowKey="#{per.id}"
-                                                     paginator="true"
-                                                     rows ="10"
-                                                     paginatorPosition="bottom"
-                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                     rowsPerPageTemplate="10,20,50">
-                                            <p:ajax event="rowSelect" listener="#{mttoPersona.onRowSelect(event)}"
-                                                    update="principal" />
-                                            <p:column headerText="Id" width="10%">
-                                                <h:outputText value="#{per.id}" />
-                                            </p:column>
-                                            <p:column headerText="Persona">
-                                                <h:outputText value="#{per.nomcom}" />
-                                            </p:column>
-                                        </p:dataTable>
-                                    </div>
+                                    <p:dataTable id="lista" var = "per" value="#{mttoPersona.lstPersonas}"
+                                                 selectionMode="single"
+                                                 selection="#{mttoPersona.personaSelB}"
+                                                 rowKey="#{per.id}"
+                                                 paginator="true"
+                                                 rows ="10"
+                                                 paginatorPosition="bottom"
+                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                 rowsPerPageTemplate="10,20,50">
+                                        <p:ajax event="rowSelect" listener="#{mttoPersona.onRowSelect(event)}"
+                                                update="principal" />
+                                        <p:column headerText="Id" width="10%">
+                                            <h:outputText value="#{per.id}" />
+                                        </p:column>
+                                        <p:column headerText="Persona">
+                                            <h:outputText value="#{per.nomcom}" />
+                                        </p:column>
+                                    </p:dataTable>
                                 </p:tab>
                             </div>
                             <div class="card">

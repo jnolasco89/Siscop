@@ -7,6 +7,7 @@ package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -25,6 +27,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -36,6 +39,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Actividad.findAll", query = "SELECT a FROM Actividad a")})
 public class Actividad implements Serializable {
+
+    @OneToMany(mappedBy = "idactividad", fetch = FetchType.EAGER)
+    private List<Recurso> recursoList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -51,14 +57,14 @@ public class Actividad implements Serializable {
     @Size(max = 200)
     @Column(name = "descripcion")
     private String descripcion;
-    @Column(name = "fechaInicio")
+    @Column(name = "fechainicio")
     @Temporal(TemporalType.DATE)
-    private Date fechaInicio;
-    @Column(name = "fechaFin")
+    private Date fechainicio;
+    @Column(name = "fechafin")
     @Temporal(TemporalType.DATE)
-    private Date fechaFin;
+    private Date fechafin;
     @JoinColumn(name = "estado", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     private ItemCatalogo estado;
 
     public Actividad() {
@@ -92,20 +98,20 @@ public class Actividad implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Date getFechaInicio() {
-        return fechaInicio;
+    public Date getFechainicio() {
+        return fechainicio;
     }
 
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
+    public void setFechainicio(Date fechainicio) {
+        this.fechainicio = fechainicio;
     }
 
-    public Date getFechaFin() {
-        return fechaFin;
+    public Date getFechafin() {
+        return fechafin;
     }
 
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
+    public void setFechafin(Date fechafin) {
+        this.fechafin = fechafin;
     }
 
     public ItemCatalogo getEstado() {
@@ -140,5 +146,14 @@ public class Actividad implements Serializable {
     public String toString() {
         return "sv.org.siscop.caritas.entidades.Actividad[ id=" + id + " ]";
     }
-    
+
+    @XmlTransient
+    public List<Recurso> getRecursoList() {
+        return recursoList;
+    }
+
+    public void setRecursoList(List<Recurso> recursoList) {
+        this.recursoList = recursoList;
+    }
+
 }

@@ -21,8 +21,8 @@ public class ValidacionesActividad {
 
     public ValidacionesActividad() {
     }
-    
-     public void validarNombre(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
+
+    public void validarNombre(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
         String codigo = value.toString();
 
         if (codigo.length() == 0) {
@@ -31,7 +31,7 @@ public class ValidacionesActividad {
                     new FacesMessage(
                             FacesMessage.SEVERITY_WARN,
                             "Error",
-                            "Nombre requerido")
+                            "Campo requerido")
             );
         }
 
@@ -49,5 +49,73 @@ public class ValidacionesActividad {
         }
 
         PrimeFaces.current().ajax().addCallbackParam("validacion", true);
+    }
+
+    public void validarCantidadRecurso(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
+        if (value == null) {
+            throw new ValidatorException(
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_WARN,
+                            "Error",
+                            "Campo requerido")
+            );
+        }
+
+        String codigo = value.toString();
+
+        if (codigo.length() == 0) {
+            throw new ValidatorException(
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_WARN,
+                            "Error",
+                            "Campo requerido")
+            );
+        }
+
+        Pattern patron = Pattern.compile("^[0-9]+");
+        Matcher encaja = patron.matcher(codigo);
+
+        if (!encaja.find()) {
+            throw new ValidatorException(
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_WARN,
+                            "Error",
+                            "Solo se permiten datos numericos")
+            );
+        }
+    }
+    
+     public void validarCostUnitario(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
+        if (value == null) {
+            throw new ValidatorException(
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_WARN,
+                            "Error",
+                            "Campo requerido")
+            );
+        }
+
+        String codigo = value.toString();
+
+        if (codigo.length() == 0) {
+            throw new ValidatorException(
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_WARN,
+                            "Error",
+                            "Campo requerido")
+            );
+        }
+
+        Pattern patron = Pattern.compile("^[0-9]+");
+        Matcher encaja = patron.matcher(codigo);
+
+        if (!encaja.find()) {
+            throw new ValidatorException(
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_WARN,
+                            "Error",
+                            "Solo se permiten datos numericos")
+            );
+        }
     }
 }

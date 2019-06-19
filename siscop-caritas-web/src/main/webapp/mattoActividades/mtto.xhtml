@@ -77,7 +77,7 @@
                                             icon="ui-icon-refresh" process="@this"/>
                                     </p:menubar>
                                 </p:panelGrid>
-                                <p:panel style="margin-top: 5px;" >
+                                <p:panel style="margin-top: 5px;" header="Datos generales">
                                     <h:panelGrid id="datosActividad" columns="6" cellpadding="5">
                                         <p:outputLabel for="txtNombre" value="Nombre:"/>
                                         <p:inputText id="txtNombre" 
@@ -86,26 +86,109 @@
                                                      >
                                             <p:message for="txtNombre"/>
                                         </p:inputText>
-                                        <p:outputLabel for="txtDescripcion" value="Descripcion:"/>
-                                        <p:inputTextarea id="txtDescripcion" 
-                                                         value="#{mttoActividades.actividadActual.descripcion}"
-                                                         >
-                                        </p:inputTextarea>
                                         <p:outputLabel for="fechaInicio" value="Fecha inicio:" />
                                         <p:datePicker id="fechaInicio" 
-                                                      value="#{mttoActividades.actividadActual.fechaInicio}" 
+                                                      value="#{mttoActividades.actividadActual.fechainicio}" 
                                                       locale="es" 
                                                       monthNavigator="true" 
                                                       pattern="yyyy-MMM-dd"/>
                                         <p:outputLabel for="fechaFin" value="Fecha fin:" />
                                         <p:datePicker id="fechaFin" 
-                                                      value="#{mttoActividades.actividadActual.fechaFin}" 
+                                                      value="#{mttoActividades.actividadActual.fechafin}" 
                                                       locale="es" 
                                                       monthNavigator="true" 
                                                       pattern="yyyy-MMM-dd"/>
+                                        <p:outputLabel for="txtDescripcion" value="Descripcion:"/>
+                                        <p:inputTextarea id="txtDescripcion" 
+                                                         value="#{mttoActividades.actividadActual.descripcion}"
+                                                         >
+                                        </p:inputTextarea>
                                     </h:panelGrid>
                                 </p:panel>
-                               
+                                <p:tabView id="tabsDetallesActvidad">
+                                    <p:tab id="tabRecursos" title="Recursos" >
+                                        <h:panelGrid id="datosRecurso" columns="6" cellpadding="5">
+                                            <p:outputLabel for="txtRecurso" value="Recurso:"/>
+                                            <p:inputText id="txtRecurso" 
+                                                         value="#{mttoActividades.recursoActual.nombre}"
+                                                         validator="#{mttoActividades.validaciones.validarNombre}"
+                                                         >
+                                                <p:message for="txtRecurso"/>
+                                            </p:inputText>
+                                            <p:outputLabel for="txtCantidad" value="Cantidad:" />
+                                            <p:inputText id="txtCantidad" 
+                                                         value="#{mttoActividades.recursoActual.cantidad}"
+                                                         validator="#{mttoActividades.validaciones.validarCantidadRecurso}"
+                                                         >
+                                                <p:message for="txtCantidad"/>
+                                            </p:inputText>
+                                            <p:outputLabel for="txtCostoUnitario" value="Costo unitario:" />
+                                            <p:inputText id="txtCostoUnitario" 
+                                                         value="#{mttoActividades.recursoActual.costounitario}"
+                                                         validator="#{mttoActividades.validaciones.validarCostUnitario}"
+                                                         >
+                                                <p:message for="txtCostoUnitario"/>
+                                            </p:inputText>
+                                            
+
+                                        </h:panelGrid>
+                                        <p:menubar>
+                                                <p:menuitem 
+                                                    value="Agregar" 
+                                                    actionListener="#{mttoActividades.accionBtnRecurso()}"
+                                                    icon="ui-icon-plus"
+                                                    process="@this txtRecurso txtCantidad txtCostoUnitario"
+                                                    update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos :formTabs:tabs:tabsDetallesActvidad:datosRecurso"
+                                                    />
+                                                <p:menuitem 
+                                                    value="Limpiar" 
+                                                    actionListener="#{mttoActividades.accionBtnRecurso()}"
+                                                    icon="ui-icon-plus"
+                                                    process="@this"
+                                                    update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos :formTabs:tabs:tabsDetallesActvidad:datosRecurso"
+                                                    />
+                                            </p:menubar>
+                                        <p:dataTable id="tablaRecursos"
+                                                     widgetVar="tablaRecursos"
+                                                     var = "recurso" 
+                                                     value="#{mttoActividades.recursos}"
+                                                     emptyMessage="Sin registros"
+                                                     rowIndexVar="index"
+                                                     >
+                                            <p:column headerText="Recurso">
+                                                <h:outputText value="#{recurso.nombre}" />
+                                            </p:column>
+                                            <p:column headerText="Cantidad">
+                                                <h:outputText value="#{recurso.cantidad}"/>
+                                            </p:column>
+                                            <p:column headerText="Costo unitario">
+                                                <h:outputText value="#{recurso.costounitario}"/>
+                                            </p:column>
+                                            <p:column headerText="Total">
+                                                <h:outputText value="#{recurso.total}"/>
+                                            </p:column>
+                                            <p:column headerText="Opciones" style="text-align: center;">
+                                                <p:commandButton 
+                                                    icon="ui-icon-trash" 
+                                                    style="width: 30px;margin: 0px 10px 0px 10px;"
+                                                    action="#{mttoActividades.eliminarRecurso(index)}" 
+                                                    update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos"
+                                                    process="@this"
+                                                    />
+                                                <p:commandButton 
+                                                    icon="ui-icon-pencil" 
+                                                    style="width: 30px;margin: 0px 10px 0px 10px;"
+                                                    actionListener="#{mttoActividades.cargarRecursoSeleccionado(index, recurso)}"
+                                                    update=":formTabs:tabs:tabsDetallesActvidad:datosRecurso"
+                                                    process="@this"
+                                                    />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </p:tab>
+                                    <p:tab id="requisiciones" title="Requisiciones">
+
+                                    </p:tab>
+                                </p:tabView>
                             </p:tab>
                         </p:tabView>
                     </h:form>

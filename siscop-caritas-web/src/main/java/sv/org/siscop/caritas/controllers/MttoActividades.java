@@ -6,10 +6,17 @@
 package sv.org.siscop.caritas.controllers;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -138,7 +145,7 @@ public class MttoActividades implements Serializable {
 
     //---- Pestania actividad
     public void guardarActividad() {
-        System.out.println("Guardar actividad");
+            System.out.println("Guardar actividad");
     }
 
     public void limpiarFormularioActividadYbusqueda() {
@@ -181,5 +188,18 @@ public class MttoActividades implements Serializable {
         recursos.remove(index);
     }
     
+    public void limpirFormularioYtablaRecurso(){
+        recursoActual=new Recurso();
+        recursos=new ArrayList<>();
+        modoRecurso=1;
+    }
     
+    public void cancelarEdicionRecurso(){
+        recursoActual=new Recurso();
+        modoRecurso=1;
+    }
+    
+    public boolean habilitarBtnCancelarEdicionRecurso(){
+        return modoRecurso==1;
+    }
 }

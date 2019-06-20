@@ -5,13 +5,9 @@
  */
 package sv.org.siscop.caritas.validadores;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
-import org.primefaces.PrimeFaces;
 
 /**
  *
@@ -19,103 +15,30 @@ import org.primefaces.PrimeFaces;
  */
 public class ValidacionesActividad {
 
+    private ValidacionesGenerales generales;
+
     public ValidacionesActividad() {
+        generales = new ValidacionesGenerales();
+
     }
-
     public void validarNombre(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
-        String codigo = value.toString();
-
-        if (codigo.length() == 0) {
-            PrimeFaces.current().ajax().addCallbackParam("validacion", false);
-            throw new ValidatorException(
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_WARN,
-                            "Error",
-                            "Campo requerido")
-            );
-        }
-
-        Pattern patron = Pattern.compile("^(?!\\s*$).+");
-        Matcher encaja = patron.matcher(codigo);
-
-        if (!encaja.find()) {
-            PrimeFaces.current().ajax().addCallbackParam("validacion", false);
-            throw new ValidatorException(
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_WARN,
-                            "Error",
-                            "Formato de nombre invalido")
-            );
-        }
-
-        PrimeFaces.current().ajax().addCallbackParam("validacion", true);
+        generales.validarCadena("Formato de nombre incorrecto", value);
     }
 
     public void validarCantidadRecurso(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
-        if (value == null) {
-            throw new ValidatorException(
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_WARN,
-                            "Error",
-                            "Campo requerido")
-            );
-        }
+        generales.validarNumeroEntero("Formato numerico incorrecto", value);
+    }
 
-        String codigo = value.toString();
-
-        if (codigo.length() == 0) {
-            throw new ValidatorException(
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_WARN,
-                            "Error",
-                            "Campo requerido")
-            );
-        }
-
-        Pattern patron = Pattern.compile("^[0-9]+");
-        Matcher encaja = patron.matcher(codigo);
-
-        if (!encaja.find()) {
-            throw new ValidatorException(
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_WARN,
-                            "Error",
-                            "Solo se permiten datos numericos")
-            );
-        }
+    public void validarCostUnitario(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
+        generales.validarNumeroDecimal("Formato numerico incorrecto", value);
     }
     
-     public void validarCostUnitario(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
-        if (value == null) {
-            throw new ValidatorException(
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_WARN,
-                            "Error",
-                            "Campo requerido")
-            );
-        }
-
-        String codigo = value.toString();
-
-        if (codigo.length() == 0) {
-            throw new ValidatorException(
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_WARN,
-                            "Error",
-                            "Campo requerido")
-            );
-        }
-
-        Pattern patron = Pattern.compile("^[0-9]+");
-        Matcher encaja = patron.matcher(codigo);
-
-        if (!encaja.find()) {
-            throw new ValidatorException(
-                    new FacesMessage(
-                            FacesMessage.SEVERITY_WARN,
-                            "Error",
-                            "Solo se permiten datos numericos")
-            );
-        }
+    public void validarFechaInicio(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
+        generales.validarFecha("Formato de fecha incorrecto", value);
     }
+    
+    public void validarFechaFin(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
+        generales.validarFecha("Formato de fecha incorrecto", value);
+    }
+    
 }

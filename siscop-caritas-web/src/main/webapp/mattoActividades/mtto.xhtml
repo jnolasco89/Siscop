@@ -68,6 +68,7 @@
                                             action="#{mttoActividades.guardarActividad()}" 
                                             icon="ui-icon-disk" 
                                             update=":formTabs:tabs:datosActividad"
+                                            process="@this txtNombre fechaInicio fechaFin"
                                             >
                                         </p:menuitem>
                                         <p:menuitem 
@@ -91,13 +92,25 @@
                                                       value="#{mttoActividades.actividadActual.fechainicio}" 
                                                       locale="es" 
                                                       monthNavigator="true" 
-                                                      pattern="yyyy-MMM-dd"/>
+                                                      pattern="dd/MMM/yyyy"
+                                                      yearNavigator="true"
+                                                      yearRange="2000:2999"
+                                                      validator="#{mttoActividades.validaciones.validarFechaInicio}"
+                                                      >
+                                            <p:message for="fechaInicio"/>
+                                        </p:datePicker>
                                         <p:outputLabel for="fechaFin" value="Fecha fin:" />
                                         <p:datePicker id="fechaFin" 
                                                       value="#{mttoActividades.actividadActual.fechafin}" 
                                                       locale="es" 
                                                       monthNavigator="true" 
-                                                      pattern="yyyy-MMM-dd"/>
+                                                      pattern="dd/MMM/yyyy"
+                                                      yearNavigator="true"
+                                                      yearRange="2000:2999"
+                                                      validator="#{mttoActividades.validaciones.validarFechaFin}"
+                                                      >
+                                            <p:message for="fechaFin"/>
+                                        </p:datePicker>
                                         <p:outputLabel for="txtDescripcion" value="Descripcion:"/>
                                         <p:inputTextarea id="txtDescripcion" 
                                                          value="#{mttoActividades.actividadActual.descripcion}"
@@ -129,25 +142,33 @@
                                                          >
                                                 <p:message for="txtCostoUnitario"/>
                                             </p:inputText>
-                                            
+
 
                                         </h:panelGrid>
                                         <p:menubar>
-                                                <p:menuitem 
-                                                    value="Agregar" 
-                                                    actionListener="#{mttoActividades.accionBtnRecurso()}"
-                                                    icon="ui-icon-plus"
-                                                    process="@this txtRecurso txtCantidad txtCostoUnitario"
-                                                    update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos :formTabs:tabs:tabsDetallesActvidad:datosRecurso"
-                                                    />
-                                                <p:menuitem 
-                                                    value="Limpiar" 
-                                                    actionListener="#{mttoActividades.accionBtnRecurso()}"
-                                                    icon="ui-icon-plus"
-                                                    process="@this"
-                                                    update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos :formTabs:tabs:tabsDetallesActvidad:datosRecurso"
-                                                    />
-                                            </p:menubar>
+                                            <p:menuitem 
+                                                value="Agregar" 
+                                                actionListener="#{mttoActividades.accionBtnRecurso()}"
+                                                icon="ui-icon-plus"
+                                                process="@this txtRecurso txtCantidad txtCostoUnitario"
+                                                update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos :formTabs:tabs:tabsDetallesActvidad:datosRecurso"
+                                                />
+                                            <p:menuitem 
+                                                value="Limpiar" 
+                                                actionListener="#{mttoActividades.limpirFormularioYtablaRecurso()}"
+                                                icon="ui-icon-refresh"
+                                                process="@this"
+                                                update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos :formTabs:tabs:tabsDetallesActvidad:datosRecurso"
+                                                />
+                                            <p:menuitem 
+                                                value="Cancelar" 
+                                                actionListener="#{mttoActividades.cancelarEdicionRecurso()}"
+                                                icon="	ui-icon-close"
+                                                process="@this"
+                                                update=":formTabs:tabs:tabsDetallesActvidad:datosRecurso"
+                                                disabled="#{mttoActividades.habilitarBtnCancelarEdicionRecurso()}"
+                                                />
+                                        </p:menubar>
                                         <p:dataTable id="tablaRecursos"
                                                      widgetVar="tablaRecursos"
                                                      var = "recurso" 

@@ -34,8 +34,6 @@ public class PersonaFacade extends AbstractFacade<Persona> {
     public List<Persona> buscarPersonas(Map filtro) throws Exception {
         List<Persona> lista = new ArrayList();
         try {
-            Integer codper = null;
-            String dui = null;
             StringBuilder sql = new StringBuilder("SELECT object(a) FROM  Persona a ");
             sql.append("WHERE 1=1 ");
 
@@ -84,7 +82,6 @@ public class PersonaFacade extends AbstractFacade<Persona> {
     public List<Persona> buscarPersonasDoc(Map filtro) throws Exception {
         List<Persona> lista = new ArrayList();
         try {
-            Integer codper = null;
             String dui = null;
             StringBuilder sql = new StringBuilder("SELECT object(a) FROM  Persona a , IN(a.personadocList) as v ");
             sql.append("WHERE 1=1 ");

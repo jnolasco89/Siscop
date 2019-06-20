@@ -589,7 +589,9 @@ public class MttoPersona implements Serializable {
             this.personaActual.setEstadoCivil(servCat.findItemCatalogoById(estCivil));
             String nomcom = nombre1.concat(" ").concat(nombre2);
             nomcom = nomcom.concat(" ").concat(apellido1);
-            nomcom = nomcom.concat(" ").concat(apecasada != null ? (" DE " + apecasada) : apellido2);
+            nomcom = nomcom.concat(" ")
+                    .concat((apecasada != null && !apecasada.isEmpty())
+                            ? " DE " + apecasada : apellido2);
             this.personaActual.setNomcom(nomcom);
 
             this.personaActual.setDireccionList(direccionesList);

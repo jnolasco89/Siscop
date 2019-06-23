@@ -1,0 +1,194 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-lg-12">
+                <p:layoutUnit position="center">
+                    <h3 style="margin-top:0">Mantenimiento de catálogos</h3>
+
+                    <h:form id="formTabs">
+                        <p:growl id="growl" showDetail="true" for="msgGrowl"/>
+                        <p:tabView id="tabs" activeIndex="#{mttoCatalogo.tabActiva}">
+                            <p:tab id="busqueda" title="Búsqueda">
+                                <h:panelGrid>
+                                    <p:menubar>
+                                        <p:menuitem>
+                                            <p:inputText id="txtCampoBusqueda" value="#{mttoCatalogo.campoBusqueda}"/>
+                                        </p:menuitem>
+                                        <p:menuitem 
+                                            value="Buscar" 
+                                            actionListener="#{mttoCatalogo.buscarCatalogo()}" 
+                                            icon="ui-icon-search"
+                                            update="tablaCatalogos"/>
+                                        <p:menuitem 
+                                            value="Limpiar" 
+                                            action="#{mttoCatalogo.limpiarBusqueda()}" 
+                                            update=":formTabs:tabs"
+                                            icon="ui-icon-refresh" />
+                                    </p:menubar>
+                                    <p:dataTable id="tablaCatalogos" var = "cat" 
+                                                 widgetVar="tablaCatalogos"
+                                                 value="#{mttoCatalogo.catalogos}"
+                                                 selectionMode="single"
+                                                 selection="#{mttoCatalogo.catalogoActual}"
+                                                 rowKey="#{cat.id}"
+                                                 emptyMessage="Sin registros">
+                                        <p:ajax event="rowSelect"
+                                                listener="#{mttoCatalogo.cargarCatalogoSeleccionado()}"
+                                                update=":formTabs:tabs"
+                                                />
+                                        <p:column headerText="Código">
+                                            <h:outputText value="#{cat.id}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre">
+                                            <h:outputText value="#{cat.nombre}" />
+                                        </p:column>
+                                        <p:column headerText="Estado">
+                                            <h:outputText value="#{mttoCatalogo.estadoEnString(cat.activo)}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </h:panelGrid>
+                            </p:tab>
+                            <p:tab id="detalle" title="Detalle">
+                                <p:panelGrid>
+                                    <p:menubar>
+                                        <p:menuitem 
+                                            value="Guardar" 
+                                            action="#{mttoCatalogo.guardarCatalogo()}" 
+                                            icon="ui-icon-disk" 
+                                            update=":formTabs:tabs:datosCatalogo"
+                                            >
+                                        </p:menuitem>
+                                        <p:menuitem 
+                                            value="Limpiar" 
+                                            action="#{mttoCatalogo.limpiarFormularioYbusqueda()}" 
+                                            update=":formTabs"
+                                            icon="ui-icon-refresh" process="@this"/>
+                                    </p:menubar>
+                                </p:panelGrid>
+                                <p:panel style="margin-top: 5px;" header="Catalogo">
+                                    <h:panelGrid id="datosCatalogo" columns="6" cellpadding="5">
+                                        <p:outputLabel for="txtNombre" value="Nombre:"/>
+                                        <p:inputText id="txtNombre" 
+                                                     value="#{mttoCatalogo.catalogoActual.nombre}"
+                                                     validator="#{mttoCatalogo.validaciones.validarNombre}"
+                                                     >
+                                            <p:message for="txtNombre"/>
+                                        </p:inputText>
+                                    </h:panelGrid>
+                                </p:panel>
+                                <p:panel id="panelItemsCatalogo" style="margin-top: 5px;" header="Items catalogo">
+                                    <h:panelGrid id="gridItemsCatalogo">
+                                        <p:menubar>
+                                            <p:menuitem 
+                                                value="Nuevo" 
+                                                actionListener="#{mttoCatalogo.abrirModalNuevoItem()}" 
+                                                icon="ui-icon-plus"
+                                                process="@this"
+                                                />
+                                        </p:menubar>
+                                        <p:dataTable id="itemsCatalogo"
+                                                     widgetVar="itemsCatalogo"
+                                                     var = "item" 
+                                                     value="#{mttoCatalogo.itemsActuales}"
+                                                     emptyMessage="Sin registros"
+                                                     rowIndexVar="index"
+                                                     >
+                                            <p:column headerText="Nombre">
+                                                <h:outputText value="#{item.descripcion}" />
+                                            </p:column>
+                                            <p:column headerText="Estado" rendered="#{mttoCatalogo.renderColumnaEstado()}">
+                                                <h:outputText value="#{mttoCatalogo.estadoEnString(item.activo)}"/>
+                                            </p:column>
+                                            <p:column headerText="Opciones" style="text-align: center;">
+                                                <p:commandButton 
+                                                    icon="ui-icon-trash" 
+                                                    style="width: 30px;margin: 0px 10px 0px 10px;"
+                                                    action="#{mttoCatalogo.eliminarItem(index)}" 
+                                                    update=":formTabs:tabs:itemsCatalogo"
+                                                    process="@this"
+                                                    rendered="#{item.verEliminar}"
+                                                    />
+                                                <p:commandButton 
+                                                    icon="ui-icon-pencil" 
+                                                    style="width: 30px;margin: 0px 10px 0px 10px;"
+                                                    actionListener="#{mttoCatalogo.abrirModalEditarItem(index)}"
+                                                    update=":formModal"
+                                                    process="@this"
+                                                    />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </h:panelGrid>
+                                </p:panel>
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+
+                    <h:form id="formModal">
+                        <p:dialog id="dialogItemCatalogo" 
+                                  widgetVar="dialogItemCatalogo" 
+                                  modal="true" 
+                                  header="#{mttoCatalogo.tituloModal}" 
+                                  width="320" 
+                                  height="150"
+                                  resizable="false"
+                                  >
+                            <p:panel>
+                                <h:panelGrid columns="1" cellpadding="5">
+                                    <p:outputLabel for="txtNombreItem" value="Nombre: "/>
+                                    <p:inputText id="txtNombreItem" 
+                                                 value="#{mttoCatalogo.itemActual.descripcion}"
+                                                 validator="#{mttoCatalogo.validaciones.validarNombre}"
+                                                 >
+                                        <p:message for="txtNombreItem"/>
+                                    </p:inputText>
+                                    <p:outputLabel for="estadoItem" value="Estado:"
+                                                   rendered="#{ mttoCatalogo.renderListEstado() }"/>
+                                    <p:selectOneMenu id="estadoItem" 
+                                                     value="#{mttoCatalogo.itemActual.activo}"
+                                                     rendered="#{mttoCatalogo.renderListEstado()}">
+                                        <f:selectItem itemLabel="Activo" itemValue="true"/>
+                                        <f:selectItem itemLabel="Inactivo" itemValue="false"/>
+                                    </p:selectOneMenu>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                    <p:commandButton 
+                                        id="btnModalAceptar"
+                                        process="dialogItemCatalogo"
+                                        value="#{mttoCatalogo.tituloBtnModal}" 
+                                        actionListener="#{mttoCatalogo.accionModal()}"
+                                        update=":formModal:dialogItemCatalogo"
+                                        oncomplete="handleLoginRequest(xhr, status, args)"
+
+                                        />
+                                    <p:commandButton 
+                                        id="btnModalCancelar"
+                                        process="@this"
+                                        value="Cancelar" 
+                                        update=":formModal:dialogItemCatalogo"
+                                        actionListener="#{mttoCatalogo.limpiarModal()}"
+                                        />
+                                </h:panelGrid>
+                            </p:panel>
+                        </p:dialog>
+                    </h:form>
+
+                </p:layoutUnit>
+            </div>
+        </div>
+        <script type="text/javascript">
+            function handleLoginRequest(xhr, status, args) {
+                if (args.validationFailed || !args.validacion) {
+                    PF('dialogItemCatalogo').show();
+                } else {
+                    PF('dialogItemCatalogo').hide();
+                }
+            }
+        </script>
+    </ui:define>
+</ui:composition>

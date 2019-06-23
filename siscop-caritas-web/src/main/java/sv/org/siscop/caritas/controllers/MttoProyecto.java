@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.SelectEvent;
@@ -27,6 +28,9 @@ import org.primefaces.event.TabChangeEvent;
 import sv.org.siscop.caritas.ejb.ServicioProyectoLocal;
 import sv.org.siscop.caritas.entidades.Proyecto;
 import sv.org.siscop.caritas.ejb.ServicioPersonaLocal;
+import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
+import sv.org.siscop.caritas.entidades.ItemCatalogo;
+import sv.org.siscop.caritas.util.Catalogos;
 
 /**
  *
@@ -37,9 +41,9 @@ import sv.org.siscop.caritas.ejb.ServicioPersonaLocal;
 public class MttoProyecto implements Serializable {
 
     @EJB
-    private ServicioPersonaLocal servPersona;
-    @EJB
     private ServicioProyectoLocal servProyecto;
+    @EJB
+    private ServiciosCatalogoLocal servCat;
 
     private final static Logger logger = Logger.getLogger(MttoProyecto.class.getName());
 
@@ -62,6 +66,7 @@ public class MttoProyecto implements Serializable {
     private String descripcion;
     private Date fechaInicio;
     private Date fechaFin;
+    private Integer idEstado;
 
     int tabindex = 0;
 
@@ -69,6 +74,8 @@ public class MttoProyecto implements Serializable {
     private List<Proyecto> proyectosList = new ArrayList<>();
 
     //SelectItems
+    private List<SelectItem> itemEstado = new ArrayList<>();
+
     public void onTabChange(TabChangeEvent event) {
         this.tabindex = ((TabView) event.getSource()).getIndex();
     }
@@ -188,6 +195,27 @@ public class MttoProyecto implements Serializable {
         this.fechaFin = fechaFin;
     }
 
+    public Integer getIdEstado() {
+        return idEstado;
+    }
+
+    public void setIdEstado(Integer idEstado) {
+        this.idEstado = idEstado;
+    }
+
+    public List<SelectItem> getItemEstado() {
+        try {
+            itemEstado.clear();
+            for (ItemCatalogo item : this.servCat
+                    .findCatalogoById(Catalogos.ESTADO_PROYECTO.getCodigo()).getItemCatalogoList()) {
+                itemEstado.add(new SelectItem(item.getId(), item.getDescripcion()));
+            }
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+        return itemEstado;
+    }
+
 //</editor-fold>
     public void buscarProyectos() {
 
@@ -238,6 +266,7 @@ public class MttoProyecto implements Serializable {
         descripcion = "";
         fechaInicio = null;
         fechaFin = null;
+        idEstado = 0;
 
     }
 
@@ -255,6 +284,7 @@ public class MttoProyecto implements Serializable {
             descripcion = proyectoActual.getDescripcion();
             fechaInicio = proyectoActual.getFechaini();
             fechaFin = proyectoActual.getFechafin();
+            idEstado = proyectoActual.getEstado().getId();
 
             tabindex = 1;
         } catch (Exception ex) {
@@ -290,6 +320,9 @@ public class MttoProyecto implements Serializable {
             }
             if (codigoProyecto == null || codigoProyecto.isEmpty()) {
                 campos.add("Código");
+            }
+            if (idEstado == 0) {
+                mensajes.add("Estado");
             }
             if (fechaInicio == null) {
                 campos.add("Fecha de Inicio");
@@ -328,6 +361,7 @@ public class MttoProyecto implements Serializable {
             this.proyectoActual.setDescripcion(descripcion);
             this.proyectoActual.setFechaini(fechaInicio);
             this.proyectoActual.setFechafin(fechaFin);
+            this.proyectoActual.setEstado(servCat.findItemCatalogoById(idEstado));
 
             if (esProyNuevo) {
                 this.servProyecto.nuevoProyecto(proyectoActual);

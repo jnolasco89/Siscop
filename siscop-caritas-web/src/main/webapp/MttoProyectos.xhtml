@@ -26,13 +26,13 @@
                                     </p:menubar>
                                     <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
                                                  styleClass="ui-panelgrid-blank">
-                                        <p:outputLabel for="txtNombreB" value="Nombre" />
+                                        <p:outputLabel for="txtNombreB" value="Nombre:" />
                                         <p:inputText id="txtNombreB" value="#{mttoProyecto.nombreB}"                                                     
                                                      onkeyup="this.value = this.value.toUpperCase();"/>
-                                        <p:outputLabel for="txtNombreCortoB" value="Nombre Corto" />
+                                        <p:outputLabel for="txtNombreCortoB" value="Nombre Corto:" />
                                         <p:inputText id="txtNombreCortoB" value="#{mttoProyecto.nombreCortoB}"
                                                      onkeyup="this.value = this.value.toUpperCase();"/>
-                                        <p:outputLabel for="txtCodigo" value="Código" />
+                                        <p:outputLabel for="txtCodigo" value="Código:" />
                                         <p:inputText id="txtCodigo" value="#{mttoProyecto.codigoB}"/>
 
                                     </p:panelGrid>
@@ -63,45 +63,59 @@
                                     <p:menubar>
                                         <p:menuitem value="Nuevo" action="#{mttoProyecto.nuevoProyecto()}"
                                                     icon="ui-icon-search"
-                                                    update="lista datosper 
+                                                    update="lista 
                                                     otraInfo
                                                     :principal:growl"
                                                     />
                                         <p:menuitem value="Guardar" action="#{mttoProyecto.guardarProyecto()}" icon="ui-icon-refresh"                                                
                                                     update="lista :principal:growl otraInfo" />
                                     </p:menubar>
-                                    <p:panelGrid id="datosper" columns="6" styleClass="ui-panelgrid-blank" >
-                                        <p:outputLabel value="Nombre:" for="txtNombre" />
-                                        <p:inputText id="txtNombre" value="#{mttoProyecto.nombre}"
-                                                     title="Nombre"
-                                                     onkeyup="this.value = this.value.toUpperCase();"/>
 
-                                        <p:outputLabel value="Nombre Corto:" for="txtNombreCorto" />
-                                        <p:inputText id="txtNombreCorto" value="#{mttoProyecto.nombreCorto}"
-                                                     title="Nombre Corto"
-                                                     onkeyup="this.value = this.value.toUpperCase();"/>
-
-                                        <p:outputLabel value="Código:" for="txtApellido1P" />
-                                        <p:inputText id="txtApellido1P" value="#{mttoProyecto.codigoProyecto}"
-                                                     title="Código"
-                                                     onkeyup="this.value = this.value.toUpperCase();"/>
-
-                                        <p:outputLabel value="Fecha de Inicio:" for="fechaIni" />
-                                        <p:calendar id="fechaIni" value="#{mttoProyecto.fechaInicio}"
-                                                    title="Fecha de Inicio"
-                                                    pattern="dd-MM-yyyy" mask="true"/>
-
-                                        <p:outputLabel value="Fecha de Finalización:" for="fechaFin" />
-                                        <p:calendar id="fechaFin" value="#{mttoProyecto.fechaInicio}"
-                                                    title="Fecha de Finalización"
-                                                    pattern="dd-MM-yyyy" mask="true"/>
-                                    </p:panelGrid>
-                                    <p:panelGrid id="pnlDesc" columns="4" styleClass="ui-panelgrid-blank">
-                                        <p:inputTextarea rows="2" placeholder="Descripción"
-                                                         value="#{mttoProyecto.descripcion}"
-                                                         autoResize="false"/>
-                                    </p:panelGrid>
-
+                                    <div class="ui-g ui-panelgrid-blank">
+                                        <div class="ui-g-6" >
+                                            <p:outputLabel value="Nombre:" for="txtNombre"/>
+                                            <p:inputText id="txtNombre" value="#{mttoProyecto.nombre}"
+                                                         title="Nombre"
+                                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                                        </div> 
+                                        <div class="ui-g-4" >
+                                            <p:outputLabel value="Nombre Corto:" for="txtNombreCorto"/>                                           
+                                            <p:inputText id="txtNombreCorto" value="#{mttoProyecto.nombreCorto}"
+                                                         title="Nombre Corto"
+                                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                                        </div> 
+                                        <div class="ui-g-2" >
+                                            <p:outputLabel value="Código:" for="txtApellido1P"/>
+                                            <p:inputText id="txtApellido1P" value="#{mttoProyecto.codigoProyecto}"
+                                                         title="Código"
+                                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                                        </div>
+                                        <div class="ui-g-6" >
+                                            <p:outputLabel value="Descripción:" for="txtDescripcion" />
+                                            <p:inputTextarea rows="4" id="txtDescripcion"
+                                                             value="#{mttoProyecto.descripcion}"
+                                                             autoResize="true"/>
+                                        </div>
+                                        <div class="ui-g-2" >
+                                            <p:outputLabel for="selectOneEstado" value="Estado" />
+                                            <p:selectOneMenu id="selectOneEstado" value="#{mttoProyecto.idEstado}">
+                                                <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                <f:selectItems value="#{mttoProyecto.itemEstado}"/>
+                                            </p:selectOneMenu>
+                                        </div>
+                                        <div class="ui-g-2" >
+                                            <p:outputLabel value="Fecha de Inicio:" for="fechaIni" />
+                                            <p:calendar id="fechaIni" value="#{mttoProyecto.fechaInicio}"
+                                                        title="Fecha de Inicio"
+                                                        pattern="dd-MM-yyyy" mask="true"/>
+                                        </div> 
+                                        <div class="ui-g-2" >
+                                            <p:outputLabel value="Fecha de Finalización:" for="fechaFin" />
+                                            <p:calendar id="fechaFin" value="#{mttoProyecto.fechaInicio}"
+                                                        title="Fecha de Finalización"
+                                                        pattern="dd-MM-yyyy" mask="true"/>
+                                        </div>
+                                    </div>
                                     <p:tabView id="otraInfo">
 
                                         <p:tab id="catalogo" title="Catálogo Contable">

@@ -11,7 +11,8 @@ public enum Catalogos {
     ESTADO_CIVIL(2),
     TIPO_DIRECC(3),
     TIPO_DOC(4),
-    TIPO_TEL(5);
+    TIPO_TEL(5),
+    ESTADO_PROYECTO(20);
 
     /**
      * iD de Catalogo

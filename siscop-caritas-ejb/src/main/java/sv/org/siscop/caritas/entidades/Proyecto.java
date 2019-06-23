@@ -15,6 +15,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -54,6 +56,9 @@ public class Proyecto implements Auditable, Serializable {
     @Column(name = "fechafin")
     @Temporal(TemporalType.DATE)
     private Date fechafin;
+    @JoinColumn(name = "idestado", referencedColumnName = "id")
+    @ManyToOne
+    private ItemCatalogo estado;
     @Embedded
     private Audit audit;
 
@@ -118,6 +123,14 @@ public class Proyecto implements Auditable, Serializable {
 
     public void setFechafin(Date fechafin) {
         this.fechafin = fechafin;
+    }
+
+    public ItemCatalogo getEstado() {
+        return estado;
+    }
+
+    public void setEstado(ItemCatalogo estado) {
+        this.estado = estado;
     }
 
     @Override

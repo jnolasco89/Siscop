@@ -3,7 +3,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
-                template="/WEB-INF/template.xhtml">
+                template="/WEB-INF/template.xhtml"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
 
     <ui:define name="content">
         <div class="ui-g ui-fluid">
@@ -74,51 +75,63 @@
                                                     icon="fa fa-save"                                                
                                                     update="lista :principal:growl otraInfo" />
                                     </p:menubar>
-                                    <p:panelGrid id="datosper" columns="4" styleClass="ui-panelgrid-blank">
-                                        <p:inputText id="txtNombre1P" value="#{mttoPersona.nombre1}"
-                                                     placeholder="Primer Nombre"
-                                                     title="Primer Nombre"
-                                                     onkeyup="this.value = this.value.toUpperCase();"/>
-                                        <p:inputText id="txtNombre2P" value="#{mttoPersona.nombre2}"
-                                                     placeholder="Segundo Nombre"
-                                                     title="Segundo Nombre"
-                                                     onkeyup="this.value = this.value.toUpperCase();"/>
-                                        <p:inputText id="txtApellido1P" value="#{mttoPersona.apellido1}"
-                                                     placeholder="Primer Apellido"
-                                                     title="Primer Apellido"
-                                                     onkeyup="this.value = this.value.toUpperCase();"/>
-                                        <p:inputText id="txtApellido2P" value="#{mttoPersona.apellido2}"
-                                                     placeholder="Segundo Apellido"
-                                                     title="Segundo Apellido"
-                                                     onkeyup="this.value = this.value.toUpperCase();"/>
-                                        <p:inputText id="txtApecasadaP" value="#{mttoPersona.apecasada}"
-                                                     placeholder="Apellido Casada"
-                                                     title="Apellido Casada"
-                                                     onkeyup="this.value = this.value.toUpperCase();"/>
-                                        <p:calendar id="fNac" value="#{mttoPersona.fechaNacimiento}" 
-                                                    placeholder="Fecha de Nacimiento"
-                                                    title="Fecha de Nacimiento"
-                                                    pattern="dd-MM-yyyy" mask="true"/>
-                                        <p:outputLabel for="selectOneCBSexo" value="Sexo:" />
-                                        <p:selectOneMenu id="selectOneCBSexo" value="#{mttoPersona.sexo}"
-                                                         label="Sexo">
-                                            <f:selectItem itemValue="" itemLabel="Seleccione.."/>
-                                            <f:selectItem itemValue="M" itemLabel="Masculino"/>
-                                            <f:selectItem itemValue="F" itemLabel="Femenino" />
-                                        </p:selectOneMenu>
-                                        <p:outputLabel for="selectOneCBTipoP" value="Tipo:" />
-                                        <p:selectOneMenu id="selectOneCBTipoP" value="#{mttoPersona.tipoPer}">
-                                            <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
-                                            <f:selectItems value="#{mttoPersona.tipoPerList}"/>
-                                        </p:selectOneMenu>
-                                        <p:outputLabel for="estCivil" value="Estado civil" />
-                                        <p:selectOneMenu id="estCivil" value="#{mttoPersona.estCivil}">
-                                            <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
-                                            <f:selectItems value="#{mttoPersona.estadoCivilLst}"/>
-                                        </p:selectOneMenu>
-                                    </p:panelGrid>
-
-
+                                    <div jsf:id="datosper" class="ui-g ui-panelgrid-blank">
+                                        <div class="ui-g-12" >
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtNombre1P" value="Primer Nombre:" />
+                                                <p:inputText id="txtNombre1P" value="#{mttoPersona.nombre1}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtNombre2P" value="Segundo Nombre:" />
+                                                <p:inputText id="txtNombre2P" value="#{mttoPersona.nombre2}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtApellido1P" value="Primer Apellido:" />
+                                                <p:inputText id="txtApellido1P" value="#{mttoPersona.apellido1}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtApellido2P" value="Segundo Apellido:" />
+                                                <p:inputText id="txtApellido2P" value="#{mttoPersona.apellido2}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtApecasadaP" value="Apellido Casada:" />
+                                                <p:inputText id="txtApecasadaP" value="#{mttoPersona.apecasada}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="fNac" value="Fecha de Nacimiento:" />
+                                                <p:calendar id="fNac" value="#{mttoPersona.fechaNacimiento}"
+                                                            pattern="dd-MM-yyyy" mask="true"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="selectOneCBSexo" value="Sexo:" />
+                                                <p:selectOneMenu id="selectOneCBSexo" value="#{mttoPersona.sexo}"
+                                                                 label="Sexo">
+                                                    <f:selectItem itemValue="" itemLabel="Seleccione.."/>
+                                                    <f:selectItem itemValue="M" itemLabel="Masculino"/>
+                                                    <f:selectItem itemValue="F" itemLabel="Femenino" />
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="selectOneCBTipoP" value="Tipo:" />
+                                                <p:selectOneMenu id="selectOneCBTipoP" value="#{mttoPersona.tipoPer}">
+                                                    <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                    <f:selectItems value="#{mttoPersona.tipoPerList}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="estCivil" value="Estado civil" />
+                                                <p:selectOneMenu id="estCivil" value="#{mttoPersona.estCivil}">
+                                                    <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                    <f:selectItems value="#{mttoPersona.estadoCivilLst}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <p:tabView id="otraInfo">
 

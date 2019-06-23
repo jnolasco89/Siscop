@@ -31,7 +31,6 @@ import sv.org.siscop.caritas.entidades.Documento;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.Persona;
 import sv.org.siscop.caritas.entidades.Telefono;
-import sv.org.siscop.caritas.entidades.Usuario;
 import sv.org.siscop.caritas.util.Catalogos;
 import sv.org.siscop.caritas.ejb.ServicioPersonaLocal;
 
@@ -532,8 +531,7 @@ public class MttoPersona implements Serializable {
             limpiarPersona();
             nuevaPersona = true;
             this.personaActual = new Persona();
-            Usuario user = (Usuario) facesContext.getExternalContext().getSessionMap().get("usuario");
-
+           
             this.showMessage(FacesMessage.SEVERITY_WARN,
                     "Agregue información requerida.", null);
 

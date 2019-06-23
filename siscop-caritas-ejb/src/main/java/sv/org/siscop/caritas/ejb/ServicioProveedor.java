@@ -37,9 +37,9 @@ public class ServicioProveedor implements ServicioProveedorLocal {
 
         if (nuevo) {
             proveedor.setId(persona.getId());
-            this.actualizarProveedor(proveedor);
-        } else {
             this.nuevoProveedor(proveedor);
+        } else {
+            this.actualizarProveedor(proveedor);
         }
     }
 

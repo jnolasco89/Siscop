@@ -28,7 +28,7 @@ public class ServicioProveedor implements ServicioProveedorLocal {
 
     @Override
     public void guardarProveedor(Persona persona, Proveedor proveedor, boolean nuevo) {
-        Persona person = null;
+
         if (persona.getId() != null) {
             personaDao.edit(persona);
         } else {

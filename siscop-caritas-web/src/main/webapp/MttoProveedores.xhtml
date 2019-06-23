@@ -141,7 +141,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <p:tabView id="otraInfo">
 
                                         <p:tab id="documentos" title="Documentos Personales">
@@ -260,20 +260,19 @@
                   header="Seleccionar Persona"
                   widgetVar="modalBusquedaPersona"
                   modal="true" showEffect="fade" hideEffect="fade"
-                  resizable="false" responsive="true"
-                  height="400"
-
-                  width="900">
+                  resizable="true" responsive="true"
+                  height="500"
+                  width="700">
             <h:form id="formbuscarPersona">
 
                 <p:menubar>
                     <p:menuitem value="Buscar" actionListener="#{mttoProveedor.buscarPersona()}" 
                                 icon="fa fa-search" update="listaPersonas :principal:growl"  />
                     <p:menuitem value="Limpiar" action="#{mttoProveedor.limpiarBusquedaPersonas()}"
-                                update="listaPersonas" icon="fa fa-eraser" />
+                                update="formbuscarPersona" icon="fa fa-eraser" />
                 </p:menubar>
                 <p:panelGrid id="busquedaParams">
-                    <p:panelGrid columns="4" >
+                    <p:panelGrid columns="4" styleClass="ui-panelgrid-blank" >
                         <p:outputLabel for="txtNombre1" value="Primer Nombre" />
                         <p:inputText id="txtNombre1" value="#{mttoProveedor.nombre1B}"
                                      onkeyup="this.value = this.value.toUpperCase();"/>
@@ -300,17 +299,11 @@
                                  rowsPerPageTemplate="10,20,50">
                         <p:ajax event="rowSelect" listener="#{mttoProveedor.onRowSelectPersona(event)}"
                                 update="principal" />
-                        <p:column headerText="Primer Nombre">
-                            <h:outputText value="#{per.nombre1}" />
+                        <p:column headerText="ID" width="10%">
+                            <h:outputText value="#{per.id}" />
                         </p:column>
-                        <p:column headerText="Segundo Nombre">
-                            <h:outputText value="#{per.nombre2}" />
-                        </p:column>
-                        <p:column headerText="Primer Apellido">
-                            <h:outputText value="#{per.apellido1}" />
-                        </p:column>
-                        <p:column headerText="Segundo Apellido">
-                            <h:outputText value="#{per.apellido2}" />
+                        <p:column headerText="Nombre completo">
+                            <h:outputText value="#{per.nomcom}" />
                         </p:column>
                     </p:dataTable>
                 </p:panelGrid>

@@ -10,25 +10,25 @@ import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import sv.org.siscop.caritas.dao.PersonaFacade;
-import sv.org.siscop.caritas.dao.UsuarioFacade;
+import sv.org.siscop.caritas.dao.EmpleadoFacade;
 import sv.org.siscop.caritas.entidades.Persona;
-import sv.org.siscop.caritas.entidades.Usuario;
+import sv.org.siscop.caritas.entidades.Empleado;
 
 /**
  *
  * @author Henry
  */
 @Stateless
-public class ServicioUsuario implements ServicioUsuarioLocal {
+public class ServicioEmpleado implements ServicioEmpleadoLocal {
 
     @EJB
-    UsuarioFacade proveedorDao;
+    EmpleadoFacade empleadoDao;
     @EJB
     PersonaFacade personaDao;
 
     @Override
-    public void guardarUsuario(Persona persona, Usuario proveedor, boolean nuevo) {
-        
+    public void guardarEmpleado(Persona persona, Empleado proveedor, boolean nuevo) {
+       
         if (persona.getId() != null) {
             personaDao.edit(persona);
         } else {
@@ -37,25 +37,25 @@ public class ServicioUsuario implements ServicioUsuarioLocal {
 
         if (nuevo) {
             proveedor.setId(persona.getId());
-            this.nuevoUsuario(proveedor);
+            this.nuevoEmpleado(proveedor);
         } else {
-            this.actualizarUsuario(proveedor);
+            this.actualizarEmpleado(proveedor);
         }
     }
 
     @Override
-    public void nuevoUsuario(Usuario c) {
-        proveedorDao.create(c);
+    public void nuevoEmpleado(Empleado c) {
+        empleadoDao.create(c);
     }
 
     @Override
-    public Usuario actualizarUsuario(Usuario c) {
-        return proveedorDao.edit(c);
+    public Empleado actualizarEmpleado(Empleado c) {
+        return empleadoDao.edit(c);
     }
 
     @Override
-    public List<Usuario> buscarUsuarios(Map params) throws Exception {
-        return proveedorDao.buscarUsuarios(params);
+    public List<Empleado> buscarEmpleados(Map params) throws Exception {
+        return empleadoDao.buscarEmpleados(params);
     }
 
 }

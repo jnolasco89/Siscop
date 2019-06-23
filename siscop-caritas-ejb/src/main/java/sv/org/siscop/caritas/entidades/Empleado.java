@@ -23,9 +23,9 @@ import javax.validation.constraints.NotNull;
  * @author Henry
  */
 @Entity
-@Table(name = "proveedor")
+@Table(name = "empleado")
 @EntityListeners(AuditListener.class)
-public class Proveedor implements Auditable, Serializable {
+public class Empleado implements Auditable, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -40,10 +40,10 @@ public class Proveedor implements Auditable, Serializable {
     @Embedded
     private Audit audit;
 
-    public Proveedor() {
+    public Empleado() {
     }
 
-    public Proveedor(Long id) {
+    public Empleado(Long id) {
         this.id = id;
     }
 
@@ -91,7 +91,7 @@ public class Proveedor implements Auditable, Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Proveedor other = (Proveedor) obj;
+        final Empleado other = (Empleado) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
@@ -100,7 +100,7 @@ public class Proveedor implements Auditable, Serializable {
 
     @Override
     public String toString() {
-        return "sv.org.siscop.caritas.entidades.Proveedor[ id=" + id + " ]";
+        return "sv.org.siscop.caritas.entidades.Empleado[ id=" + id + " ]";
     }
 
 }

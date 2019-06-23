@@ -31,10 +31,11 @@ import sv.org.siscop.caritas.entidades.Documento;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.Persona;
 import sv.org.siscop.caritas.entidades.Telefono;
-import sv.org.siscop.caritas.entidades.Usuario;
 import sv.org.siscop.caritas.util.Catalogos;
 import sv.org.siscop.caritas.ejb.ServicioPersonaLocal;
+import sv.org.siscop.caritas.ejb.ServicioProveedorLocal;
 import sv.org.siscop.caritas.entidades.Proveedor;
+import sv.org.siscop.caritas.util.Item;
 
 /**
  *
@@ -48,6 +49,8 @@ public class MttoProveedor implements Serializable {
     private ServiciosCatalogoLocal servCat;
     @EJB
     private ServicioPersonaLocal servPersona;
+    @EJB
+    private ServicioProveedorLocal servProveedor;
 
     private final static Logger logger = Logger.getLogger(MttoProveedor.class.getName());
 
@@ -60,6 +63,8 @@ public class MttoProveedor implements Serializable {
     private String nombre2ProvB;
     private String apellido1ProvB;
     private String apellido2ProvB;
+
+    boolean nuevoProveedor = false;
 
     private Proveedor proveedorActual = new Proveedor();
     private Proveedor proveedorSelB = new Proveedor();
@@ -75,7 +80,7 @@ public class MttoProveedor implements Serializable {
 
     private Persona personaActual = new Persona();
     private Persona personaSelB = new Persona();
-    boolean nuevaPersona = false;
+    boolean nuevaPersona = true;
 
     private Integer tipoTel;
     private Integer tipoDir;
@@ -88,6 +93,7 @@ public class MttoProveedor implements Serializable {
     private String apellido1;
     private String apellido2;
     private String apecasada;
+    private String razonSocial = new String();
     private String numeroDoc;
     private String numeroTel;
     private String nuevaDirecc;
@@ -95,7 +101,7 @@ public class MttoProveedor implements Serializable {
     private String sexo;
     private Integer tipoPer;
 
-    int tabindex = 0;
+    int tabindexPrincipal = 0;
 
     //Listas
     private List<Persona> lstPersonas = new ArrayList<>();
@@ -111,9 +117,80 @@ public class MttoProveedor implements Serializable {
     private final List<SelectItem> tipoDocLst = new ArrayList<>();
 
     public void onTabChange(TabChangeEvent event) {
-        this.tabindex = ((TabView) event.getSource()).getIndex();
+        this.tabindexPrincipal = ((TabView) event.getSource()).getIndex();
     }
 
+    //<editor-fold defaultstate="collapsed" desc="Getter and Setter Proveedores">
+    public String getDuiProvB() {
+        return duiProvB;
+    }
+
+    public void setDuiProvB(String duiProvB) {
+        this.duiProvB = duiProvB;
+    }
+
+    public String getNombre1ProvB() {
+        return nombre1ProvB;
+    }
+
+    public void setNombre1ProvB(String nombre1ProvB) {
+        this.nombre1ProvB = nombre1ProvB;
+    }
+
+    public String getNombre2ProvB() {
+        return nombre2ProvB;
+    }
+
+    public void setNombre2ProvB(String nombre2ProvB) {
+        this.nombre2ProvB = nombre2ProvB;
+    }
+
+    public String getApellido1ProvB() {
+        return apellido1ProvB;
+    }
+
+    public void setApellido1ProvB(String apellido1ProvB) {
+        this.apellido1ProvB = apellido1ProvB;
+    }
+
+    public String getApellido2ProvB() {
+        return apellido2ProvB;
+    }
+
+    public void setApellido2ProvB(String apellido2ProvB) {
+        this.apellido2ProvB = apellido2ProvB;
+    }
+
+    public Proveedor getProveedorActual() {
+        return proveedorActual;
+    }
+
+    public void setProveedorActual(Proveedor proveedorActual) {
+        this.proveedorActual = proveedorActual;
+    }
+
+    public Proveedor getProveedorSelB() {
+        return proveedorSelB;
+    }
+
+    public void setProveedorSelB(Proveedor proveedorSelB) {
+        this.proveedorSelB = proveedorSelB;
+    }
+
+    public List<Proveedor> getLstProveedores() {
+        return lstProveedores;
+    }
+
+    public void setLstProveedores(List<Proveedor> lstProveedores) {
+        this.lstProveedores = lstProveedores;
+    }
+
+    public boolean isNuevoProveedor() {
+        return nuevoProveedor;
+    }
+
+//</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Getter y Setter Persona">
     public Persona getPersonaActual() {
         return personaActual;
     }
@@ -178,12 +255,12 @@ public class MttoProveedor implements Serializable {
         this.lstPersonas = lstPersonas;
     }
 
-    public int getTabindex() {
-        return tabindex;
+    public int getTabindexPrincipal() {
+        return tabindexPrincipal;
     }
 
-    public void setTabindex(int tabindex) {
-        this.tabindex = tabindex;
+    public void setTabindexPrincipal(int tabindexPrincipal) {
+        this.tabindexPrincipal = tabindexPrincipal;
     }
 
     public boolean isNuevaPersona() {
@@ -358,6 +435,14 @@ public class MttoProveedor implements Serializable {
         this.apecasada = apecasada;
     }
 
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
+
     public Date getFechaNacimiento() {
         return fechaNacimiento;
     }
@@ -405,8 +490,121 @@ public class MttoProveedor implements Serializable {
     public void setDocumentosList(List<Documento> documentosList) {
         this.documentosList = documentosList;
     }
+//</editor-fold>
 
-    public void buscar() {
+    public void buscarProveedores() {
+
+        try {
+            Map filtro = new HashMap();
+
+            boolean hayDui = false;
+            if (duiProvB != null && !duiProvB.isEmpty()) {
+                filtro.put("dui", duiProvB);
+                hayDui = true;
+            }
+            if (nombre1ProvB != null && !nombre1ProvB.isEmpty()) {
+                filtro.put("nombre1", nombre1ProvB);
+            }
+            if (nombre2ProvB != null && !nombre2ProvB.isEmpty()) {
+                filtro.put("nombre2", nombre2ProvB);
+            }
+            if (apellido1ProvB != null && !apellido1ProvB.isEmpty()) {
+                filtro.put("apellido1", apellido1ProvB);
+            }
+            if (apellido2ProvB != null && !apellido2ProvB.isEmpty()) {
+                filtro.put("apellido2", apellido2ProvB);
+            }
+
+            if (filtro.isEmpty()) {
+                this.showMessage(FacesMessage.SEVERITY_WARN,
+                        "Agregue un parámetro de búsqueda", null);
+                return;
+            }
+
+            if (hayDui) {
+                this.showMessage(FacesMessage.SEVERITY_WARN,
+                        "No se encontró metodo.", null);
+            } else {
+                lstProveedores = servProveedor.buscarProveedors(filtro);
+            }
+
+            if (lstProveedores.isEmpty()) {
+                this.showMessage(FacesMessage.SEVERITY_WARN,
+                        "No se encontró ningún resultado.", null);
+            }
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void limpiarBusquedaProveedores() {
+        lstProveedores = new ArrayList<>();
+        duiProvB = "";
+        nombre1ProvB = "";
+        nombre2ProvB = "";
+        apellido1ProvB = "";
+        apellido2ProvB = "";
+    }
+
+    public void limpiarProveedor() {
+        limpiarPersona();
+
+    }
+
+    public void onRowSelectProveedor(SelectEvent event) throws IOException {
+        try {
+            limpiarProveedor();
+
+            personaActual = new Persona();
+            proveedorActual = new Proveedor();
+
+            proveedorActual = proveedorSelB;
+            personaActual = proveedorSelB.getPersona();
+
+            nombre1 = personaActual.getNombre1();
+            nombre2 = personaActual.getNombre2();
+            apellido1 = personaActual.getApellido1();
+            apellido2 = personaActual.getApellido2();
+            apecasada = personaActual.getApecasada();
+            fechaNacimiento = personaActual.getFechanac();
+            sexo = personaActual.getSexo();
+            tipoPer = personaActual.getTipo().getId();
+            telefonosList = personaActual.getTelefonoList();
+            direccionesList = personaActual.getDireccionList();
+            documentosList = personaActual.getDocumentoList();
+            tabindexPrincipal = 1;
+            if (personaActual.getEstadoCivil() != null) {
+                estCivil = personaActual.getEstadoCivil().getId();
+            }
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void nuevoProveedor() {
+        try {
+            limpiarPersona();
+            nuevoProveedor = true;
+            nuevaPersona = true;
+            this.personaActual = new Persona();
+            this.proveedorActual = new Proveedor();
+
+            this.showMessage(FacesMessage.SEVERITY_WARN,
+                    "Agregue información requerida.", null);
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void abrirModalBuscarPersona() {
+        PrimeFaces.current().ajax().update(":formbuscarPersona");
+        PrimeFaces.current().executeScript("PF('modalBusquedaPersona').show();");
+    }
+
+    public void buscarPersona() {
 
         try {
             Map filtro = new HashMap();
@@ -488,28 +686,10 @@ public class MttoProveedor implements Serializable {
 
     }
 
-    public void limpiarTelefono() {
-        tipoTel = 0;
-        numeroTel = new String();
-    }
-
-    public void limpiarDireccion() {
-        tipoDir = 0;
-        nuevaDirecc = new String();
-    }
-
-    public void limpiarDocumento() {
-        tipoDoc = 0;
-        numeroDoc = new String();
-    }
-
-    public void onRowUnselect(UnselectEvent event) {
-        personaActual = new Persona();
-    }
-
-    public void onRowSelect(SelectEvent event) throws IOException {
+    public void onRowSelectPersona(SelectEvent event) throws IOException {
         try {
-            limpiarPersona();
+            //limpiarPersona();
+            nuevoProveedor();
 
             personaActual = new Persona();
 
@@ -526,10 +706,14 @@ public class MttoProveedor implements Serializable {
             telefonosList = personaActual.getTelefonoList();
             direccionesList = personaActual.getDireccionList();
             documentosList = personaActual.getDocumentoList();
-            tabindex = 1;
+//            tabindexPrincipal = 1;
             if (personaActual.getEstadoCivil() != null) {
                 estCivil = personaActual.getEstadoCivil().getId();
             }
+//            PrimeFaces.current().ajax().update(":formbuscarPersona");
+            nuevaPersona = false;
+            PrimeFaces.current().executeScript("PF('modalBusquedaPersona').hide();");
+
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
@@ -538,9 +722,8 @@ public class MttoProveedor implements Serializable {
     public void nuevaPersona() {
         try {
             limpiarPersona();
-            nuevaPersona = true;
+            nuevoProveedor = true;
             this.personaActual = new Persona();
-            Usuario user = (Usuario) facesContext.getExternalContext().getSessionMap().get("usuario");
 
             this.showMessage(FacesMessage.SEVERITY_WARN,
                     "Agregue información requerida.", null);
@@ -557,20 +740,27 @@ public class MttoProveedor implements Serializable {
 
             if (tipoPer == 0) {
                 mensajes.add("Seleccione tipo de persona.");
+            } else {
+                if (tipoPer.equals(Item.JURIDICA.getCodigo())) {
+                    mensajes.add("Seleccione tipo de persona.");
+                    if (razonSocial.isEmpty()) {
+                        mensajes.add("Ingrese Razón Social.");
+                    }
+                } else {
+                    if (nombre1.isEmpty()) {
+                        mensajes.add("Digite primer nombre.");
+                    }
+                    if (apellido1.isEmpty()) {
+                        mensajes.add("Digite primer apellido.");
+                    }
+                    if (sexo == null || sexo.isEmpty()) {
+                        mensajes.add("Seleccione sexo.");
+                    }
+                    if (fechaNacimiento == null) {
+                        mensajes.add("Seleccione fecha de nacimiento.");
+                    }
+                }
             }
-            if (nombre1.isEmpty()) {
-                mensajes.add("Digite primer nombre.");
-            }
-            if (apellido1.isEmpty()) {
-                mensajes.add("Digite primer apellido.");
-            }
-            if (sexo == null || sexo.isEmpty()) {
-                mensajes.add("Seleccione sexo.");
-            }
-            if (fechaNacimiento == null) {
-                mensajes.add("Seleccione fecha de nacimiento.");
-            }
-
             for (String msj : mensajes) {
                 hay = true;
                 this.showMessage(FacesMessage.SEVERITY_WARN, msj, null);
@@ -584,7 +774,7 @@ public class MttoProveedor implements Serializable {
         return hay;
     }
 
-    public void guardarPersona() {
+    public void guardarProveedor() {
         try {
             if (validarPersona()) {
                 return;
@@ -605,30 +795,53 @@ public class MttoProveedor implements Serializable {
                     .concat((apecasada != null && !apecasada.isEmpty())
                             ? " DE " + apecasada : apellido2);
             this.personaActual.setNomcom(nomcom);
+            if (razonSocial.isEmpty()) {
+                this.personaActual.setRazsocial(nomcom);
+            } else {
+                this.personaActual.setRazsocial(razonSocial);
+            }
 
             this.personaActual.setDireccionList(direccionesList);
             this.personaActual.setTelefonoList(telefonosList);
             this.personaActual.setDocumentoList(documentosList);
 
-            if (nuevaPersona) {
-                this.servPersona.nuevaPersona(personaActual);
-            } else {
-                personaActual = this.servPersona.actualizarPersona(personaActual);
-            }
+            this.proveedorActual = new Proveedor(personaActual.getId());
+            this.proveedorActual.setPersona(personaActual);
+
+            this.servProveedor.guardarProveedor(personaActual, proveedorActual, nuevoProveedor);
 
             // Actualizar docs para actualizar id's
             telefonosList = personaActual.getTelefonoList();
             direccionesList = personaActual.getDireccionList();
             documentosList = personaActual.getDocumentoList();
 
-            this.showMessage(FacesMessage.SEVERITY_INFO, "Persona guardada exitosamente.", null);
+            this.showMessage(FacesMessage.SEVERITY_INFO, "Proveedor guardado exitosamente.", null);
 
-            nuevaPersona = false;
+            nuevoProveedor = false;
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
-            showMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar persona.", ex.getLocalizedMessage());
+            showMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar proveedor.", ex.getLocalizedMessage());
         }
+    }
+
+    public void limpiarTelefono() {
+        tipoTel = 0;
+        numeroTel = new String();
+    }
+
+    public void limpiarDireccion() {
+        tipoDir = 0;
+        nuevaDirecc = new String();
+    }
+
+    public void limpiarDocumento() {
+        tipoDoc = 0;
+        numeroDoc = new String();
+    }
+
+    public void onRowUnselect(UnselectEvent event) {
+        personaActual = new Persona();
     }
 
     public void agregarTelefono() {

@@ -13,48 +13,48 @@
                     <h:form id="principal">
                         <p:growl id="growl" showSummary="true" globalOnly="true" showDetail="true" for="msgGrowl" life="6000"/>
 
-                        <p:tabView id="tabs" activeIndex="#{mttoProveedor.tabindex}">
+                        <p:tabView id="tabs" activeIndex="#{mttoProveedor.tabindexPrincipal}">
                             <div class="card">
                                 <p:tab id="busqueda" title="Búsqueda">
                                     <p:menubar>
-                                        <p:menuitem value="Buscar" actionListener="#{mttoProveedor.buscar()}" 
+                                        <p:menuitem value="Buscar" actionListener="#{mttoProveedor.buscarProveedores()}" 
                                                     icon="ui-icon-search" update="@form"  />
-                                        <p:menuitem value="Limpiar" action="#{mttoProveedor.limpiarBusquedaPersonas()}"
-                                                    update="tabs lista" icon="ui-icon-refresh" />
+                                        <p:menuitem value="Limpiar" action="#{mttoProveedor.limpiarBusquedaProveedores()}"
+                                                    update="tabs lista" icon="fa fa-eraser" />
                                     </p:menubar>
                                     <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
                                                  styleClass="ui-panelgrid-blank">
                                         <p:outputLabel for="txtNombre1" value="Primer Nombre" />
-                                        <p:inputText id="txtNombre1" value="#{mttoProveedor.nombre1B}"                                                     
+                                        <p:inputText id="txtNombre1" value="#{mttoProveedor.nombre1ProvB}"                                                     
                                                      onkeyup="this.value = this.value.toUpperCase();"/>
                                         <p:outputLabel for="txtNombre2" value="Segundo Nombre" />
-                                        <p:inputText id="txtNombre2" value="#{mttoProveedor.nombre2B}"
+                                        <p:inputText id="txtNombre2" value="#{mttoProveedor.nombre2ProvB}"
                                                      onkeyup="this.value = this.value.toUpperCase();"/>
                                         <p:outputLabel for="txtApellido1" value="Primer Apellido" />
-                                        <p:inputText id="txtApellido1" value="#{mttoProveedor.apellido1B}"
+                                        <p:inputText id="txtApellido1" value="#{mttoProveedor.apellido1ProvB}"
                                                      onkeyup="this.value = this.value.toUpperCase();"/>
                                         <p:outputLabel for="txtApellido1" value="Segundo Apellido" />
-                                        <p:inputText id="txtApellido2" value="#{mttoProveedor.apellido2B}"
+                                        <p:inputText id="txtApellido2" value="#{mttoProveedor.apellido2ProvB}"
                                                      onkeyup="this.value = this.value.toUpperCase();"/>
                                         <p:outputLabel for="txtDui" value="DUI" />
-                                        <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoProveedor.duiB}"/>
+                                        <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoProveedor.duiProvB}"/>
                                     </p:panelGrid>
-                                    <p:dataTable id="lista" var = "per" value="#{mttoProveedor.lstPersonas}"
+                                    <p:dataTable id="lista" var = "prov" value="#{mttoProveedor.lstProveedores}"
                                                  selectionMode="single"
-                                                 selection="#{mttoProveedor.personaSelB}"
-                                                 rowKey="#{per.id}"
+                                                 selection="#{mttoProveedor.proveedorSelB}"
+                                                 rowKey="#{prov.id}"
                                                  paginator="true"
                                                  rows ="10"
                                                  paginatorPosition="bottom"
                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                  rowsPerPageTemplate="10,20,50">
-                                        <p:ajax event="rowSelect" listener="#{mttoProveedor.onRowSelect(event)}"
+                                        <p:ajax event="rowSelect" listener="#{mttoProveedor.onRowSelectProveedor(event)}"
                                                 update="principal" />
                                         <p:column headerText="Id" width="10%">
-                                            <h:outputText value="#{per.id}" />
+                                            <h:outputText value="#{prov.id}" />
                                         </p:column>
-                                        <p:column headerText="Persona">
-                                            <h:outputText value="#{per.nomcom}" />
+                                        <p:column headerText="Proveedor">
+                                            <h:outputText value="#{prov.persona.nomcom}" />
                                         </p:column>
                                     </p:dataTable>
                                 </p:tab>
@@ -63,13 +63,24 @@
                                 <p:tab id="detalle" title="Detalle">
 
                                     <p:menubar>
-                                        <p:menuitem value="Nuevo" action="#{mttoProveedor.nuevaPersona()}"
-                                                    icon="ui-icon-search"
-                                                    update="lista datosper 
-                                                    otraInfo
-                                                    :principal:growl"
-                                                    />
-                                        <p:menuitem value="Guardar" action="#{mttoProveedor.guardarPersona()}" icon="ui-icon-refresh"                                                
+                                        <p:menuitem
+                                            id="mnNuevoProveedor"
+                                            value="Nuevo" action="#{mttoProveedor.nuevoProveedor}"
+                                            icon="ui-icon-search"
+                                            update="lista datosper 
+                                            otraInfo
+                                            :principal:growl"
+                                            />                                       
+
+                                        <p:menuitem 
+                                            id="mnNuevoaPartir"
+                                            value="Nuevo a partir de Existente"
+                                            action="#{mttoProveedor.abrirModalBuscarPersona()}"
+                                            icon="fa address-book-o"
+                                            update="formbuscarPersona"
+                                            />
+
+                                        <p:menuitem value="Guardar" action="#{mttoProveedor.guardarProveedor()}" icon="ui-icon-refresh"                                                
                                                     update="lista :principal:growl otraInfo" />
                                     </p:menubar>
                                     <p:panelGrid id="datosper" columns="4" styleClass="ui-panelgrid-blank">
@@ -138,14 +149,15 @@
                                             <p:dataTable id="listaDocs" var = "doc" 
                                                          value="#{mttoProveedor.documentosList}"
                                                          style="width:50%;">
-                                                <p:column headerText="Tipo">
+                                                <p:column headerText="Tipo"  width="30%">
                                                     <h:outputText value="#{doc.tipo.descripcion}" />
                                                 </p:column>
                                                 <p:column headerText="Número">
                                                     <h:outputText value="#{doc.numero}" />
                                                 </p:column>
-                                                <p:column>
+                                                <p:column width="10%">
                                                     <p:commandButton icon="ui-icon-trash"
+
                                                                      title="Eliminar documento"
                                                                      actionListener="#{mttoProveedor.eliminarDocumento(doc)}"
                                                                      update="listaDocs :principal:growl"/>
@@ -171,13 +183,13 @@
                                             <p:dataTable id="listaTel" var = "tel"
                                                          value="#{mttoProveedor.telefonosList}"
                                                          style="width:50%;">
-                                                <p:column headerText="Telefono">
+                                                <p:column headerText="Telefono" width="30%">
                                                     <h:outputText value="#{tel.tipo.descripcion}" />
                                                 </p:column>
                                                 <p:column headerText="Número">
                                                     <h:outputText value="#{tel.numero}" />
                                                 </p:column>
-                                                <p:column>
+                                                <p:column width="10%">
                                                     <p:commandButton icon="ui-icon-trash"
                                                                      title="Eliminar teléfono"
                                                                      actionListener="#{mttoProveedor.eliminarTelefono(tel)}"
@@ -206,13 +218,13 @@
                                             <p:dataTable id="listaDir" var = "dir"
                                                          value="#{mttoProveedor.direccionesList}"
                                                          style="width:70%;">
-                                                <p:column headerText="Tipo">
+                                                <p:column headerText="Tipo" width="30%">
                                                     <h:outputText value="#{dir.tipo.descripcion}" />
                                                 </p:column>
                                                 <p:column headerText="Direccion">
                                                     <h:outputText value="#{dir.direccion}" />
                                                 </p:column>                                            
-                                                <p:column>
+                                                <p:column width="10%">
                                                     <p:commandButton icon="ui-icon-trash"
                                                                      title="Eliminar dirección"
                                                                      actionListener="#{mttoProveedor.eliminarDireccion(dir)}"
@@ -228,6 +240,68 @@
                 </div>
             </div>
         </div>
+        <p:dialog id="mttoProveedor"
+                  header="Seleccionar Persona"
+                  widgetVar="modalBusquedaPersona"
+                  modal="true" showEffect="fade" hideEffect="fade"
+                  resizable="false" responsive="true"
+                  height="400"
+                  
+                  width="900">
+            <h:form id="formbuscarPersona">
+
+                <p:menubar>
+                    <p:menuitem value="Buscar" actionListener="#{mttoProveedor.buscarPersona()}" 
+                                icon="ui-icon-search" update="listaPersonas :principal:growl"  />
+                    <p:menuitem value="Limpiar" action="#{mttoProveedor.limpiarBusquedaPersonas()}"
+                                update="listaPersonas" icon="ui-icon-refresh" />
+                </p:menubar>
+                <p:panelGrid id="busquedaParams">
+                    <p:panelGrid columns="4" >
+                        <p:outputLabel for="txtNombre1" value="Primer Nombre" />
+                        <p:inputText id="txtNombre1" value="#{mttoProveedor.nombre1B}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtNombre2" value="Segundo Nombre" />
+                        <p:inputText id="txtNombre2" value="#{mttoProveedor.nombre2B}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtApellido1" value="Primer Apellido" />
+                        <p:inputText id="txtApellido1" value="#{mttoProveedor.apellido1B}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtApellido1" value="Segundo Apellido" />
+                        <p:inputText id="txtApellido2" value="#{mttoProveedor.apellido2B}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtDui" value="Dui" />
+                        <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoProveedor.duiB}"/>
+                    </p:panelGrid>
+                    <p:dataTable id="listaPersonas" var = "per" value="#{mttoProveedor.lstPersonas}"
+                                 selectionMode="single"
+                                 selection="#{mttoProveedor.personaSelB}"
+                                 rowKey="#{per.id}"
+                                 paginator="true"
+                                 rows ="10"
+                                 paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,20,50">
+                        <p:ajax event="rowSelect" listener="#{mttoProveedor.onRowSelectPersona(event)}"
+                                update="principal" />
+                        <p:column headerText="Primer Nombre">
+                            <h:outputText value="#{per.nombre1}" />
+                        </p:column>
+                        <p:column headerText="Segundo Nombre">
+                            <h:outputText value="#{per.nombre2}" />
+                        </p:column>
+                        <p:column headerText="Primer Apellido">
+                            <h:outputText value="#{per.apellido1}" />
+                        </p:column>
+                        <p:column headerText="Segundo Apellido">
+                            <h:outputText value="#{per.apellido2}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:panelGrid>
+
+
+            </h:form>
+        </p:dialog>
 
     </ui:define>
 </ui:composition>

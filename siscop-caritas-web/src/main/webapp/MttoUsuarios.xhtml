@@ -1,0 +1,323 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-lg-12">
+                <div class="card">
+                    <h1 style="margin-top:0">Usuarios</h1>
+                    <h:form id="principal">
+                        <p:growl id="growl" showSummary="true" globalOnly="true" showDetail="true" for="msgGrowl" life="6000"/>
+
+                        <p:tabView id="tabs" activeIndex="#{mttoUsuario.tabindexPrincipal}">
+                            <div class="card">
+                                <p:tab id="busqueda" title="Búsqueda">
+                                    <p:menubar>
+                                        <p:menuitem value="Buscar" actionListener="#{mttoUsuario.buscarUsuarios()}" 
+                                                    icon="fa fa-search" update="@form"  />
+                                        <p:menuitem value="Limpiar" action="#{mttoUsuario.limpiarBusquedaUsuarios()}"
+                                                    update="tabs lista" icon="fa fa-eraser" />
+                                    </p:menubar>
+                                    <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                                 styleClass="ui-panelgrid-blank">
+                                        <p:outputLabel for="txtNombre1" value="Primer Nombre" />
+                                        <p:inputText id="txtNombre1" value="#{mttoUsuario.nombre1UserB}"                                                     
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:outputLabel for="txtNombre2" value="Segundo Nombre" />
+                                        <p:inputText id="txtNombre2" value="#{mttoUsuario.nombre2UserB}"
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:outputLabel for="txtApellido1" value="Primer Apellido" />
+                                        <p:inputText id="txtApellido1" value="#{mttoUsuario.apellido1UserB}"
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:outputLabel for="txtApellido1" value="Segundo Apellido" />
+                                        <p:inputText id="txtApellido2" value="#{mttoUsuario.apellido2UserB}"
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:outputLabel for="txtDui" value="DUI" />
+                                        <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoUsuario.duiUserB}"/>
+                                    </p:panelGrid>
+                                    <p:dataTable id="lista" var = "prov" value="#{mttoUsuario.lstUsuarios}"
+                                                 selectionMode="single"
+                                                 selection="#{mttoUsuario.usuarioSelB}"
+                                                 rowKey="#{prov.id}"
+                                                 paginator="true"
+                                                 rows ="10"
+                                                 paginatorPosition="bottom"
+                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                 rowsPerPageTemplate="10,20,50">
+                                        <p:ajax event="rowSelect" listener="#{mttoUsuario.onRowSelectUsuario(event)}"
+                                                update="principal" />
+                                        <p:column headerText="Id" width="10%">
+                                            <h:outputText value="#{prov.id}" />
+                                        </p:column>
+                                        <p:column headerText="Proveedor">
+                                            <h:outputText value="#{prov.persona.nomcom}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>
+                            </div>
+                            <div class="card">
+                                <p:tab id="detalle" title="Detalle">
+
+                                    <p:menubar>
+                                        <p:menuitem
+                                            id="mnNuevoProveedor"
+                                            value="Nuevo" action="#{mttoUsuario.nuevoUsuario}"
+                                            icon="fa fa-user-plus"
+                                            update="lista otraInfo datosper
+                                            :principal:growl"
+                                            />                                       
+
+                                        <p:menuitem 
+                                            id="mnNuevoaPartir"
+                                            value="Nuevo a partir de Existente"
+                                            action="#{mttoUsuario.abrirModalBuscarPersona()}"
+                                            icon="fa fa-user-circle"
+                                            update="formbuscarPersona"
+                                            />
+
+                                        <p:menuitem value="Guardar" action="#{mttoUsuario.guardarUsuario()}"
+                                                    icon="fa fa-save"                                                
+                                                    update="lista :principal:growl otraInfo datosper" />
+                                    </p:menubar>
+                                    <div jsf:id="datosper" class="ui-g ui-panelgrid-blank">
+                                        <div class="ui-g-12" >
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtNombre1P" value="Primer Nombre:" />
+                                                <p:inputText id="txtNombre1P" value="#{mttoUsuario.nombre1}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtNombre2P" value="Segundo Nombre:" />
+                                                <p:inputText id="txtNombre2P" value="#{mttoUsuario.nombre2}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtApellido1P" value="Primer Apellido:" />
+                                                <p:inputText id="txtApellido1P" value="#{mttoUsuario.apellido1}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtApellido2P" value="Segundo Apellido:" />
+                                                <p:inputText id="txtApellido2P" value="#{mttoUsuario.apellido2}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="txtApecasadaP" value="Apellido Casada:" />
+                                                <p:inputText id="txtApecasadaP" value="#{mttoUsuario.apecasada}"
+                                                             onkeyup="this.value = this.value.toUpperCase();"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="fNac" value="Fecha de Nacimiento:" />
+                                                <p:calendar id="fNac" value="#{mttoUsuario.fechaNacimiento}"
+                                                            pattern="dd-MM-yyyy" mask="true"/>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="selectOneCBSexo" value="Sexo:" />
+                                                <p:selectOneMenu id="selectOneCBSexo" value="#{mttoUsuario.sexo}"
+                                                                 label="Sexo">
+                                                    <f:selectItem itemValue="" itemLabel="Seleccione.."/>
+                                                    <f:selectItem itemValue="M" itemLabel="Masculino"/>
+                                                    <f:selectItem itemValue="F" itemLabel="Femenino" />
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="selectOneCBTipoP" value="Tipo:" />
+                                                <p:selectOneMenu id="selectOneCBTipoP" value="#{mttoUsuario.tipoPer}">
+                                                    <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                    <f:selectItems value="#{mttoUsuario.tipoPerList}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="ui-g-3" >
+                                                <p:outputLabel for="estCivil" value="Estado civil" />
+                                                <p:selectOneMenu id="estCivil" value="#{mttoUsuario.estCivil}">
+                                                    <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                    <f:selectItems value="#{mttoUsuario.estadoCivilLst}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <p:tabView id="otraInfo">
+
+                                        <p:tab id="documentos" title="Documentos Personales">
+                                            <p:panelGrid id="datosDoc" columns="5" styleClass="ui-panelgrid-blank">
+                                                <p:outputLabel for="seltipdoc" value="Tipo:" />
+                                                <p:selectOneMenu id="seltipdoc" value="#{mttoUsuario.tipoDoc}">
+                                                    <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                    <f:selectItems value="#{mttoUsuario.tipoDocLst}"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel for="numdoc" value="Número" />
+                                                <p:inputText id="numdoc" value="#{mttoUsuario.numeroDoc}" size="25"/>                                            
+                                                <p:commandButton value="Agregar" 
+                                                                 actionListener="#{mttoUsuario.agregarDocumento()}" 
+                                                                 icon="fa fa-plus"
+                                                                 update="listaDocs 
+                                                                 :principal:tabs:otraInfo:datosDoc 
+                                                                 :principal:growl" />
+                                            </p:panelGrid>
+                                            <p:dataTable id="listaDocs" var = "doc" 
+                                                         value="#{mttoUsuario.documentosList}"
+                                                         style="width:50%;">
+                                                <p:column headerText="Tipo"  width="30%">
+                                                    <h:outputText value="#{doc.tipo.descripcion}" />
+                                                </p:column>
+                                                <p:column headerText="Número">
+                                                    <h:outputText value="#{doc.numero}" />
+                                                </p:column>
+                                                <p:column width="10%">
+                                                    <p:commandButton icon="ui-icon-trash"
+
+                                                                     title="Eliminar documento"
+                                                                     actionListener="#{mttoUsuario.eliminarDocumento(doc)}"
+                                                                     update="listaDocs :principal:growl"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+
+                                        <p:tab id="telefonos" title="Teléfonos">
+                                            <p:panelGrid id="datosTel" columns="5" styleClass="ui-panelgrid-blank">
+                                                <p:outputLabel for="selectOneCB" value="Tipo:" />
+                                                <p:selectOneMenu id="selectOneCB" value="#{mttoUsuario.tipoTel}">
+                                                    <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                    <f:selectItems value="#{mttoUsuario.tipotelLst}"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel for="noTel" value="Número" />
+                                                <p:inputMask id="noTel" mask="9999-9999" value="#{mttoUsuario.numeroTel}"/>
+                                                <p:commandButton value="Agregar" 
+                                                                 actionListener="#{mttoUsuario.agregarTelefono()}" 
+                                                                 icon="fa fa-plus"
+                                                                 update="listaTel 
+                                                                 :principal:tabs:otraInfo:datosTel
+                                                                 :principal:growl" />
+                                            </p:panelGrid>
+                                            <p:dataTable id="listaTel" var = "tel"
+                                                         value="#{mttoUsuario.telefonosList}"
+                                                         style="width:50%;">
+                                                <p:column headerText="Telefono" width="30%">
+                                                    <h:outputText value="#{tel.tipo.descripcion}" />
+                                                </p:column>
+                                                <p:column headerText="Número">
+                                                    <h:outputText value="#{tel.numero}" />
+                                                </p:column>
+                                                <p:column width="10%">
+                                                    <p:commandButton icon="ui-icon-trash"
+                                                                     title="Eliminar teléfono"
+                                                                     actionListener="#{mttoUsuario.eliminarTelefono(tel)}"
+                                                                     update="listaTel :principal:growl"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+
+                                        <p:tab id="direcciones" title="Direcciones">
+                                            <p:panelGrid id="datosDir" columns="5" styleClass="ui-panelgrid-blank">
+                                                <p:outputLabel for="txtNuevaDirecc" value="Tipo:" />
+                                                <p:selectOneMenu id="txtNuevaDirecc" value="#{mttoUsuario.tipoDir}">
+                                                    <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                    <f:selectItems value="#{mttoUsuario.tipoDireccLst}"/>
+                                                </p:selectOneMenu>
+                                                <p:outputLabel for="direccion" value="Dirección" />
+                                                <p:inputText id="direccion" value="#{mttoUsuario.nuevaDirecc}" 
+                                                             onkeyup="this.value = this.value.toUpperCase();"
+                                                             size="50" style="text-transform: uppercase"/>
+                                                <p:commandButton value="Agregar" 
+                                                                 actionListener="#{mttoUsuario.agregarDireccion()}" 
+                                                                 icon="fa fa-plus"
+                                                                 update="listaDir
+                                                                 :principal:tabs:otraInfo:datosDir 
+                                                                 :principal:growl" />
+                                            </p:panelGrid>
+                                            <p:dataTable id="listaDir" var = "dir"
+                                                         value="#{mttoUsuario.direccionesList}"
+                                                         style="width:70%;">
+                                                <p:column headerText="Tipo" width="30%">
+                                                    <h:outputText value="#{dir.tipo.descripcion}" />
+                                                </p:column>
+                                                <p:column headerText="Direccion">
+                                                    <h:outputText value="#{dir.direccion}" />
+                                                </p:column>                                            
+                                                <p:column width="10%">
+                                                    <p:commandButton icon="ui-icon-trash"
+                                                                     title="Eliminar dirección"
+                                                                     actionListener="#{mttoUsuario.eliminarDireccion(dir)}"
+                                                                     update="listaDir :principal:growl"/>
+                                                </p:column>
+                                            </p:dataTable>                                  
+                                        </p:tab>
+                                    </p:tabView>
+                                </p:tab>
+                            </div>
+                        </p:tabView>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+        <p:dialog id="mttoUsuario"
+                  header="Seleccionar Persona"
+                  widgetVar="modalBusquedaPersona"
+                  modal="true" showEffect="fade" hideEffect="fade"
+                  resizable="false" responsive="true"
+                  height="400"
+
+                  width="900">
+            <h:form id="formbuscarPersona">
+
+                <p:menubar>
+                    <p:menuitem value="Buscar" actionListener="#{mttoUsuario.buscarPersona()}" 
+                                icon="fa fa-search" update="listaPersonas :principal:growl"  />
+                    <p:menuitem value="Limpiar" action="#{mttoUsuario.limpiarBusquedaPersonas()}"
+                                update="listaPersonas" icon="fa fa-eraser" />
+                </p:menubar>
+                <p:panelGrid id="busquedaParams">
+                    <p:panelGrid columns="4" >
+                        <p:outputLabel for="txtNombre1" value="Primer Nombre" />
+                        <p:inputText id="txtNombre1" value="#{mttoUsuario.nombre1B}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtNombre2" value="Segundo Nombre" />
+                        <p:inputText id="txtNombre2" value="#{mttoUsuario.nombre2B}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtApellido1" value="Primer Apellido" />
+                        <p:inputText id="txtApellido1" value="#{mttoUsuario.apellido1B}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtApellido1" value="Segundo Apellido" />
+                        <p:inputText id="txtApellido2" value="#{mttoUsuario.apellido2B}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtDui" value="Dui" />
+                        <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoUsuario.duiB}"/>
+                    </p:panelGrid>
+                    <p:dataTable id="listaPersonas" var = "per" value="#{mttoUsuario.lstPersonas}"
+                                 selectionMode="single"
+                                 selection="#{mttoUsuario.personaSelB}"
+                                 rowKey="#{per.id}"
+                                 paginator="true"
+                                 rows ="10"
+                                 paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,20,50">
+                        <p:ajax event="rowSelect" listener="#{mttoUsuario.onRowSelectPersona(event)}"
+                                update="principal" />
+                        <p:column headerText="Primer Nombre">
+                            <h:outputText value="#{per.nombre1}" />
+                        </p:column>
+                        <p:column headerText="Segundo Nombre">
+                            <h:outputText value="#{per.nombre2}" />
+                        </p:column>
+                        <p:column headerText="Primer Apellido">
+                            <h:outputText value="#{per.apellido1}" />
+                        </p:column>
+                        <p:column headerText="Segundo Apellido">
+                            <h:outputText value="#{per.apellido2}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:panelGrid>
+
+
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

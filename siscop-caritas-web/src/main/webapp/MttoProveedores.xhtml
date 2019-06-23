@@ -18,7 +18,7 @@
                                 <p:tab id="busqueda" title="Búsqueda">
                                     <p:menubar>
                                         <p:menuitem value="Buscar" actionListener="#{mttoProveedor.buscarProveedores()}" 
-                                                    icon="ui-icon-search" update="@form"  />
+                                                    icon="fa fa-search" update="@form"  />
                                         <p:menuitem value="Limpiar" action="#{mttoProveedor.limpiarBusquedaProveedores()}"
                                                     update="tabs lista" icon="fa fa-eraser" />
                                     </p:menubar>
@@ -66,7 +66,7 @@
                                         <p:menuitem
                                             id="mnNuevoProveedor"
                                             value="Nuevo" action="#{mttoProveedor.nuevoProveedor}"
-                                            icon="ui-icon-search"
+                                            icon="fa fa-user-plus"
                                             update="lista datosper 
                                             otraInfo
                                             :principal:growl"
@@ -76,11 +76,12 @@
                                             id="mnNuevoaPartir"
                                             value="Nuevo a partir de Existente"
                                             action="#{mttoProveedor.abrirModalBuscarPersona()}"
-                                            icon="fa address-book-o"
+                                            icon="fa fa-user-circle"
                                             update="formbuscarPersona"
                                             />
 
-                                        <p:menuitem value="Guardar" action="#{mttoProveedor.guardarProveedor()}" icon="ui-icon-refresh"                                                
+                                        <p:menuitem value="Guardar" action="#{mttoProveedor.guardarProveedor()}"
+                                                    icon="fa fa-save"                                                
                                                     update="lista :principal:growl otraInfo" />
                                     </p:menubar>
                                     <p:panelGrid id="datosper" columns="4" styleClass="ui-panelgrid-blank">
@@ -142,6 +143,7 @@
                                                 <p:inputText id="numdoc" value="#{mttoProveedor.numeroDoc}" size="25"/>                                            
                                                 <p:commandButton value="Agregar" 
                                                                  actionListener="#{mttoProveedor.agregarDocumento()}" 
+                                                                 icon="fa fa-plus"
                                                                  update="listaDocs 
                                                                  :principal:tabs:otraInfo:datosDoc 
                                                                  :principal:growl" />
@@ -176,6 +178,7 @@
                                                 <p:inputMask id="noTel" mask="9999-9999" value="#{mttoProveedor.numeroTel}"/>
                                                 <p:commandButton value="Agregar" 
                                                                  actionListener="#{mttoProveedor.agregarTelefono()}" 
+                                                                 icon="fa fa-plus"
                                                                  update="listaTel 
                                                                  :principal:tabs:otraInfo:datosTel
                                                                  :principal:growl" />
@@ -211,6 +214,7 @@
                                                              size="50" style="text-transform: uppercase"/>
                                                 <p:commandButton value="Agregar" 
                                                                  actionListener="#{mttoProveedor.agregarDireccion()}" 
+                                                                 icon="fa fa-plus"
                                                                  update="listaDir
                                                                  :principal:tabs:otraInfo:datosDir 
                                                                  :principal:growl" />
@@ -246,15 +250,15 @@
                   modal="true" showEffect="fade" hideEffect="fade"
                   resizable="false" responsive="true"
                   height="400"
-                  
+
                   width="900">
             <h:form id="formbuscarPersona">
 
                 <p:menubar>
                     <p:menuitem value="Buscar" actionListener="#{mttoProveedor.buscarPersona()}" 
-                                icon="ui-icon-search" update="listaPersonas :principal:growl"  />
+                                icon="fa fa-search" update="listaPersonas :principal:growl"  />
                     <p:menuitem value="Limpiar" action="#{mttoProveedor.limpiarBusquedaPersonas()}"
-                                update="listaPersonas" icon="ui-icon-refresh" />
+                                update="listaPersonas" icon="fa fa-eraser" />
                 </p:menubar>
                 <p:panelGrid id="busquedaParams">
                     <p:panelGrid columns="4" >

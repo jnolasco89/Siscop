@@ -76,6 +76,7 @@ public class MttoPersona implements Serializable {
     private String apellido1;
     private String apellido2;
     private String apecasada;
+    private String razonSocial = "";
     private String numeroDoc;
     private String numeroTel;
     private String nuevaDirecc;
@@ -346,6 +347,14 @@ public class MttoPersona implements Serializable {
         this.apecasada = apecasada;
     }
 
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
+
     public Date getFechaNacimiento() {
         return fechaNacimiento;
     }
@@ -400,30 +409,24 @@ public class MttoPersona implements Serializable {
             Map filtro = new HashMap();
 
             boolean hayDui = false;
-            boolean hay = false;
             if (duiB != null && !duiB.isEmpty()) {
                 filtro.put("dui", duiB);
                 hayDui = true;
-                hay = true;
             }
             if (nombre1B != null && !nombre1B.isEmpty()) {
                 filtro.put("nombre1", nombre1B);
-                hay = true;
             }
             if (nombre2B != null && !nombre2B.isEmpty()) {
                 filtro.put("nombre2", nombre2B);
-                hay = true;
             }
             if (apellido1B != null && !apellido1B.isEmpty()) {
                 filtro.put("apellido1", apellido1B);
-                hay = true;
             }
             if (apellido2B != null && !apellido2B.isEmpty()) {
                 filtro.put("apellido2", apellido2B);
-                hay = true;
             }
 
-            if (!hay) {
+            if (filtro.isEmpty()) {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "Agregue un parámetro de búsqueda", null);
                 return;
@@ -462,6 +465,7 @@ public class MttoPersona implements Serializable {
         apellido1 = new String();
         apellido2 = new String();
         apecasada = new String();
+        razonSocial = new String();
         fechaNacimiento = null;
         sexo = new String();
         tipoPer = 0;

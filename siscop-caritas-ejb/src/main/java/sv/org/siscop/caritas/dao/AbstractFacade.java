@@ -5,6 +5,7 @@
  */
 package sv.org.siscop.caritas.dao;
 
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -29,20 +30,43 @@ public abstract class AbstractFacade<T> {
     protected abstract EntityManager getEntityManager();
 
     public void create(T entity) {
+        try {
             getEntityManager().persist(entity);
-        
-        
-//        catch (ConstraintViolationException e) {
-//            // Aqui tira los errores de constraint
-//            for (ConstraintViolation actual : e.getConstraintViolations()) {
-//                System.out.println(actual.toString());
-//            }
-//        }
-        
+
+        } catch (ConstraintViolationException e) {
+            // Aqui tira los errores de constraint
+            for (ConstraintViolation actual : e.getConstraintViolations()) {
+                System.out.println(actual.toString());
+            }
+        }
+
     }
 
     public T edit(T entity) {
-       return getEntityManager().merge(entity);
+        try {
+            return getEntityManager().merge(entity);
+
+        } //        catch (ConstraintViolationException e) {
+        //            // Aqui tira los errores de constraint
+        //            for (ConstraintViolation actual : e.getConstraintViolations()) {
+        //                System.out.println(actual.toString());
+        //            }
+        //    }
+        catch (ConstraintViolationException cause) {
+
+            if (cause instanceof ConstraintViolationException) {
+                @SuppressWarnings("ThrowableResultIgnored")
+                ConstraintViolationException cve = (ConstraintViolationException) cause;
+                for (Iterator<ConstraintViolation<?>> it = cve.getConstraintViolations().iterator(); it.hasNext();) {
+                    ConstraintViolation<? extends Object> v = it.next();
+                    System.err.println(v);
+                    System.err.println("==>>" + v.getMessage());
+                }
+            }
+
+        }
+
+        return entity;
     }
 
     public void remove(T entity) {

@@ -41,9 +41,6 @@ public class Direccion implements Auditable, Serializable {
     @Size(max = 200)
     @Column(name = "direccion")
     private String direccion;
-    @Size(max = 15)
-    @Column(name = "usermod")
-    private String usermod;
     @JoinColumn(name = "idpersona", referencedColumnName = "id")
     @ManyToOne
     private Persona persona;
@@ -89,14 +86,6 @@ public class Direccion implements Auditable, Serializable {
     @Override
     public void setAudit(Audit audit) {
         this.audit = audit;
-    }
-
-    public String getUsermod() {
-        return usermod;
-    }
-
-    public void setUsermod(String usermod) {
-        this.usermod = usermod;
     }
 
     public Persona getPersona() {

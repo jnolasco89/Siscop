@@ -19,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -76,6 +77,10 @@ public class Persona implements Auditable, Serializable {
     @JoinColumn(name = "idestadocivil", referencedColumnName = "id")
     @ManyToOne
     private ItemCatalogo estadoCivil;
+    
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona")
+    private Proveedor empleado;
+
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Direccion> direccionList;
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -194,6 +199,14 @@ public class Persona implements Auditable, Serializable {
 
     public void setEstadoCivil(ItemCatalogo estadoCivil) {
         this.estadoCivil = estadoCivil;
+    }
+
+    public Proveedor getEmpleado() {
+        return empleado;
+    }
+
+    public void setEmpleado(Proveedor empleado) {
+        this.empleado = empleado;
     }
 
     @Override

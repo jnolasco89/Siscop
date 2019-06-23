@@ -21,7 +21,7 @@
                                         <p:menuitem value="Buscar" actionListener="#{mttoPersona.buscar()}" 
                                                     icon="ui-icon-search" update="@form"  />
                                         <p:menuitem value="Limpiar" action="#{mttoPersona.limpiarBusquedaPersonas()}"
-                                                    update="tabs lista" icon="ui-icon-refresh" />
+                                                    update="tabs lista" icon="fa fa-eraser" />
                                     </p:menubar>
                                     <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
                                                  styleClass="ui-panelgrid-blank">
@@ -145,7 +145,7 @@
                                                 <p:column headerText="Número">
                                                     <h:outputText value="#{doc.numero}" />
                                                 </p:column>
-                                                <p:column>
+                                                <p:column width="10%">
                                                     <p:commandButton icon="ui-icon-trash"
                                                                      title="Eliminar documento"
                                                                      actionListener="#{mttoPersona.eliminarDocumento(doc)}"
@@ -178,7 +178,7 @@
                                                 <p:column headerText="Número">
                                                     <h:outputText value="#{tel.numero}" />
                                                 </p:column>
-                                                <p:column>
+                                                <p:column width="10%">
                                                     <p:commandButton icon="ui-icon-trash"
                                                                      title="Eliminar teléfono"
                                                                      actionListener="#{mttoPersona.eliminarTelefono(tel)}"
@@ -213,7 +213,7 @@
                                                 <p:column headerText="Direccion">
                                                     <h:outputText value="#{dir.direccion}" />
                                                 </p:column>                                            
-                                                <p:column>
+                                                <p:column width="10%">
                                                     <p:commandButton icon="ui-icon-trash"
                                                                      title="Eliminar dirección"
                                                                      actionListener="#{mttoPersona.eliminarDireccion(dir)}"

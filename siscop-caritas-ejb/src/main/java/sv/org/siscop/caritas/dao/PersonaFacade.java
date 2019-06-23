@@ -70,6 +70,10 @@ public class PersonaFacade extends AbstractFacade<Persona> {
                 q.setParameter("apellido2",
                         "%" + filtro.get("apellido2").toString().toUpperCase() + "%");
             }
+            if (filtro.containsKey("razsocial")) {
+                q.setParameter("razsocial",
+                        "%" + filtro.get("razsocial").toString().toUpperCase() + "%");
+            }
 
             lista = (List<Persona>) q.getResultList();
             return lista;
@@ -83,7 +87,7 @@ public class PersonaFacade extends AbstractFacade<Persona> {
         List<Persona> lista = new ArrayList();
         try {
             String dui = null;
-            StringBuilder sql = new StringBuilder("SELECT object(a) FROM  Persona a , IN(a.personadocList) as v ");
+            StringBuilder sql = new StringBuilder("SELECT object(a) FROM  Persona a , IN(a.documentoList) as v ");
             sql.append("WHERE 1=1 ");
             if (filtro.containsKey("nombre1")) {
                 sql.append("AND UPPER(a.nombre1) like :nombre1 ");

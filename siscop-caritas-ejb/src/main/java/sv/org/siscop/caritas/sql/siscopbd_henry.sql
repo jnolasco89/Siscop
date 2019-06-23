@@ -5,7 +5,7 @@
 -- Dumped from database version 11.2
 -- Dumped by pg_dump version 11.2
 
--- Started on 2019-06-22 22:38:49
+-- Started on 2019-06-23 12:25:09
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,7 +26,7 @@ CREATE SCHEMA public;
 
 
 --
--- TOC entry 2970 (class 0 OID 0)
+-- TOC entry 2979 (class 0 OID 0)
 -- Dependencies: 3
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
 --
@@ -149,6 +149,21 @@ CREATE TABLE public.documento (
 
 
 --
+-- TOC entry 222 (class 1259 OID 16903)
+-- Name: empleado; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.empleado (
+    id bigint NOT NULL,
+    idpersona bigint,
+    usercrea character varying(15),
+    fechacrea time without time zone,
+    usermod character varying(15),
+    fechamod time without time zone
+);
+
+
+--
 -- TOC entry 197 (class 1259 OID 16532)
 -- Name: item_catalogo; Type: TABLE; Schema: public; Owner: -
 --
@@ -241,7 +256,8 @@ CREATE TABLE public.proyecto (
     usercrea character varying(15),
     fechamod timestamp without time zone,
     usermod character varying(15),
-    descripcion character varying(300)
+    descripcion character varying(300),
+    idestado integer
 );
 
 
@@ -444,7 +460,7 @@ CREATE TABLE public.usuario (
 
 
 --
--- TOC entry 2943 (class 0 OID 16551)
+-- TOC entry 2951 (class 0 OID 16551)
 -- Dependencies: 200
 -- Data for Name: account; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -453,7 +469,7 @@ INSERT INTO public.account VALUES (1, 'hzometa', 'PBKDF2WithHmacSHA512:3072:jyoZ
 
 
 --
--- TOC entry 2962 (class 0 OID 16859)
+-- TOC entry 2970 (class 0 OID 16859)
 -- Dependencies: 219
 -- Data for Name: actividad; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -461,12 +477,11 @@ INSERT INTO public.account VALUES (1, 'hzometa', 'PBKDF2WithHmacSHA512:3072:jyoZ
 
 
 --
--- TOC entry 2939 (class 0 OID 16529)
+-- TOC entry 2947 (class 0 OID 16529)
 -- Dependencies: 196
 -- Data for Name: catalogo; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.catalogo VALUES (58, 'asd                                               ', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.catalogo VALUES (59, 'sdsdff                                            ', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.catalogo VALUES (60, 'dsfsdf                                            ', NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.catalogo VALUES (61, 'hhhhhh                                            ', NULL, NULL, NULL, NULL, NULL);
@@ -475,10 +490,11 @@ INSERT INTO public.catalogo VALUES (4, 'Tipo documento                          
 INSERT INTO public.catalogo VALUES (5, 'Tipo teléfono                                     ', true, NULL, NULL, NULL, NULL);
 INSERT INTO public.catalogo VALUES (1, 'Tipo persona                                      ', true, NULL, NULL, NULL, NULL);
 INSERT INTO public.catalogo VALUES (2, 'Estado Civil                                      ', true, NULL, NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (20, 'Estados de proyecto                               ', true, NULL, NULL, NULL, NULL);
 
 
 --
--- TOC entry 2957 (class 0 OID 16760)
+-- TOC entry 2965 (class 0 OID 16760)
 -- Dependencies: 214
 -- Data for Name: cuenta; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -486,7 +502,7 @@ INSERT INTO public.catalogo VALUES (2, 'Estado Civil                            
 
 
 --
--- TOC entry 2947 (class 0 OID 16589)
+-- TOC entry 2955 (class 0 OID 16589)
 -- Dependencies: 204
 -- Data for Name: direccion; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -494,15 +510,13 @@ INSERT INTO public.catalogo VALUES (2, 'Estado Civil                            
 
 
 --
--- TOC entry 2946 (class 0 OID 16577)
+-- TOC entry 2954 (class 0 OID 16577)
 -- Dependencies: 203
 -- Data for Name: documento; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 INSERT INTO public.documento VALUES (1, 2, 11, '02102709891035', NULL, NULL, '2019-06-13 19:48:24.759', NULL, NULL, NULL);
-INSERT INTO public.documento VALUES (2, 2, 10, '04188845-9', NULL, NULL, '2019-06-13 20:10:03.606', NULL, NULL, NULL);
 INSERT INTO public.documento VALUES (5, 3, 10, '8888888-8', NULL, NULL, '2019-06-13 20:26:20.776', NULL, NULL, NULL);
-INSERT INTO public.documento VALUES (6, 4, 10, '0418884-9', NULL, NULL, '2019-06-13 21:17:13.238', NULL, NULL, NULL);
 INSERT INTO public.documento VALUES (7, 5, 10, '456555', NULL, NULL, '2019-06-13 21:32:05.126', NULL, NULL, NULL);
 INSERT INTO public.documento VALUES (8, 5, 11, '655656', NULL, NULL, '2019-06-13 21:51:57.372', NULL, NULL, NULL);
 INSERT INTO public.documento VALUES (9, 4, 11, '65656', NULL, NULL, '2019-06-13 21:54:38.143', NULL, NULL, NULL);
@@ -517,12 +531,21 @@ INSERT INTO public.documento VALUES (22, 11, 10, '243434', NULL, NULL, '2019-06-
 
 
 --
--- TOC entry 2940 (class 0 OID 16532)
+-- TOC entry 2973 (class 0 OID 16903)
+-- Dependencies: 222
+-- Data for Name: empleado; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.empleado VALUES (14, NULL, NULL, '11:52:16.9', NULL, NULL);
+INSERT INTO public.empleado VALUES (4, NULL, NULL, '12:08:03.099', NULL, NULL);
+
+
+--
+-- TOC entry 2948 (class 0 OID 16532)
 -- Dependencies: 197
 -- Data for Name: item_catalogo; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.item_catalogo VALUES (63, '          ', 'Hola                                              ', 59, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (65, '4         ', 'Prueba                                            ', 59, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (67, '3         ', '1                                                 ', 59, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (3, NULL, 'Soltero                                           ', 2, NULL, NULL, NULL, NULL, NULL);
@@ -543,10 +566,13 @@ INSERT INTO public.item_catalogo VALUES (15, NULL, 'Celular 2                   
 INSERT INTO public.item_catalogo VALUES (16, NULL, 'Casa 1                                            ', 5, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (17, NULL, 'Casa 2                                            ', 5, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (18, NULL, 'Trabajo                                           ', 5, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (64, NULL, 'Terminado                                         ', 20, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (20, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (63, '          ', 'En ejecución                                      ', 20, NULL, NULL, NULL, NULL, NULL);
 
 
 --
--- TOC entry 2961 (class 0 OID 16854)
+-- TOC entry 2969 (class 0 OID 16854)
 -- Dependencies: 218
 -- Data for Name: menu; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -559,10 +585,12 @@ INSERT INTO public.menu VALUES (201, 'Proyectos', '/MttoProyectos.xhtml', 'fa fa
 INSERT INTO public.menu VALUES (202, 'Actividades', '/mattoActividades/mtto.xhtml', 'fa fa-tachometer', 2, true, 'S');
 INSERT INTO public.menu VALUES (203, 'Cuentas Contables', '/mattoCuentas/mtto.xhtml', 'fa fa-tachometer', 2, true, 'S');
 INSERT INTO public.menu VALUES (101, 'Catálogos', '/mattoCatalogos/mtto.xhtml', 'fa fa-tachometer', 1, true, 'S');
+INSERT INTO public.menu VALUES (108, 'Empleados', '/MttoEmpleados.xhtml', 'fa fa-users', 1, true, 'S');
+INSERT INTO public.menu VALUES (107, 'Usuarios', '/MttoUsuarios.xhtml', 'fa fa-users', 1, true, 'S');
 
 
 --
--- TOC entry 2941 (class 0 OID 16546)
+-- TOC entry 2949 (class 0 OID 16546)
 -- Dependencies: 198
 -- Data for Name: persona; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -570,19 +598,20 @@ INSERT INTO public.menu VALUES (101, 'Catálogos', '/mattoCatalogos/mtto.xhtml',
 INSERT INTO public.persona VALUES (9, 1, 'JOSSELYN MARIELA LIMA  DEL ZOMETA', NULL, 'JOSSELYN', 'MARIELA', NULL, 'LIMA', 'SOLIS', 'ZOMETA', '2019-06-17 22:39:45.543', NULL, NULL, NULL, '2000-08-05', 'F', 4);
 INSERT INTO public.persona VALUES (3, 1, 'JOSE EDGARDO NOLASCO RODRIGUEZ', NULL, 'JOSE', 'EDGARDO', NULL, 'NOLASCO', 'RODRIGUEZ', '', '2019-06-13 20:24:51.219', NULL, '2019-06-13 20:26:20.783', NULL, '1988-10-06', 'M', 3);
 INSERT INTO public.persona VALUES (5, 1, 'JOSE ANTONIO TIJUIL MEGNO', NULL, 'JOSE', 'ANTONIO', NULL, 'TIJUIL', 'MEGNO', '', '2019-06-13 21:32:05.123', NULL, '2019-06-13 21:51:57.542', NULL, '1989-05-01', 'M', 3);
-INSERT INTO public.persona VALUES (2, 1, 'HENRY MAURICIO ZOMETA SANCHEZ', 'HENRY MAURICIO ZOMETA SANCHEZ', 'HENRY', 'MAURICIO', NULL, 'ZOMETA', 'SANCHEZ', '', '2019-06-13 18:45:53.605', NULL, '2019-06-21 05:25:13.553', NULL, '1989-09-27', 'M', 4);
 INSERT INTO public.persona VALUES (6, 1, 'EDWIN ARNOLDO EDWIN SANCHEZ', 'EDWIN ARNOLDO EDWIN SANCHEZ', 'EDWIN', 'ARNOLDO', NULL, 'EDWIN', 'SANCHEZ', '', '2019-06-13 21:57:39.337', NULL, '2019-06-22 05:15:27.676', NULL, '2001-11-18', 'M', 3);
 INSERT INTO public.persona VALUES (10, 1, 'RONALD ANTONIO MARROQUIN PERAZA', 'RONALD ANTONIO MARROQUIN PERAZA', 'RONALD', 'ANTONIO', NULL, 'MARROQUIN', 'PERAZA', '', '2019-06-22 05:16:52.787', NULL, NULL, NULL, '2019-06-22', 'M', 3);
-INSERT INTO public.persona VALUES (7, 1, 'HENRY DANIEL PEREZ SULMI', NULL, 'HENRY', 'DANIEL', NULL, 'PEREZ', 'SULMI', '', '2019-06-13 22:08:38.023', NULL, '2019-06-13 22:09:51.113', NULL, '1989-09-01', 'M', 3);
 INSERT INTO public.persona VALUES (11, 1, 'DAVID ERNESTO MUNGUIA PAYES', 'DAVID ERNESTO MUNGUIA PAYES', 'DAVID', 'ERNESTO', NULL, 'MUNGUIA', 'PAYES', '', '2019-06-22 05:28:51.258', NULL, NULL, NULL, '2019-06-12', 'M', 3);
 INSERT INTO public.persona VALUES (12, 1, 'DAVID ERNESTO MUNGUIA SORRENTO', 'DAVID ERNESTO MUNGUIA SORRENTO', 'DAVID', 'ERNESTO', NULL, 'MUNGUIA', 'SORRENTO', '', '2019-06-22 21:43:16.935', NULL, NULL, NULL, '2019-06-22', 'M', 5);
 INSERT INTO public.persona VALUES (13, 1, 'DORA LA EXPLORADORA MUNDIAL', 'DORA LA EXPLORADORA MUNDIAL', 'DORA', 'LA', NULL, 'EXPLORADORA', 'MUNDIAL', '', '2019-06-22 22:26:08.377', NULL, NULL, NULL, '2019-06-22', 'F', 3);
 INSERT INTO public.persona VALUES (8, 1, 'DORA TATIANA DORA UZA', NULL, 'DORA', 'TATIANA', NULL, 'DORA', 'UZA', '', '2019-06-13 22:12:10.83', NULL, '2019-06-13 22:15:31.987', NULL, '1985-08-05', 'F', 5);
-INSERT INTO public.persona VALUES (4, 1, 'JOSSELYN MARIELA LIMA  DE ZOMETA', NULL, 'JOSSELYN', 'MARIELA', NULL, 'LIMA', 'SOLIS', 'ZOMETA', '2019-06-13 21:16:11.495', NULL, '2019-06-15 17:58:35.065', NULL, '2000-08-05', 'F', 4);
+INSERT INTO public.persona VALUES (2, 1, 'HENRY MAURICIO ZOMETA SANCHEZ', 'HENRY MAURICIO ZOMETA SANCHEZ', 'HENRY', 'MAURICIO', NULL, 'ZOMETA', 'SANCHEZ', '', '2019-06-13 18:45:53.605', NULL, '2019-06-23 07:57:07.663', NULL, '1989-09-27', 'M', 4);
+INSERT INTO public.persona VALUES (4, 1, 'JOSSELYN MARIELA LIMA  DE ZOMETA', 'JOSSELYN MARIELA LIMA  DE ZOMETA', 'JOSSELYN', 'MARIELA', NULL, 'LIMA', 'SOLIS', 'ZOMETA', '2019-06-13 21:16:11.495', NULL, '2019-06-23 08:07:57.954', NULL, '2000-08-05', 'F', 4);
+INSERT INTO public.persona VALUES (7, 1, 'HENRY DANIELITO PEREZ SULMI', 'HENRY DANIELITO PEREZ SULMI', 'HENRY', 'DANIELITO', NULL, 'PEREZ', 'SULMI', '', '2019-06-13 22:08:38.023', NULL, '2019-06-23 08:38:39.404', NULL, '1989-09-01', 'M', 3);
+INSERT INTO public.persona VALUES (14, 1, 'JUAN CARLOS CASTRO ZUNIGA', 'JUAN CARLOS CASTRO ZUNIGA', 'JUAN', 'CARLOS', NULL, 'CASTRO', 'ZUNIGA', '', '2019-06-23 11:52:16.888', NULL, NULL, NULL, '2019-06-23', 'M', 4);
 
 
 --
--- TOC entry 2960 (class 0 OID 16843)
+-- TOC entry 2968 (class 0 OID 16843)
 -- Dependencies: 217
 -- Data for Name: proveedor; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -590,20 +619,21 @@ INSERT INTO public.persona VALUES (4, 1, 'JOSSELYN MARIELA LIMA  DE ZOMETA', NUL
 INSERT INTO public.proveedor VALUES (2, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.proveedor VALUES (6, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.proveedor VALUES (13, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.proveedor VALUES (4, NULL, NULL, NULL, '2019-06-23', NULL, NULL, NULL);
 
 
 --
--- TOC entry 2950 (class 0 OID 16673)
+-- TOC entry 2958 (class 0 OID 16673)
 -- Dependencies: 207
 -- Data for Name: proyecto; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.proyecto VALUES (1, 'PYT1', 'MI PROYECTO 1', 'PROYECTO1', '2019-09-28', NULL, '12:15:06.086', NULL, NULL, NULL, '');
-INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', '2019-06-30', NULL, '12:49:26.71', NULL, NULL, NULL, 'Esta es una prueba de una descripcion');
+INSERT INTO public.proyecto VALUES (1, 'PYT1', 'MI PROYECTO 1', 'PROYECTO1', '2019-09-28', NULL, '12:15:06.086', NULL, NULL, NULL, '', 63);
+INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', '2019-06-30', NULL, '12:49:26.71', NULL, '2019-06-23 07:36:59.294', NULL, 'Esta es una prueba de una descripcion del proyecto', 63);
 
 
 --
--- TOC entry 2963 (class 0 OID 16862)
+-- TOC entry 2971 (class 0 OID 16862)
 -- Dependencies: 220
 -- Data for Name: recurso; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -611,7 +641,7 @@ INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', 
 
 
 --
--- TOC entry 2948 (class 0 OID 16606)
+-- TOC entry 2956 (class 0 OID 16606)
 -- Dependencies: 205
 -- Data for Name: telefono; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -620,7 +650,7 @@ INSERT INTO public.telefono VALUES (1, 6, 14, NULL, '3442-4242', '2019-06-13 22:
 
 
 --
--- TOC entry 2945 (class 0 OID 16562)
+-- TOC entry 2953 (class 0 OID 16562)
 -- Dependencies: 202
 -- Data for Name: token; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -628,15 +658,16 @@ INSERT INTO public.telefono VALUES (1, 6, 14, NULL, '3442-4242', '2019-06-13 22:
 
 
 --
--- TOC entry 2949 (class 0 OID 16616)
+-- TOC entry 2957 (class 0 OID 16616)
 -- Dependencies: 206
 -- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.usuario VALUES (7, NULL, 7, NULL, '2019-06-23 08:35:34.856', NULL, NULL, NULL);
 
 
 --
--- TOC entry 2971 (class 0 OID 0)
+-- TOC entry 2980 (class 0 OID 0)
 -- Dependencies: 199
 -- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -645,7 +676,7 @@ SELECT pg_catalog.setval('public.account_id_seq', 1, true);
 
 
 --
--- TOC entry 2972 (class 0 OID 0)
+-- TOC entry 2981 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: seq_actividad; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -654,7 +685,7 @@ SELECT pg_catalog.setval('public.seq_actividad', 1, false);
 
 
 --
--- TOC entry 2973 (class 0 OID 0)
+-- TOC entry 2982 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: seq_catalogo; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -663,7 +694,7 @@ SELECT pg_catalog.setval('public.seq_catalogo', 4, true);
 
 
 --
--- TOC entry 2974 (class 0 OID 0)
+-- TOC entry 2983 (class 0 OID 0)
 -- Dependencies: 210
 -- Name: seq_direccion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -672,7 +703,7 @@ SELECT pg_catalog.setval('public.seq_direccion', 3, true);
 
 
 --
--- TOC entry 2975 (class 0 OID 0)
+-- TOC entry 2984 (class 0 OID 0)
 -- Dependencies: 211
 -- Name: seq_documento; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -681,7 +712,7 @@ SELECT pg_catalog.setval('public.seq_documento', 22, true);
 
 
 --
--- TOC entry 2976 (class 0 OID 0)
+-- TOC entry 2985 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: seq_itemcatalogo; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -690,16 +721,16 @@ SELECT pg_catalog.setval('public.seq_itemcatalogo', 2, true);
 
 
 --
--- TOC entry 2977 (class 0 OID 0)
+-- TOC entry 2986 (class 0 OID 0)
 -- Dependencies: 208
 -- Name: seq_persona; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_persona', 13, true);
+SELECT pg_catalog.setval('public.seq_persona', 14, true);
 
 
 --
--- TOC entry 2978 (class 0 OID 0)
+-- TOC entry 2987 (class 0 OID 0)
 -- Dependencies: 213
 -- Name: seq_proyecto; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -708,16 +739,16 @@ SELECT pg_catalog.setval('public.seq_proyecto', 2, true);
 
 
 --
--- TOC entry 2979 (class 0 OID 0)
+-- TOC entry 2988 (class 0 OID 0)
 -- Dependencies: 209
 -- Name: seq_telefono; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_telefono', 2, true);
+SELECT pg_catalog.setval('public.seq_telefono', 3, true);
 
 
 --
--- TOC entry 2980 (class 0 OID 0)
+-- TOC entry 2989 (class 0 OID 0)
 -- Dependencies: 212
 -- Name: seq_usuario; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -726,7 +757,7 @@ SELECT pg_catalog.setval('public.seq_usuario', 1, false);
 
 
 --
--- TOC entry 2981 (class 0 OID 0)
+-- TOC entry 2990 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -735,7 +766,7 @@ SELECT pg_catalog.setval('public.token_id_seq', 1, false);
 
 
 --
--- TOC entry 2770 (class 2606 OID 16559)
+-- TOC entry 2774 (class 2606 OID 16559)
 -- Name: account account_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -744,7 +775,7 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 2772 (class 2606 OID 16555)
+-- TOC entry 2776 (class 2606 OID 16555)
 -- Name: account account_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -753,7 +784,7 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 2774 (class 2606 OID 16557)
+-- TOC entry 2778 (class 2606 OID 16557)
 -- Name: account account_username_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -762,7 +793,7 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 2804 (class 2606 OID 16868)
+-- TOC entry 2808 (class 2606 OID 16868)
 -- Name: actividad actividad_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -771,7 +802,7 @@ ALTER TABLE ONLY public.actividad
 
 
 --
--- TOC entry 2764 (class 2606 OID 16803)
+-- TOC entry 2768 (class 2606 OID 16803)
 -- Name: catalogo catalogo_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -780,7 +811,7 @@ ALTER TABLE ONLY public.catalogo
 
 
 --
--- TOC entry 2784 (class 2606 OID 16598)
+-- TOC entry 2788 (class 2606 OID 16598)
 -- Name: direccion direccion_persona_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -789,7 +820,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2786 (class 2606 OID 16596)
+-- TOC entry 2790 (class 2606 OID 16596)
 -- Name: direccion direccion_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -798,7 +829,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2778 (class 2606 OID 16814)
+-- TOC entry 2782 (class 2606 OID 16814)
 -- Name: documento documento_numero_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -807,8 +838,8 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2982 (class 0 OID 0)
--- Dependencies: 2778
+-- TOC entry 2991 (class 0 OID 0)
+-- Dependencies: 2782
 -- Name: CONSTRAINT documento_numero_unique ON documento; Type: COMMENT; Schema: public; Owner: -
 --
 
@@ -816,7 +847,7 @@ COMMENT ON CONSTRAINT documento_numero_unique ON public.documento IS 'No puede r
 
 
 --
--- TOC entry 2780 (class 2606 OID 16816)
+-- TOC entry 2784 (class 2606 OID 16816)
 -- Name: documento documento_persona_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -825,8 +856,8 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2983 (class 0 OID 0)
--- Dependencies: 2780
+-- TOC entry 2992 (class 0 OID 0)
+-- Dependencies: 2784
 -- Name: CONSTRAINT documento_persona_unique ON documento; Type: COMMENT; Schema: public; Owner: -
 --
 
@@ -834,7 +865,7 @@ COMMENT ON CONSTRAINT documento_persona_unique ON public.documento IS 'No puede 
 
 
 --
--- TOC entry 2782 (class 2606 OID 16581)
+-- TOC entry 2786 (class 2606 OID 16581)
 -- Name: documento documento_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -843,7 +874,16 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2766 (class 2606 OID 16768)
+-- TOC entry 2812 (class 2606 OID 16907)
+-- Name: empleado empleado_pk; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.empleado
+    ADD CONSTRAINT empleado_pk PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2770 (class 2606 OID 16768)
 -- Name: item_catalogo item_catalogo_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -852,7 +892,7 @@ ALTER TABLE ONLY public.item_catalogo
 
 
 --
--- TOC entry 2802 (class 2606 OID 16858)
+-- TOC entry 2806 (class 2606 OID 16858)
 -- Name: menu menu_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -861,7 +901,7 @@ ALTER TABLE ONLY public.menu
 
 
 --
--- TOC entry 2768 (class 2606 OID 16576)
+-- TOC entry 2772 (class 2606 OID 16576)
 -- Name: persona persona_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -870,7 +910,7 @@ ALTER TABLE ONLY public.persona
 
 
 --
--- TOC entry 2800 (class 2606 OID 16847)
+-- TOC entry 2804 (class 2606 OID 16847)
 -- Name: proveedor proveedor_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -879,7 +919,7 @@ ALTER TABLE ONLY public.proveedor
 
 
 --
--- TOC entry 2796 (class 2606 OID 16679)
+-- TOC entry 2800 (class 2606 OID 16679)
 -- Name: proyecto proyecto_codigo_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -888,7 +928,7 @@ ALTER TABLE ONLY public.proyecto
 
 
 --
--- TOC entry 2798 (class 2606 OID 16677)
+-- TOC entry 2802 (class 2606 OID 16677)
 -- Name: proyecto proyecto_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -897,7 +937,7 @@ ALTER TABLE ONLY public.proyecto
 
 
 --
--- TOC entry 2806 (class 2606 OID 16887)
+-- TOC entry 2810 (class 2606 OID 16887)
 -- Name: recurso recurso_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -906,7 +946,7 @@ ALTER TABLE ONLY public.recurso
 
 
 --
--- TOC entry 2788 (class 2606 OID 16829)
+-- TOC entry 2792 (class 2606 OID 16829)
 -- Name: telefono telefono_persona_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -915,7 +955,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2790 (class 2606 OID 16613)
+-- TOC entry 2794 (class 2606 OID 16613)
 -- Name: telefono telefono_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -924,7 +964,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2776 (class 2606 OID 16569)
+-- TOC entry 2780 (class 2606 OID 16569)
 -- Name: token token_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -933,7 +973,7 @@ ALTER TABLE ONLY public.token
 
 
 --
--- TOC entry 2792 (class 2606 OID 16620)
+-- TOC entry 2796 (class 2606 OID 16620)
 -- Name: usuario usuario_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -942,7 +982,7 @@ ALTER TABLE ONLY public.usuario
 
 
 --
--- TOC entry 2794 (class 2606 OID 16622)
+-- TOC entry 2798 (class 2606 OID 16622)
 -- Name: usuario usuario_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -951,7 +991,7 @@ ALTER TABLE ONLY public.usuario
 
 
 --
--- TOC entry 2813 (class 2606 OID 16774)
+-- TOC entry 2819 (class 2606 OID 16774)
 -- Name: direccion direccion_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -960,7 +1000,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2812 (class 2606 OID 16599)
+-- TOC entry 2818 (class 2606 OID 16599)
 -- Name: direccion direccion_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -969,7 +1009,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2811 (class 2606 OID 16817)
+-- TOC entry 2817 (class 2606 OID 16817)
 -- Name: documento documento_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -978,7 +1018,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2810 (class 2606 OID 16584)
+-- TOC entry 2816 (class 2606 OID 16584)
 -- Name: documento documento_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -987,8 +1027,8 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2984 (class 0 OID 0)
--- Dependencies: 2810
+-- TOC entry 2993 (class 0 OID 0)
+-- Dependencies: 2816
 -- Name: CONSTRAINT documento_persona_fk ON documento; Type: COMMENT; Schema: public; Owner: -
 --
 
@@ -996,7 +1036,16 @@ COMMENT ON CONSTRAINT documento_persona_fk ON public.documento IS 'd';
 
 
 --
--- TOC entry 2807 (class 2606 OID 16804)
+-- TOC entry 2825 (class 2606 OID 16908)
+-- Name: empleado empleado_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.empleado
+    ADD CONSTRAINT empleado_persona_fk FOREIGN KEY (id) REFERENCES public.persona(id);
+
+
+--
+-- TOC entry 2813 (class 2606 OID 16804)
 -- Name: item_catalogo item_catalogo_catalogo_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1005,7 +1054,7 @@ ALTER TABLE ONLY public.item_catalogo
 
 
 --
--- TOC entry 2808 (class 2606 OID 16769)
+-- TOC entry 2814 (class 2606 OID 16769)
 -- Name: persona persona_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1014,7 +1063,7 @@ ALTER TABLE ONLY public.persona
 
 
 --
--- TOC entry 2817 (class 2606 OID 16849)
+-- TOC entry 2824 (class 2606 OID 16849)
 -- Name: proveedor proveedor_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1023,7 +1072,16 @@ ALTER TABLE ONLY public.proveedor
 
 
 --
--- TOC entry 2815 (class 2606 OID 16830)
+-- TOC entry 2823 (class 2606 OID 16888)
+-- Name: proyecto proyecto_item_estado_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.proyecto
+    ADD CONSTRAINT proyecto_item_estado_fk FOREIGN KEY (idestado) REFERENCES public.item_catalogo(id);
+
+
+--
+-- TOC entry 2821 (class 2606 OID 16830)
 -- Name: telefono telefono_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1032,7 +1090,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2814 (class 2606 OID 16685)
+-- TOC entry 2820 (class 2606 OID 16685)
 -- Name: telefono telefono_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1041,7 +1099,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2809 (class 2606 OID 16570)
+-- TOC entry 2815 (class 2606 OID 16570)
 -- Name: token token_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1050,7 +1108,7 @@ ALTER TABLE ONLY public.token
 
 
 --
--- TOC entry 2816 (class 2606 OID 16623)
+-- TOC entry 2822 (class 2606 OID 16623)
 -- Name: usuario usuario_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1058,7 +1116,7 @@ ALTER TABLE ONLY public.usuario
     ADD CONSTRAINT usuario_persona_fk FOREIGN KEY (idpersona) REFERENCES public.persona(id);
 
 
--- Completed on 2019-06-22 22:38:50
+-- Completed on 2019-06-23 12:25:09
 
 --
 -- PostgreSQL database dump complete

@@ -12,6 +12,7 @@ public enum Catalogos {
     TIPO_DIRECC(3),
     TIPO_DOC(4),
     TIPO_TEL(5),
+    ESTADO_ACTIVIDAD(10),
     ESTADO_PROYECTO(20);
 
     /**

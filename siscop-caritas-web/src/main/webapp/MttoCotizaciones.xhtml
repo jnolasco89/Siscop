@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-lg-12">
+                <div class="card">
+                    <h1 style="margin-top:0">Cotizaciones</h1>
+                    <h:form id="principal">
+                        <p:growl id="growl" showSummary="true" globalOnly="true"
+                                 sticky="true" showDetail="true" for="msgGrowl"/>
+
+
+                        <p:tabView id="tabs" activeIndex="#{mttoCotizacion.tabindex}">
+                            <div class="card">
+                                <p:tab id="busqueda" title="Búsqueda">
+                                    <p:menubar>
+                                        <p:menuitem value="Buscar" actionListener="#{mttoCotizacion.buscarPlancotizaciones()}" 
+                                                    icon="ui-icon-search" update="@form"  />
+                                        <p:menuitem value="Limpiar" action="#{mttoCotizacion.limpiarPlancotizacion()}"
+                                                    update="tabs lista" icon="ui-icon-refresh" />
+                                    </p:menubar>
+                                    <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                                 styleClass="ui-panelgrid-blank">
+                                        <p:outputLabel for="txtDescripcionB" value="Descripción:" />
+                                        <p:inputText id="txtDescripcionB" value="#{mttoCotizacion.descripcionB}"                                                     
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>                                        
+                                        <p:outputLabel for="txtIdProyecto" value="Id Proyecto:" />
+                                        <p:inputText id="txtIdProyecto" value="#{mttoCotizacion.idProyectoB}"/>
+                                        <p:outputLabel for="selectOneEstado" value="Estado" />
+                                        <p:selectOneMenu id="selectOneEstado" value="#{mttoCotizacion.estadoActividadB}">
+                                            <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                            <f:selectItems value="#{mttoCotizacion.itemEstadoActividad}"/>
+                                        </p:selectOneMenu>
+
+                                    </p:panelGrid>
+                                    <div class="card">
+                                        <p:dataTable id="lista" var = "plan" value="#{mttoCotizacion.planCotizacionList}"
+                                                     selectionMode="single"
+                                                     selection="#{mttoCotizacion.plancotizacionB}"
+                                                     rowKey="#{plan.id}"
+                                                     paginator="true"
+                                                     rows ="10"
+                                                     paginatorPosition="bottom"
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     rowsPerPageTemplate="10,20,50">
+                                            <p:ajax event="rowSelect" listener="#{mttoCotizacion.onRowSelect(event)}"
+                                                    update="principal" />
+                                            <p:column headerText="Id" width="10%">
+                                                <h:outputText value="#{plan.id}" />
+                                            </p:column>
+                                            <p:column headerText="Cotizacion">
+                                                <h:outputText value="#{plan.descripcion}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:tab>
+                            </div>
+                            <div class="card">
+                                <p:tab id="detalle" title="Detalle">
+                                    <p:menubar>
+                                        <p:menuitem value="Nuevo" action="#{mttoCotizacion.nuevoPlancotizacion()}"
+                                                    icon="ui-icon-search"
+                                                    update="lista 
+                                                    otraInfo
+                                                    :principal:growl"
+                                                    />
+                                        <p:menuitem value="Guardar" action="#{mttoCotizacion.guardarPlancotizacion()}" icon="fa fa-save"                                                
+                                                    update="lista :principal:growl otraInfo" />
+                                    </p:menubar>
+
+                                    <div class="ui-g ui-panelgrid-blank">                                       
+                                        <div class="ui-g-6" >
+                                            <p:outputLabel value="Descripción:" for="txtDescripcion" />
+                                            <p:inputTextarea rows="4" id="txtDescripcion"
+                                                             value="#{mttoCotizacion.descripcion}"
+                                                             autoResize="true"/>
+                                        </div>
+                                        <div class="ui-g-2" >
+                                            <p:outputLabel value="Fecha:" for="fecha" />
+                                            <p:calendar id="fecha" value="#{mttoCotizacion.fecha}"
+                                                        pattern="dd-MM-yyyy" mask="true"/>
+                                        </div>
+                                    </div>
+                                    <p:tabView id="otraInfo">
+
+                                        <p:tab id="plantilla" title="Plantilla">
+
+                                        </p:tab>
+
+                                        <p:tab id="cotizaciones" title="Cotizaciones">
+                                            <p:panelGrid id="datosTel" columns="5" styleClass="ui-panelgrid-blank">
+                                            </p:panelGrid>
+
+                                        </p:tab>                                       
+                                    </p:tabView>
+                                </p:tab>
+                            </div>
+                        </p:tabView>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>

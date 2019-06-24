@@ -46,11 +46,6 @@ public class Planitem implements Serializable {
     private String descripcion;
     @Column(name = "cantidad")
     private Integer cantidad;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "preciounitario")
-    private BigDecimal preciounitario;
-    @Column(name = "total")
-    private BigDecimal total;
     @JoinColumn(name = "idmedida", referencedColumnName = "id")
     @ManyToOne
     private ItemCatalogo medida;
@@ -103,22 +98,6 @@ public class Planitem implements Serializable {
 
     public void setCantidad(Integer cantidad) {
         this.cantidad = cantidad;
-    }
-
-    public BigDecimal getPreciounitario() {
-        return preciounitario;
-    }
-
-    public void setPreciounitario(BigDecimal preciounitario) {
-        this.preciounitario = preciounitario;
-    }
-
-    public BigDecimal getTotal() {
-        return total;
-    }
-
-    public void setTotal(BigDecimal total) {
-        this.total = total;
     }
 
     public ItemCatalogo getMedida() {

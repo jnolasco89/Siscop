@@ -6,9 +6,9 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,8 +17,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -59,6 +57,8 @@ public class Plancotizacion implements Serializable {
     private Actividad actividad;
     @OneToMany(mappedBy = "plancotizacion")
     private List<Planitem> planitemList;
+    @OneToMany(mappedBy = "idplantilla")
+    private List<Cotizacion> cotizacionList;
 
     public Plancotizacion() {
     }
@@ -123,21 +123,34 @@ public class Plancotizacion implements Serializable {
         this.actividad = actividad;
     }
 
+    public List<Cotizacion> getCotizacionList() {
+        return cotizacionList;
+    }
+
+    public void setCotizacionList(List<Cotizacion> cotizacionList) {
+        this.cotizacionList = cotizacionList;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Plancotizacion)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        Plancotizacion other = (Plancotizacion) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Plancotizacion other = (Plancotizacion) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;

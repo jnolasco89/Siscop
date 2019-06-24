@@ -7,7 +7,7 @@ package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +19,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,7 +27,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -40,9 +38,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "ItemCatalogo.findAll", query = "SELECT i FROM ItemCatalogo i")})
 public class ItemCatalogo implements Serializable {
-
-    @OneToMany(mappedBy = "estado", fetch = FetchType.EAGER)
-    private List<Actividad> actividadList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -74,7 +69,7 @@ public class ItemCatalogo implements Serializable {
     private Catalogo idcatalogo;
     @Transient
     private boolean verEliminar;
-    
+
     public ItemCatalogo() {
     }
 
@@ -156,19 +151,24 @@ public class ItemCatalogo implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ItemCatalogo)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        ItemCatalogo other = (ItemCatalogo) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ItemCatalogo other = (ItemCatalogo) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;
@@ -178,14 +178,4 @@ public class ItemCatalogo implements Serializable {
     public String toString() {
         return "sv.org.siscop.caritas.entidades.ItemCatalogo[ id=" + id + " ]";
     }
-
-    @XmlTransient
-    public List<Actividad> getActividadList() {
-        return actividadList;
-    }
-
-    public void setActividadList(List<Actividad> actividadList) {
-        this.actividadList = actividadList;
-    }
-
 }

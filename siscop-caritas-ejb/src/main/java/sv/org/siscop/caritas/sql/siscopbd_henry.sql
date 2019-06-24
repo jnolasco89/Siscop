@@ -5,7 +5,7 @@
 -- Dumped from database version 11.2
 -- Dumped by pg_dump version 11.2
 
--- Started on 2019-06-23 12:25:09
+-- Started on 2019-06-24 06:47:17
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,7 +26,7 @@ CREATE SCHEMA public;
 
 
 --
--- TOC entry 2979 (class 0 OID 0)
+-- TOC entry 3029 (class 0 OID 0)
 -- Dependencies: 3
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
 --
@@ -95,6 +95,22 @@ CREATE TABLE public.catalogo (
     usermod character varying(15),
     fechacrea timestamp without time zone,
     usercrea character varying(15)
+);
+
+
+--
+-- TOC entry 227 (class 1259 OID 16950)
+-- Name: cotizacion; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.cotizacion (
+    id bigint NOT NULL,
+    idplantilla bigint,
+    idproveedor bigint,
+    fecha date,
+    total numeric(15,2),
+    comentarios character varying(300),
+    validacionofac boolean
 );
 
 
@@ -182,6 +198,24 @@ CREATE TABLE public.item_catalogo (
 
 
 --
+-- TOC entry 228 (class 1259 OID 16971)
+-- Name: itemcotizacion; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.itemcotizacion (
+    id bigint NOT NULL,
+    idcotizacion bigint,
+    orden integer,
+    producto character varying(100),
+    descripcion character varying(200),
+    idmedida integer,
+    cantidad integer,
+    preciounitario numeric(15,2),
+    total numeric(15,2)
+);
+
+
+--
 -- TOC entry 218 (class 1259 OID 16854)
 -- Name: menu; Type: TABLE; Schema: public; Owner: -
 --
@@ -221,6 +255,55 @@ CREATE TABLE public.persona (
     sexo character varying(1),
     idestadocivil integer
 );
+
+
+--
+-- TOC entry 223 (class 1259 OID 16913)
+-- Name: plancotizacion; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.plancotizacion (
+    id bigint NOT NULL,
+    idactividad bigint,
+    idproyecto bigint,
+    descripcion character varying(200),
+    fecha date,
+    analisis character varying(1000)
+);
+
+
+--
+-- TOC entry 3030 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: TABLE plancotizacion; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.plancotizacion IS 'Plantilla de cotización.';
+
+
+--
+-- TOC entry 224 (class 1259 OID 16921)
+-- Name: planitem; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.planitem (
+    id bigint NOT NULL,
+    idplancotizacion bigint,
+    orden integer,
+    producto character varying(100),
+    descripcion character varying(200),
+    idmedida integer,
+    cantidad integer
+);
+
+
+--
+-- TOC entry 3031 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: TABLE planitem; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE public.planitem IS 'Items de plantilla de cotizacion';
 
 
 --
@@ -302,6 +385,19 @@ CREATE SEQUENCE public.seq_catalogo
 
 
 --
+-- TOC entry 229 (class 1259 OID 16996)
+-- Name: seq_cotizacion; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.seq_cotizacion
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- TOC entry 210 (class 1259 OID 16734)
 -- Name: seq_direccion; Type: SEQUENCE; Schema: public; Owner: -
 --
@@ -341,11 +437,50 @@ CREATE SEQUENCE public.seq_itemcatalogo
 
 
 --
+-- TOC entry 230 (class 1259 OID 16998)
+-- Name: seq_itemcotizacion; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.seq_itemcotizacion
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
 -- TOC entry 208 (class 1259 OID 16730)
 -- Name: seq_persona; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.seq_persona
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 225 (class 1259 OID 16946)
+-- Name: seq_plancotizacion; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.seq_plancotizacion
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 226 (class 1259 OID 16948)
+-- Name: seq_planitem; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.seq_planitem
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -460,7 +595,7 @@ CREATE TABLE public.usuario (
 
 
 --
--- TOC entry 2951 (class 0 OID 16551)
+-- TOC entry 2993 (class 0 OID 16551)
 -- Dependencies: 200
 -- Data for Name: account; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -469,15 +604,16 @@ INSERT INTO public.account VALUES (1, 'hzometa', 'PBKDF2WithHmacSHA512:3072:jyoZ
 
 
 --
--- TOC entry 2970 (class 0 OID 16859)
+-- TOC entry 3012 (class 0 OID 16859)
 -- Dependencies: 219
 -- Data for Name: actividad; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.actividad VALUES (1, 'Actividad 1                                                                                         ', 'Es la actividad inicial                                                                                                                                                                                 ', '2019-06-23', '2019-06-23', 20);
 
 
 --
--- TOC entry 2947 (class 0 OID 16529)
+-- TOC entry 2989 (class 0 OID 16529)
 -- Dependencies: 196
 -- Data for Name: catalogo; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -491,10 +627,19 @@ INSERT INTO public.catalogo VALUES (5, 'Tipo teléfono                          
 INSERT INTO public.catalogo VALUES (1, 'Tipo persona                                      ', true, NULL, NULL, NULL, NULL);
 INSERT INTO public.catalogo VALUES (2, 'Estado Civil                                      ', true, NULL, NULL, NULL, NULL);
 INSERT INTO public.catalogo VALUES (20, 'Estados de proyecto                               ', true, NULL, NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (10, 'Estados Actividad                                 ', true, NULL, NULL, NULL, NULL);
 
 
 --
--- TOC entry 2965 (class 0 OID 16760)
+-- TOC entry 3020 (class 0 OID 16950)
+-- Dependencies: 227
+-- Data for Name: cotizacion; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- TOC entry 3007 (class 0 OID 16760)
 -- Dependencies: 214
 -- Data for Name: cuenta; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -502,7 +647,7 @@ INSERT INTO public.catalogo VALUES (20, 'Estados de proyecto                    
 
 
 --
--- TOC entry 2955 (class 0 OID 16589)
+-- TOC entry 2997 (class 0 OID 16589)
 -- Dependencies: 204
 -- Data for Name: direccion; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -510,7 +655,7 @@ INSERT INTO public.catalogo VALUES (20, 'Estados de proyecto                    
 
 
 --
--- TOC entry 2954 (class 0 OID 16577)
+-- TOC entry 2996 (class 0 OID 16577)
 -- Dependencies: 203
 -- Data for Name: documento; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -531,7 +676,7 @@ INSERT INTO public.documento VALUES (22, 11, 10, '243434', NULL, NULL, '2019-06-
 
 
 --
--- TOC entry 2973 (class 0 OID 16903)
+-- TOC entry 3015 (class 0 OID 16903)
 -- Dependencies: 222
 -- Data for Name: empleado; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -541,7 +686,7 @@ INSERT INTO public.empleado VALUES (4, NULL, NULL, '12:08:03.099', NULL, NULL);
 
 
 --
--- TOC entry 2948 (class 0 OID 16532)
+-- TOC entry 2990 (class 0 OID 16532)
 -- Dependencies: 197
 -- Data for Name: item_catalogo; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -567,12 +712,21 @@ INSERT INTO public.item_catalogo VALUES (16, NULL, 'Casa 1                      
 INSERT INTO public.item_catalogo VALUES (17, NULL, 'Casa 2                                            ', 5, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (18, NULL, 'Trabajo                                           ', 5, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (64, NULL, 'Terminado                                         ', 20, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (20, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (63, '          ', 'En ejecución                                      ', 20, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (21, NULL, 'Terminada                                         ', 10, false, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (20, NULL, 'En Ejecución                                      ', 10, NULL, NULL, NULL, NULL, NULL);
 
 
 --
--- TOC entry 2969 (class 0 OID 16854)
+-- TOC entry 3021 (class 0 OID 16971)
+-- Dependencies: 228
+-- Data for Name: itemcotizacion; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- TOC entry 3011 (class 0 OID 16854)
 -- Dependencies: 218
 -- Data for Name: menu; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -587,10 +741,11 @@ INSERT INTO public.menu VALUES (203, 'Cuentas Contables', '/mattoCuentas/mtto.xh
 INSERT INTO public.menu VALUES (101, 'Catálogos', '/mattoCatalogos/mtto.xhtml', 'fa fa-tachometer', 1, true, 'S');
 INSERT INTO public.menu VALUES (108, 'Empleados', '/MttoEmpleados.xhtml', 'fa fa-users', 1, true, 'S');
 INSERT INTO public.menu VALUES (107, 'Usuarios', '/MttoUsuarios.xhtml', 'fa fa-users', 1, true, 'S');
+INSERT INTO public.menu VALUES (204, 'Cotizaciones', '/MttoCotizaciones.xhtml', 'fa fa-spinner', 2, true, 'S');
 
 
 --
--- TOC entry 2949 (class 0 OID 16546)
+-- TOC entry 2991 (class 0 OID 16546)
 -- Dependencies: 198
 -- Data for Name: persona; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -611,7 +766,24 @@ INSERT INTO public.persona VALUES (14, 1, 'JUAN CARLOS CASTRO ZUNIGA', 'JUAN CAR
 
 
 --
--- TOC entry 2968 (class 0 OID 16843)
+-- TOC entry 3016 (class 0 OID 16913)
+-- Dependencies: 223
+-- Data for Name: plancotizacion; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+INSERT INTO public.plancotizacion VALUES (1, NULL, NULL, 'Prueba', '2019-06-04', NULL);
+
+
+--
+-- TOC entry 3017 (class 0 OID 16921)
+-- Dependencies: 224
+-- Data for Name: planitem; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+
+
+--
+-- TOC entry 3010 (class 0 OID 16843)
 -- Dependencies: 217
 -- Data for Name: proveedor; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -623,17 +795,17 @@ INSERT INTO public.proveedor VALUES (4, NULL, NULL, NULL, '2019-06-23', NULL, NU
 
 
 --
--- TOC entry 2958 (class 0 OID 16673)
+-- TOC entry 3000 (class 0 OID 16673)
 -- Dependencies: 207
 -- Data for Name: proyecto; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 INSERT INTO public.proyecto VALUES (1, 'PYT1', 'MI PROYECTO 1', 'PROYECTO1', '2019-09-28', NULL, '12:15:06.086', NULL, NULL, NULL, '', 63);
-INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', '2019-06-30', NULL, '12:49:26.71', NULL, '2019-06-23 07:36:59.294', NULL, 'Esta es una prueba de una descripcion del proyecto', 63);
+INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', '2019-06-26', NULL, '12:49:26.71', NULL, '2019-06-23 20:16:50.947', NULL, 'Esta es una prueba de una descripcion del proyecto', 63);
 
 
 --
--- TOC entry 2971 (class 0 OID 16862)
+-- TOC entry 3013 (class 0 OID 16862)
 -- Dependencies: 220
 -- Data for Name: recurso; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -641,7 +813,7 @@ INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', 
 
 
 --
--- TOC entry 2956 (class 0 OID 16606)
+-- TOC entry 2998 (class 0 OID 16606)
 -- Dependencies: 205
 -- Data for Name: telefono; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -650,7 +822,7 @@ INSERT INTO public.telefono VALUES (1, 6, 14, NULL, '3442-4242', '2019-06-13 22:
 
 
 --
--- TOC entry 2953 (class 0 OID 16562)
+-- TOC entry 2995 (class 0 OID 16562)
 -- Dependencies: 202
 -- Data for Name: token; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -658,7 +830,7 @@ INSERT INTO public.telefono VALUES (1, 6, 14, NULL, '3442-4242', '2019-06-13 22:
 
 
 --
--- TOC entry 2957 (class 0 OID 16616)
+-- TOC entry 2999 (class 0 OID 16616)
 -- Dependencies: 206
 -- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -667,7 +839,7 @@ INSERT INTO public.usuario VALUES (7, NULL, 7, NULL, '2019-06-23 08:35:34.856', 
 
 
 --
--- TOC entry 2980 (class 0 OID 0)
+-- TOC entry 3032 (class 0 OID 0)
 -- Dependencies: 199
 -- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -676,7 +848,7 @@ SELECT pg_catalog.setval('public.account_id_seq', 1, true);
 
 
 --
--- TOC entry 2981 (class 0 OID 0)
+-- TOC entry 3033 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: seq_actividad; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -685,7 +857,7 @@ SELECT pg_catalog.setval('public.seq_actividad', 1, false);
 
 
 --
--- TOC entry 2982 (class 0 OID 0)
+-- TOC entry 3034 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: seq_catalogo; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -694,7 +866,16 @@ SELECT pg_catalog.setval('public.seq_catalogo', 4, true);
 
 
 --
--- TOC entry 2983 (class 0 OID 0)
+-- TOC entry 3035 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: seq_cotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.seq_cotizacion', 1, false);
+
+
+--
+-- TOC entry 3036 (class 0 OID 0)
 -- Dependencies: 210
 -- Name: seq_direccion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -703,7 +884,7 @@ SELECT pg_catalog.setval('public.seq_direccion', 3, true);
 
 
 --
--- TOC entry 2984 (class 0 OID 0)
+-- TOC entry 3037 (class 0 OID 0)
 -- Dependencies: 211
 -- Name: seq_documento; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -712,7 +893,7 @@ SELECT pg_catalog.setval('public.seq_documento', 22, true);
 
 
 --
--- TOC entry 2985 (class 0 OID 0)
+-- TOC entry 3038 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: seq_itemcatalogo; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -721,7 +902,16 @@ SELECT pg_catalog.setval('public.seq_itemcatalogo', 2, true);
 
 
 --
--- TOC entry 2986 (class 0 OID 0)
+-- TOC entry 3039 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: seq_itemcotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.seq_itemcotizacion', 1, false);
+
+
+--
+-- TOC entry 3040 (class 0 OID 0)
 -- Dependencies: 208
 -- Name: seq_persona; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -730,7 +920,25 @@ SELECT pg_catalog.setval('public.seq_persona', 14, true);
 
 
 --
--- TOC entry 2987 (class 0 OID 0)
+-- TOC entry 3041 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: seq_plancotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.seq_plancotizacion', 1, true);
+
+
+--
+-- TOC entry 3042 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: seq_planitem; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.seq_planitem', 1, false);
+
+
+--
+-- TOC entry 3043 (class 0 OID 0)
 -- Dependencies: 213
 -- Name: seq_proyecto; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -739,7 +947,7 @@ SELECT pg_catalog.setval('public.seq_proyecto', 2, true);
 
 
 --
--- TOC entry 2988 (class 0 OID 0)
+-- TOC entry 3044 (class 0 OID 0)
 -- Dependencies: 209
 -- Name: seq_telefono; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -748,7 +956,7 @@ SELECT pg_catalog.setval('public.seq_telefono', 3, true);
 
 
 --
--- TOC entry 2989 (class 0 OID 0)
+-- TOC entry 3045 (class 0 OID 0)
 -- Dependencies: 212
 -- Name: seq_usuario; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -757,7 +965,7 @@ SELECT pg_catalog.setval('public.seq_usuario', 1, false);
 
 
 --
--- TOC entry 2990 (class 0 OID 0)
+-- TOC entry 3046 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -766,7 +974,7 @@ SELECT pg_catalog.setval('public.token_id_seq', 1, false);
 
 
 --
--- TOC entry 2774 (class 2606 OID 16559)
+-- TOC entry 2799 (class 2606 OID 16559)
 -- Name: account account_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -775,7 +983,7 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 2776 (class 2606 OID 16555)
+-- TOC entry 2801 (class 2606 OID 16555)
 -- Name: account account_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -784,7 +992,7 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 2778 (class 2606 OID 16557)
+-- TOC entry 2803 (class 2606 OID 16557)
 -- Name: account account_username_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -793,7 +1001,7 @@ ALTER TABLE ONLY public.account
 
 
 --
--- TOC entry 2808 (class 2606 OID 16868)
+-- TOC entry 2833 (class 2606 OID 16868)
 -- Name: actividad actividad_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -802,7 +1010,7 @@ ALTER TABLE ONLY public.actividad
 
 
 --
--- TOC entry 2768 (class 2606 OID 16803)
+-- TOC entry 2793 (class 2606 OID 16803)
 -- Name: catalogo catalogo_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -811,7 +1019,16 @@ ALTER TABLE ONLY public.catalogo
 
 
 --
--- TOC entry 2788 (class 2606 OID 16598)
+-- TOC entry 2843 (class 2606 OID 16977)
+-- Name: cotizacion cotizacion_pk; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cotizacion
+    ADD CONSTRAINT cotizacion_pk PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2813 (class 2606 OID 16598)
 -- Name: direccion direccion_persona_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -820,7 +1037,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2790 (class 2606 OID 16596)
+-- TOC entry 2815 (class 2606 OID 16596)
 -- Name: direccion direccion_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -829,7 +1046,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2782 (class 2606 OID 16814)
+-- TOC entry 2807 (class 2606 OID 16814)
 -- Name: documento documento_numero_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -838,8 +1055,8 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2991 (class 0 OID 0)
--- Dependencies: 2782
+-- TOC entry 3047 (class 0 OID 0)
+-- Dependencies: 2807
 -- Name: CONSTRAINT documento_numero_unique ON documento; Type: COMMENT; Schema: public; Owner: -
 --
 
@@ -847,7 +1064,7 @@ COMMENT ON CONSTRAINT documento_numero_unique ON public.documento IS 'No puede r
 
 
 --
--- TOC entry 2784 (class 2606 OID 16816)
+-- TOC entry 2809 (class 2606 OID 16816)
 -- Name: documento documento_persona_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -856,8 +1073,8 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2992 (class 0 OID 0)
--- Dependencies: 2784
+-- TOC entry 3048 (class 0 OID 0)
+-- Dependencies: 2809
 -- Name: CONSTRAINT documento_persona_unique ON documento; Type: COMMENT; Schema: public; Owner: -
 --
 
@@ -865,7 +1082,7 @@ COMMENT ON CONSTRAINT documento_persona_unique ON public.documento IS 'No puede 
 
 
 --
--- TOC entry 2786 (class 2606 OID 16581)
+-- TOC entry 2811 (class 2606 OID 16581)
 -- Name: documento documento_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -874,7 +1091,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2812 (class 2606 OID 16907)
+-- TOC entry 2837 (class 2606 OID 16907)
 -- Name: empleado empleado_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -883,7 +1100,7 @@ ALTER TABLE ONLY public.empleado
 
 
 --
--- TOC entry 2770 (class 2606 OID 16768)
+-- TOC entry 2795 (class 2606 OID 16768)
 -- Name: item_catalogo item_catalogo_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -892,7 +1109,16 @@ ALTER TABLE ONLY public.item_catalogo
 
 
 --
--- TOC entry 2806 (class 2606 OID 16858)
+-- TOC entry 2845 (class 2606 OID 16975)
+-- Name: itemcotizacion itemcotizacion_pk; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.itemcotizacion
+    ADD CONSTRAINT itemcotizacion_pk PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2831 (class 2606 OID 16858)
 -- Name: menu menu_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -901,7 +1127,7 @@ ALTER TABLE ONLY public.menu
 
 
 --
--- TOC entry 2772 (class 2606 OID 16576)
+-- TOC entry 2797 (class 2606 OID 16576)
 -- Name: persona persona_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -910,7 +1136,25 @@ ALTER TABLE ONLY public.persona
 
 
 --
--- TOC entry 2804 (class 2606 OID 16847)
+-- TOC entry 2839 (class 2606 OID 16917)
+-- Name: plancotizacion plancotizacion_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.plancotizacion
+    ADD CONSTRAINT plancotizacion_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2841 (class 2606 OID 16925)
+-- Name: planitem planitem_pk; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.planitem
+    ADD CONSTRAINT planitem_pk PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2829 (class 2606 OID 16847)
 -- Name: proveedor proveedor_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -919,7 +1163,7 @@ ALTER TABLE ONLY public.proveedor
 
 
 --
--- TOC entry 2800 (class 2606 OID 16679)
+-- TOC entry 2825 (class 2606 OID 16679)
 -- Name: proyecto proyecto_codigo_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -928,7 +1172,7 @@ ALTER TABLE ONLY public.proyecto
 
 
 --
--- TOC entry 2802 (class 2606 OID 16677)
+-- TOC entry 2827 (class 2606 OID 16677)
 -- Name: proyecto proyecto_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -937,7 +1181,7 @@ ALTER TABLE ONLY public.proyecto
 
 
 --
--- TOC entry 2810 (class 2606 OID 16887)
+-- TOC entry 2835 (class 2606 OID 16887)
 -- Name: recurso recurso_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -946,7 +1190,7 @@ ALTER TABLE ONLY public.recurso
 
 
 --
--- TOC entry 2792 (class 2606 OID 16829)
+-- TOC entry 2817 (class 2606 OID 16829)
 -- Name: telefono telefono_persona_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -955,7 +1199,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2794 (class 2606 OID 16613)
+-- TOC entry 2819 (class 2606 OID 16613)
 -- Name: telefono telefono_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -964,7 +1208,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2780 (class 2606 OID 16569)
+-- TOC entry 2805 (class 2606 OID 16569)
 -- Name: token token_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -973,7 +1217,7 @@ ALTER TABLE ONLY public.token
 
 
 --
--- TOC entry 2796 (class 2606 OID 16620)
+-- TOC entry 2821 (class 2606 OID 16620)
 -- Name: usuario usuario_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -982,7 +1226,7 @@ ALTER TABLE ONLY public.usuario
 
 
 --
--- TOC entry 2798 (class 2606 OID 16622)
+-- TOC entry 2823 (class 2606 OID 16622)
 -- Name: usuario usuario_unique; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -991,7 +1235,34 @@ ALTER TABLE ONLY public.usuario
 
 
 --
--- TOC entry 2819 (class 2606 OID 16774)
+-- TOC entry 2859 (class 2606 OID 16941)
+-- Name: actividad actividad_item_catalogo_fk1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.actividad
+    ADD CONSTRAINT actividad_item_catalogo_fk1 FOREIGN KEY (estado) REFERENCES public.item_catalogo(id);
+
+
+--
+-- TOC entry 2864 (class 2606 OID 16986)
+-- Name: cotizacion cotizacion_plancotizacion_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cotizacion
+    ADD CONSTRAINT cotizacion_plancotizacion_fk FOREIGN KEY (idplantilla) REFERENCES public.plancotizacion(id);
+
+
+--
+-- TOC entry 2865 (class 2606 OID 16991)
+-- Name: cotizacion cotizacion_proveedor_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cotizacion
+    ADD CONSTRAINT cotizacion_proveedor_fk FOREIGN KEY (idproveedor) REFERENCES public.proveedor(id);
+
+
+--
+-- TOC entry 2853 (class 2606 OID 16774)
 -- Name: direccion direccion_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1000,7 +1271,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2818 (class 2606 OID 16599)
+-- TOC entry 2852 (class 2606 OID 16599)
 -- Name: direccion direccion_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1009,7 +1280,7 @@ ALTER TABLE ONLY public.direccion
 
 
 --
--- TOC entry 2817 (class 2606 OID 16817)
+-- TOC entry 2851 (class 2606 OID 16817)
 -- Name: documento documento_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1018,7 +1289,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2816 (class 2606 OID 16584)
+-- TOC entry 2850 (class 2606 OID 16584)
 -- Name: documento documento_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1027,8 +1298,8 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 2993 (class 0 OID 0)
--- Dependencies: 2816
+-- TOC entry 3049 (class 0 OID 0)
+-- Dependencies: 2850
 -- Name: CONSTRAINT documento_persona_fk ON documento; Type: COMMENT; Schema: public; Owner: -
 --
 
@@ -1036,7 +1307,7 @@ COMMENT ON CONSTRAINT documento_persona_fk ON public.documento IS 'd';
 
 
 --
--- TOC entry 2825 (class 2606 OID 16908)
+-- TOC entry 2860 (class 2606 OID 16908)
 -- Name: empleado empleado_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1045,7 +1316,7 @@ ALTER TABLE ONLY public.empleado
 
 
 --
--- TOC entry 2813 (class 2606 OID 16804)
+-- TOC entry 2846 (class 2606 OID 16804)
 -- Name: item_catalogo item_catalogo_catalogo_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1054,16 +1325,70 @@ ALTER TABLE ONLY public.item_catalogo
 
 
 --
--- TOC entry 2814 (class 2606 OID 16769)
--- Name: persona persona_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- TOC entry 2866 (class 2606 OID 16978)
+-- Name: itemcotizacion itemcotizacion_cotizacion_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.itemcotizacion
+    ADD CONSTRAINT itemcotizacion_cotizacion_fk FOREIGN KEY (idcotizacion) REFERENCES public.cotizacion(id);
+
+
+--
+-- TOC entry 2867 (class 2606 OID 17000)
+-- Name: itemcotizacion itemcotizacion_item_catalogo_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.itemcotizacion
+    ADD CONSTRAINT itemcotizacion_item_catalogo_fk FOREIGN KEY (idmedida) REFERENCES public.item_catalogo(id);
+
+
+--
+-- TOC entry 2848 (class 2606 OID 17005)
+-- Name: persona persona_item_estadocivil_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.persona
-    ADD CONSTRAINT persona_item_fk FOREIGN KEY (idtipo) REFERENCES public.item_catalogo(id);
+    ADD CONSTRAINT persona_item_estadocivil_fk FOREIGN KEY (idestadocivil) REFERENCES public.item_catalogo(id);
 
 
 --
--- TOC entry 2824 (class 2606 OID 16849)
+-- TOC entry 2847 (class 2606 OID 16769)
+-- Name: persona persona_item_tipo_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.persona
+    ADD CONSTRAINT persona_item_tipo_fk FOREIGN KEY (idtipo) REFERENCES public.item_catalogo(id);
+
+
+--
+-- TOC entry 2861 (class 2606 OID 16936)
+-- Name: plancotizacion plancotizacion_actividad_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.plancotizacion
+    ADD CONSTRAINT plancotizacion_actividad_fk FOREIGN KEY (idactividad) REFERENCES public.actividad(id);
+
+
+--
+-- TOC entry 2863 (class 2606 OID 16931)
+-- Name: planitem planitem_item_catalogo_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.planitem
+    ADD CONSTRAINT planitem_item_catalogo_fk FOREIGN KEY (idmedida) REFERENCES public.item_catalogo(id);
+
+
+--
+-- TOC entry 2862 (class 2606 OID 16926)
+-- Name: planitem planitem_plancotizacion_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.planitem
+    ADD CONSTRAINT planitem_plancotizacion_fk FOREIGN KEY (idplancotizacion) REFERENCES public.plancotizacion(id);
+
+
+--
+-- TOC entry 2858 (class 2606 OID 16849)
 -- Name: proveedor proveedor_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1072,7 +1397,7 @@ ALTER TABLE ONLY public.proveedor
 
 
 --
--- TOC entry 2823 (class 2606 OID 16888)
+-- TOC entry 2857 (class 2606 OID 16888)
 -- Name: proyecto proyecto_item_estado_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1081,7 +1406,7 @@ ALTER TABLE ONLY public.proyecto
 
 
 --
--- TOC entry 2821 (class 2606 OID 16830)
+-- TOC entry 2855 (class 2606 OID 16830)
 -- Name: telefono telefono_item_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1090,7 +1415,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2820 (class 2606 OID 16685)
+-- TOC entry 2854 (class 2606 OID 16685)
 -- Name: telefono telefono_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1099,7 +1424,7 @@ ALTER TABLE ONLY public.telefono
 
 
 --
--- TOC entry 2815 (class 2606 OID 16570)
+-- TOC entry 2849 (class 2606 OID 16570)
 -- Name: token token_account_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1108,7 +1433,7 @@ ALTER TABLE ONLY public.token
 
 
 --
--- TOC entry 2822 (class 2606 OID 16623)
+-- TOC entry 2856 (class 2606 OID 16623)
 -- Name: usuario usuario_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1116,7 +1441,7 @@ ALTER TABLE ONLY public.usuario
     ADD CONSTRAINT usuario_persona_fk FOREIGN KEY (idpersona) REFERENCES public.persona(id);
 
 
--- Completed on 2019-06-23 12:25:09
+-- Completed on 2019-06-24 06:47:19
 
 --
 -- PostgreSQL database dump complete

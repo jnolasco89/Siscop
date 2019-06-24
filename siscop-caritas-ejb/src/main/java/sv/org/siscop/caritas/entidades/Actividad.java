@@ -8,6 +8,7 @@ package sv.org.siscop.caritas.entidades;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,13 +60,15 @@ public class Actividad implements Serializable {
     private String descripcion;
     @Column(name = "fechainicio")
     @Temporal(TemporalType.DATE)
-    private Date fechainicio;
+    private Date fechaInicio;
     @Column(name = "fechafin")
     @Temporal(TemporalType.DATE)
-    private Date fechafin;
+    private Date fechaFin;
     @JoinColumn(name = "estado", referencedColumnName = "id")
     @ManyToOne
     private ItemCatalogo estado;
+    @OneToMany(mappedBy = "actividad")
+    private List<Plancotizacion> plancotizacionList;
 
     public Actividad() {
     }
@@ -98,20 +101,20 @@ public class Actividad implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Date getFechainicio() {
-        return fechainicio;
+    public Date getFechaInicio() {
+        return fechaInicio;
     }
 
-    public void setFechainicio(Date fechainicio) {
-        this.fechainicio = fechainicio;
+    public void setFechaInicio(Date fechaInicio) {
+        this.fechaInicio = fechaInicio;
     }
 
-    public Date getFechafin() {
-        return fechafin;
+    public Date getFechaFin() {
+        return fechaFin;
     }
 
-    public void setFechafin(Date fechafin) {
-        this.fechafin = fechafin;
+    public void setFechaFin(Date fechaFin) {
+        this.fechaFin = fechaFin;
     }
 
     public ItemCatalogo getEstado() {
@@ -122,21 +125,34 @@ public class Actividad implements Serializable {
         this.estado = estado;
     }
 
+    public List<Plancotizacion> getPlancotizacionList() {
+        return plancotizacionList;
+    }
+
+    public void setPlancotizacionList(List<Plancotizacion> plancotizacionList) {
+        this.plancotizacionList = plancotizacionList;
+    }
+
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 3;
+        hash = 23 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Actividad)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        Actividad other = (Actividad) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Actividad other = (Actividad) obj;
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return true;

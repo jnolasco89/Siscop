@@ -45,8 +45,6 @@ public class ItemCatalogo implements Serializable {
     @Size(max = 10)
     @Column(name = "codigo")
     private String codigo;
-    @OneToMany(mappedBy = "estado", fetch = FetchType.EAGER)
-    private List<Actividad> actividadList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -196,12 +194,5 @@ public class ItemCatalogo implements Serializable {
         this.codigo = codigo;
     }
 
-    @XmlTransient
-    public List<Actividad> getActividadList() {
-        return actividadList;
-    }
-
-    public void setActividadList(List<Actividad> actividadList) {
-        this.actividadList = actividadList;
-    }
+   
 }

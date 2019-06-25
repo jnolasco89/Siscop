@@ -36,19 +36,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @EntityListeners(AuditListener.class)
 public class Proyecto implements Auditable, Serializable {
 
-    @Column(name = "fechacrea")
-    @Temporal(TemporalType.TIME)
-    private Date fechacrea;
-    @Size(max = 15)
-    @Column(name = "usercrea")
-    private String usercrea;
-    @Column(name = "fechamod")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechamod;
-    @Size(max = 15)
-    @Column(name = "usermod")
-    private String usermod;
-    @OneToMany(mappedBy = "idproyecto", fetch = FetchType.EAGER)
+   
+    @OneToMany(mappedBy = "idproyecto")
     private List<Actividad> actividadList;
 
     private static final long serialVersionUID = 1L;
@@ -190,38 +179,6 @@ public class Proyecto implements Auditable, Serializable {
     @Override
     public String toString() {
         return "sv.org.siscop.caritas.entidades.Proyecto[ id=" + id + " ]";
-    }
-
-    public Date getFechacrea() {
-        return fechacrea;
-    }
-
-    public void setFechacrea(Date fechacrea) {
-        this.fechacrea = fechacrea;
-    }
-
-    public String getUsercrea() {
-        return usercrea;
-    }
-
-    public void setUsercrea(String usercrea) {
-        this.usercrea = usercrea;
-    }
-
-    public Date getFechamod() {
-        return fechamod;
-    }
-
-    public void setFechamod(Date fechamod) {
-        this.fechamod = fechamod;
-    }
-
-    public String getUsermod() {
-        return usermod;
-    }
-
-    public void setUsermod(String usermod) {
-        this.usermod = usermod;
     }
 
     @XmlTransient

@@ -18,4 +18,5 @@ import sv.org.siscop.caritas.entidades.Actividad;
 public interface ServicioActividadLocal {
     public List<Actividad> buscarActividadPorCualquierCampo(Map campos);
     public List<Actividad> getAllActividades();
+    public List<Actividad> getAllActividadesPorEstado(int estado);
 }

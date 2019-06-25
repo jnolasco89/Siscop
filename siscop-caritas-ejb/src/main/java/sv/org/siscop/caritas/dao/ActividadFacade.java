@@ -19,7 +19,8 @@ import sv.org.siscop.caritas.entidades.Actividad;
  * @author Nolasco
  */
 @Stateless
-public class ActividadFacade extends AbstractFacade<Actividad>{
+public class ActividadFacade extends AbstractFacade<Actividad> {
+
     @PersistenceContext(unitName = "siscop_pu")
     private EntityManager em;
 
@@ -31,10 +32,10 @@ public class ActividadFacade extends AbstractFacade<Actividad>{
     protected EntityManager getEntityManager() {
         return this.em;
     }
-    
-    public List buscarActividadPorCualquierCampo(Map campos){
-        List<Actividad> actividades=new ArrayList<>();
-        
+
+    public List buscarActividadPorCualquierCampo(Map campos) {
+        List<Actividad> actividades = new ArrayList<>();
+
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT a FROM Actividad a WHERE 1 = 1 ");
         if (campos.containsKey("id")) {
@@ -51,6 +52,16 @@ public class ActividadFacade extends AbstractFacade<Actividad>{
             query.setParameter("nombre", campos.get("nombre"));
         }
         actividades = query.getResultList();
+
+        return actividades;
+    }
+
+    public List<Actividad> getAllActividadesPorEstado(int estado) {
+        //21-Terminada
+        //22-En ejecucion
+        Query q = em.createQuery("SELECT a FROM Actividad a WHERE a.estado= :estado");
+        q.setParameter("estado", estado);
+        List<Actividad> actividades=q.getResultList();
         
         return actividades;
     }

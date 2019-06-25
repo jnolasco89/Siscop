@@ -18,9 +18,10 @@ import sv.org.siscop.caritas.entidades.Actividad;
  */
 @Stateless
 public class ServicioActividad implements ServicioActividadLocal {
+
     @EJB
     ActividadFacade actividadDao;
-    
+
     @Override
     public List<Actividad> buscarActividadPorCualquierCampo(Map campos) {
         return actividadDao.buscarActividadPorCualquierCampo(campos);
@@ -30,5 +31,11 @@ public class ServicioActividad implements ServicioActividadLocal {
     public List<Actividad> getAllActividades() {
         return actividadDao.findAll();
     }
-    
+
+    @Override
+    public List<Actividad> getAllActividadesPorEstado(int estado) {
+        //21-Terminada
+        //22-En ejecucion
+        return actividadDao.getAllActividadesPorEstado(estado);
+    }
 }

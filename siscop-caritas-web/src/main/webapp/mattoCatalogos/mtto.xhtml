@@ -8,8 +8,8 @@
     <ui:define name="content">
         <div class="ui-g ui-fluid">
             <div class="ui-g-12 ui-lg-12">
-                <p:layoutUnit position="center">
-                    <h3 style="margin-top:0">Mantenimiento de catálogos</h3>
+                <div class="card">
+                    <h1 style="margin-top:0">Mantenimiento de catálogos</h1>
 
                     <h:form id="formTabs">
                         <p:growl id="growl" showDetail="true" for="msgGrowl"/>
@@ -18,18 +18,24 @@
                                 <h:panelGrid>
                                     <p:menubar>
                                         <p:menuitem>
-                                            <p:inputText id="txtCampoBusqueda" value="#{mttoCatalogo.campoBusqueda}"/>
+                                            <p:inputText 
+                                                id="txtCampoBusqueda" 
+                                                value="#{mttoCatalogo.campoBusqueda}"
+                                                >
+                                            </p:inputText>
                                         </p:menuitem>
                                         <p:menuitem 
                                             value="Buscar" 
                                             actionListener="#{mttoCatalogo.buscarCatalogo()}" 
                                             icon="ui-icon-search"
-                                            update="tablaCatalogos"/>
+                                            update=":formTabs:tabs:tablaCatalogos"
+                                            process="@this txtCampoBusqueda"/>
                                         <p:menuitem 
                                             value="Limpiar" 
                                             action="#{mttoCatalogo.limpiarBusqueda()}" 
-                                            update=":formTabs:tabs"
-                                            icon="ui-icon-refresh" />
+                                            update=":formTabs:tabs:tablaCatalogos :formTabs:tabs:txtCampoBusqueda"
+                                            icon="fa fa-eraser" 
+                                            process="@this"/>
                                     </p:menubar>
                                     <p:dataTable id="tablaCatalogos" var = "cat" 
                                                  widgetVar="tablaCatalogos"
@@ -68,7 +74,7 @@
                                             value="Limpiar" 
                                             action="#{mttoCatalogo.limpiarFormularioYbusqueda()}" 
                                             update=":formTabs"
-                                            icon="ui-icon-refresh" process="@this"/>
+                                            icon="fa fa-eraser" process="@this"/>
                                     </p:menubar>
                                 </p:panelGrid>
                                 <p:panel style="margin-top: 5px;" header="Catalogo">
@@ -178,7 +184,7 @@
                         </p:dialog>
                     </h:form>
 
-                </p:layoutUnit>
+                </div>
             </div>
         </div>
         <script type="text/javascript">

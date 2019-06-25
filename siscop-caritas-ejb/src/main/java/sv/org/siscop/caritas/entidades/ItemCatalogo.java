@@ -7,6 +7,7 @@ package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -19,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,6 +29,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -38,6 +41,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "ItemCatalogo.findAll", query = "SELECT i FROM ItemCatalogo i")})
 public class ItemCatalogo implements Serializable {
+
+    @Size(max = 10)
+    @Column(name = "codigo")
+    private String codigo;
+    @OneToMany(mappedBy = "estado", fetch = FetchType.EAGER)
+    private List<Actividad> actividadList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -177,5 +186,22 @@ public class ItemCatalogo implements Serializable {
     @Override
     public String toString() {
         return "sv.org.siscop.caritas.entidades.ItemCatalogo[ id=" + id + " ]";
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    @XmlTransient
+    public List<Actividad> getActividadList() {
+        return actividadList;
+    }
+
+    public void setActividadList(List<Actividad> actividadList) {
+        this.actividadList = actividadList;
     }
 }

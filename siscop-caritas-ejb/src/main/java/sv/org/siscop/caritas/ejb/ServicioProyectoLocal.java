@@ -23,4 +23,7 @@ public interface ServicioProyectoLocal {
 
     public List<Proyecto> buscarProyectos(Map params) throws Exception;
 
+    public List<Proyecto> getAllProyectos();
+    
+    public List<Proyecto> getAllActividadesPorEstado(int estado);
 }

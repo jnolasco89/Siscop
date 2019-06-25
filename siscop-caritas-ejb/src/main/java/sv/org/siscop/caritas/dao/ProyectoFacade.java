@@ -70,4 +70,13 @@ public class ProyectoFacade extends AbstractFacade<Proyecto> {
         }
     }
 
+     public List<Proyecto> getAllProyectosPorEstado(int estado) {
+        //21-Terminada
+        //22-En ejecucion
+        Query q = em.createQuery("SELECT p FROM Proyecto p WHERE p.estado= :estado");
+        q.setParameter("estado", estado);
+        List<Proyecto> proyectos=q.getResultList();
+        
+        return proyectos;
+    }
 }

@@ -37,5 +37,14 @@ public class ServicioProyecto implements ServicioProyectoLocal {
         return proyectoDao.buscarProyectos(params);
 
     }
-
+    
+    @Override
+    public List<Proyecto> getAllProyectos(){
+        return proyectoDao.findAll();
+    }
+    
+    @Override
+    public List<Proyecto> getAllActividadesPorEstado(int estado){
+        return proyectoDao.getAllProyectosPorEstado(estado);
+    }
 }

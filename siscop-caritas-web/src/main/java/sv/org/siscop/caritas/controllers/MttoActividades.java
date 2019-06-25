@@ -6,23 +6,20 @@
 package sv.org.siscop.caritas.controllers;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import sv.org.siscop.caritas.ejb.ServicioActividadLocal;
+import sv.org.siscop.caritas.ejb.ServicioProyectoLocal;
 import sv.org.siscop.caritas.entidades.Actividad;
+import sv.org.siscop.caritas.entidades.Proyecto;
 import sv.org.siscop.caritas.entidades.Recurso;
 import sv.org.siscop.caritas.validadores.ValidacionesActividad;
 
@@ -33,16 +30,21 @@ import sv.org.siscop.caritas.validadores.ValidacionesActividad;
 @Named(value = "mttoActividades")
 @ViewScoped
 public class MttoActividades implements Serializable {
-
+    @EJB
+    ServicioProyectoLocal servProy;
     @EJB
     ServicioActividadLocal servAct;
 
     //Propiedades para la logica de la ui
     private int tabActiva;
-    private String campoBusqueda;
+    private String campoBusquedaProyecto;
+    private String campoBusquedaActividad;
     private List actividades;
+    private List<Proyecto> proyectos;
     private int modoRecurso;
+    private SimpleDateFormat formateadorFecha;
     //Propiedades para el modelo de catalogo
+    private Proyecto proyectoActual;
     private Actividad actividadActual;
     private List<Recurso> recursos;
     private Recurso recursoActual;
@@ -58,10 +60,14 @@ public class MttoActividades implements Serializable {
     @PostConstruct
     public void init() {
         tabActiva = 0;
-        campoBusqueda = "";
+        campoBusquedaProyecto="";
+        campoBusquedaActividad = "";
+        formateadorFecha=new SimpleDateFormat("dd-MM-yyyy");
         modoRecurso=1;//Cuando es 1 indica agregar, 2 indica editar
         actividadActual=new Actividad();
         actividades = servAct.getAllActividades();
+        proyectoActual=new Proyecto();
+        proyectos=servProy.getAllProyectos();
         recursos = new ArrayList<>();
         recursoActual = new Recurso();
         validaciones = new ValidacionesActividad();
@@ -76,12 +82,12 @@ public class MttoActividades implements Serializable {
         this.tabActiva = tabActiva;
     }
 
-    public String getCampoBusqueda() {
-        return campoBusqueda;
+    public String getCampoBusquedaActividad() {
+        return campoBusquedaActividad;
     }
 
-    public void setCampoBusqueda(String campoBusqueda) {
-        this.campoBusqueda = campoBusqueda;
+    public void setCampoBusquedaActividad(String campoBusquedaActividad) {
+        this.campoBusquedaActividad = campoBusquedaActividad;
     }
 
     public List getActividades() {
@@ -124,18 +130,58 @@ public class MttoActividades implements Serializable {
         this.recursoActual = recursoActual;
     }
 
+    public List<Proyecto> getProyectos() {
+        return proyectos;
+    }
+
+    public void setProyectos(List<Proyecto> proyectos) {
+        this.proyectos = proyectos;
+    }
+
+    public Proyecto getProyectoActual() {
+        return proyectoActual;
+    }
+
+    public void setProyectoActual(Proyecto proyectoActual) {
+        this.proyectoActual = proyectoActual;
+    }
+
+    public String getCampoBusquedaProyecto() {
+        return campoBusquedaProyecto;
+    }
+
+    public void setCampoBusquedaProyecto(String campoBusquedaProyecto) {
+        this.campoBusquedaProyecto = campoBusquedaProyecto;
+    }
+
+    
     //================= METODOS DE FUNCIONALIDAD =========================
+    //---- Pestania busqueda proyecto
+    public void buscarProyecto(){
+        System.out.println("Buscar proyecto");
+    }
+    
+    public void limpiarBusquedaProyecto(){
+        proyectoActual=new Proyecto();
+        campoBusquedaActividad="";
+        proyectos=servProy.getAllProyectos();
+        limpiarBusquedaActividad();
+    }
+    
+    public void cargarProyectoSeleccionado(){
+        System.out.println("Cargar proyecto seleccionado");
+    }
     //---- Pestania busqueda 
     public void buscarActividad() {
         Map campos = new HashMap();
-        campos.put("nombre", campoBusqueda);
+        campos.put("nombre", campoBusquedaActividad);
 
         actividades = servAct.buscarActividadPorCualquierCampo(campos);
     }
 
-    public void limpiarBusqueda() {
+    public void limpiarBusquedaActividad() {
         actividadActual = new Actividad();
-        campoBusqueda = "";
+        campoBusquedaActividad = "";
         actividades = servAct.getAllActividades();
     }
 
@@ -201,5 +247,13 @@ public class MttoActividades implements Serializable {
     
     public boolean habilitarBtnCancelarEdicionRecurso(){
         return modoRecurso==1;
+    }
+    
+    public String formatearFecha(Date fecha){
+        if(fecha==null){
+            return "";
+        }
+        
+        return formateadorFecha.format(fecha);
     }
 }

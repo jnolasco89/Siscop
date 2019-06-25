@@ -8,7 +8,6 @@ package sv.org.siscop.caritas.entidades;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,9 +40,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Actividad.findAll", query = "SELECT a FROM Actividad a")})
 public class Actividad implements Serializable {
 
-    @OneToMany(mappedBy = "idactividad", fetch = FetchType.EAGER)
-    private List<Recurso> recursoList;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "actividad_generator")
@@ -60,15 +56,18 @@ public class Actividad implements Serializable {
     private String descripcion;
     @Column(name = "fechainicio")
     @Temporal(TemporalType.DATE)
-    private Date fechaInicio;
+    private Date fechainicio;
     @Column(name = "fechafin")
     @Temporal(TemporalType.DATE)
-    private Date fechaFin;
+    private Date fechafin;
+    @OneToMany(mappedBy = "idactividad", fetch = FetchType.EAGER)
+    private List<Recurso> recursoList;
     @JoinColumn(name = "estado", referencedColumnName = "id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private ItemCatalogo estado;
-    @OneToMany(mappedBy = "actividad")
-    private List<Plancotizacion> plancotizacionList;
+    @JoinColumn(name = "idproyecto", referencedColumnName = "id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Proyecto idproyecto;
 
     public Actividad() {
     }
@@ -101,66 +100,20 @@ public class Actividad implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Date getFechaInicio() {
-        return fechaInicio;
+    public Date getFechainicio() {
+        return fechainicio;
     }
 
-    public void setFechaInicio(Date fechaInicio) {
-        this.fechaInicio = fechaInicio;
+    public void setFechainicio(Date fechainicio) {
+        this.fechainicio = fechainicio;
     }
 
-    public Date getFechaFin() {
-        return fechaFin;
+    public Date getFechafin() {
+        return fechafin;
     }
 
-    public void setFechaFin(Date fechaFin) {
-        this.fechaFin = fechaFin;
-    }
-
-    public ItemCatalogo getEstado() {
-        return estado;
-    }
-
-    public void setEstado(ItemCatalogo estado) {
-        this.estado = estado;
-    }
-
-    public List<Plancotizacion> getPlancotizacionList() {
-        return plancotizacionList;
-    }
-
-    public void setPlancotizacionList(List<Plancotizacion> plancotizacionList) {
-        this.plancotizacionList = plancotizacionList;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 23 * hash + Objects.hashCode(this.id);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Actividad other = (Actividad) obj;
-        if (!Objects.equals(this.id, other.id)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "sv.org.siscop.caritas.entidades.Actividad[ id=" + id + " ]";
+    public void setFechafin(Date fechafin) {
+        this.fechafin = fechafin;
     }
 
     @XmlTransient
@@ -172,4 +125,45 @@ public class Actividad implements Serializable {
         this.recursoList = recursoList;
     }
 
+    public ItemCatalogo getEstado() {
+        return estado;
+    }
+
+    public void setEstado(ItemCatalogo estado) {
+        this.estado = estado;
+    }
+
+    public Proyecto getIdproyecto() {
+        return idproyecto;
+    }
+
+    public void setIdproyecto(Proyecto idproyecto) {
+        this.idproyecto = idproyecto;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Actividad)) {
+            return false;
+        }
+        Actividad other = (Actividad) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "sv.org.siscop.caritas.entidades.Actividad[ id=" + id + " ]";
+    }
+    
 }

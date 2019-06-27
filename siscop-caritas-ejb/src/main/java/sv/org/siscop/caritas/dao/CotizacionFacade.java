@@ -56,5 +56,5 @@ public class CotizacionFacade extends AbstractFacade<Cotizacion> {
             throw new Exception(ex);
         }
     }
-
+    
 }

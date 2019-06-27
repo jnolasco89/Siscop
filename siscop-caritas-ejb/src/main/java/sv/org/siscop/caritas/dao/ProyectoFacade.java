@@ -46,6 +46,9 @@ public class ProyectoFacade extends AbstractFacade<Proyecto> {
             if (filtro.containsKey("nombrecorto")) {
                 sql.append("AND UPPER(p.nombreCorto) like :nombrecorto ");
             }
+            if (filtro.containsKey("estado")) {
+                sql.append("AND p.estado.id = :estado");
+            }
 
             sql.append(" ORDER BY p.id");
 
@@ -62,6 +65,9 @@ public class ProyectoFacade extends AbstractFacade<Proyecto> {
                 q.setParameter("nombrecorto",
                         "%" + filtro.get("nombrecorto").toString().toUpperCase() + "%");
             }
+            if (filtro.containsKey("estado")) {
+                q.setParameter("estado", filtro.get("estado"));
+            }
             lista = (List<Proyecto>) q.getResultList();
             return lista;
         } catch (Exception ex) {
@@ -70,13 +76,13 @@ public class ProyectoFacade extends AbstractFacade<Proyecto> {
         }
     }
 
-     public List<Proyecto> getAllProyectosPorEstado(int estado) {
+    public List<Proyecto> getAllProyectosPorEstado(int estado) {
         //21-Terminada
         //22-En ejecucion
         Query q = em.createQuery("SELECT p FROM Proyecto p WHERE p.estado= :estado");
         q.setParameter("estado", estado);
-        List<Proyecto> proyectos=q.getResultList();
-        
+        List<Proyecto> proyectos = q.getResultList();
+
         return proyectos;
     }
 }

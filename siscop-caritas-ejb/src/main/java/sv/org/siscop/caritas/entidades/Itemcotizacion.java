@@ -123,6 +123,11 @@ public class Itemcotizacion implements Serializable {
     }
 
     public BigDecimal getTotal() {
+//        if (this.getPreciounitario() != null && this.getCantidad() != null) {
+//            BigDecimal tot = this.getPreciounitario()
+//                    .multiply(BigDecimal.valueOf(this.getCantidad()));
+//            this.setTotal(tot);
+//        }
         return total;
     }
 

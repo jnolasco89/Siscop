@@ -7,10 +7,17 @@ package sv.org.siscop.caritas.ejb;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import sv.org.siscop.caritas.dao.CotizacionFacade;
+import sv.org.siscop.caritas.dao.ItemcotizacionFacade;
 import sv.org.siscop.caritas.dao.PlantillaCotizacionFacade;
+import sv.org.siscop.caritas.entidades.Cotizacion;
+import sv.org.siscop.caritas.entidades.Itemcotizacion;
 import sv.org.siscop.caritas.entidades.Plancotizacion;
+import sv.org.siscop.caritas.entidades.Planitem;
 
 /**
  *
@@ -21,6 +28,10 @@ public class ServicioCotizacion implements ServicioCotizacionLocal {
 
     @EJB
     PlantillaCotizacionFacade planCotizacionDao;
+    @EJB
+    CotizacionFacade cotizacionDao;
+    @EJB
+    ItemcotizacionFacade itemcotizacionDao;
 
     @Override
     public void nuevoPlancotizacion(Plancotizacion c) {
@@ -28,8 +39,47 @@ public class ServicioCotizacion implements ServicioCotizacionLocal {
     }
 
     @Override
+    public void nuevoPlanItem(Planitem item) throws Exception {
+        try {
+            planCotizacionDao.nuevoPlanItem(item);
+        } catch (Exception ex) {
+            Logger.getLogger(ServicioCotizacion.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        }
+    }
+
+    @Override
     public Plancotizacion actualizarPlancotizacion(Plancotizacion c) {
         return planCotizacionDao.edit(c);
+    }
+
+    public void nuevaCotizacion(Cotizacion c) {
+        cotizacionDao.create(c);
+    }
+
+    @Override
+    public void actualizarCotizacion(Cotizacion c) {
+        cotizacionDao.edit(c);
+    }
+
+    @Override
+    public void nuevoItemCotizacion(Itemcotizacion item) throws Exception {
+        try {
+            itemcotizacionDao.create(item);
+        } catch (Exception ex) {
+            Logger.getLogger(ServicioCotizacion.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        }
+    }
+
+    @Override
+    public void actualizarItemCotizacion(Itemcotizacion item) throws Exception {
+        try {
+            itemcotizacionDao.edit(item);
+        } catch (Exception ex) {
+            Logger.getLogger(ServicioCotizacion.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        }
     }
 
     @Override

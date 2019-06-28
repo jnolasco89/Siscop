@@ -14,3 +14,14 @@ and open the template in the editor.
 .input-cta-padre .ui-inputfield{
     opacity: 1!important;
 }
+
+.btn-eliminar-off{
+    background: #2399e5;
+    border: 1px solid #1f89ce;
+    color: #fff;
+}
+
+.btn-eliminar-on{
+    border: 1px solid red;
+    
+}

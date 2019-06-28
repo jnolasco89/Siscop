@@ -5,6 +5,7 @@
  */
 package sv.org.siscop.caritas.dao;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import sv.org.siscop.caritas.entidades.Recurso;
@@ -13,6 +14,7 @@ import sv.org.siscop.caritas.entidades.Recurso;
  *
  * @author Nolasco
  */
+@Stateless
 public class RecursoFacade extends AbstractFacade<Recurso> {
     @PersistenceContext(unitName = "siscop_pu")
     private EntityManager em;

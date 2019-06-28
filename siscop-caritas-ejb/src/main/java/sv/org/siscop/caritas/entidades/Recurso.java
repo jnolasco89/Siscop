@@ -58,6 +58,8 @@ public class Recurso implements Serializable {
     private Double total;
     @Transient
     private int indiceEnList;
+    @Transient
+    private boolean eliminar;
 
     public Recurso() {
     }
@@ -121,7 +123,15 @@ public class Recurso implements Serializable {
     public void setIndiceEnList(int indiceEnList) {
         this.indiceEnList = indiceEnList;
     }
-    
+
+    public boolean isEliminar() {
+        return eliminar;
+    }
+
+    public void setEliminar(boolean eliminar) {
+        this.eliminar = eliminar;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;

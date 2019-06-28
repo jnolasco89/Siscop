@@ -12,19 +12,18 @@
                 <div class="card">
                     <h1 style="margin-top:0">Mantenimiento de actividades</h1>
                     <h:form id="formTabs">
-                        <p:growl id="growl" showDetail="true" for="msgGrowl"/>
+                        <p:growl id="msg" showDetail="true" for="msgGrowl"/>
                         <p:tabView id="tabs" activeIndex="#{mttoActividades.tabActiva}">
                             <div class="card">
                                 <p:tab id="busqueda" title="Búsqueda">
                                     <p:menubar>
-                                        <p:menuitem>
-                                            <p:inputText id="txtCampoBusqueda" value="#{mttoActividades.campoBusquedaActividad}"/>
-                                        </p:menuitem>
                                         <p:menuitem 
                                             value="Buscar" 
                                             actionListener="#{mttoActividades.buscarActividad()}" 
                                             icon="ui-icon-search"
-                                            update="tablaActividades"/>
+                                            update="tablaActividades"
+                                            process="@this datosActividadBuscada"
+                                            />
                                         <p:menuitem 
                                             value="Limpiar" 
                                             action="#{mttoActividades.limpiarBusquedaActividad()}" 
@@ -33,6 +32,75 @@
                                             process="@this"
                                             />
                                     </p:menubar>
+
+                                    <div jsf:id="datosActividadBuscada" class="ui-g ui-fluid">
+                                        <div class="ui-md-2">
+                                            <p:outputLabel for="txtBusProyecto" value="Nombre corto proyecto:" />
+                                        </div>
+                                        <div class="ui-md-3">
+                                            <div class="ui-inputgroup">
+                                                <p:inputText id="txtBusProyecto"
+                                                             value="#{mttoActividades.actividadBusqueda.idproyecto.nombreCorto}"
+                                                             readonly="true"
+                                                             >
+                                                </p:inputText>
+                                                <p:commandButton icon="ui-icon-search"  
+                                                                 styleClass="white-button"
+                                                                 process="@this"
+                                                                 update=":formDialogProyectos"
+                                                                 actionListener="#{mttoActividades.abrirModalBuscarProyecto()}"/>  
+                                            </div>
+                                        </div>
+                                        <div class="ui-md-2">
+                                            <p:outputLabel for="txtBusActividad" value="Nombre actividad:" />
+                                        </div>
+                                        <div class="ui-md-3">
+                                            <p:inputText id="txtBusActividad" value="#{mttoActividades.actividadBusqueda.nombre}"
+                                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                                        </div>
+                                        <div class="ui-md-2">
+                                            <p:outputLabel for="BusfechaInicio" value="Fecha inicio:" />
+                                        </div>
+                                        <div class="ui-md-3">
+                                            <p:calendar id="BusfechaInicio" 
+                                                        value="#{mttoActividades.actividadBusqueda.fechainicio}"
+                                                        pattern="dd-MM-yyyy" 
+                                                        mask="true"
+                                                        locale="es"
+                                                        navigator="true"
+                                                        >
+                                            </p:calendar>    
+                                        </div>
+                                        <div class="ui-md-2">
+                                            <p:outputLabel for="BusfechaFin" value="Fecha fin:" />
+                                        </div>
+                                        <div class="ui-md-3">
+                                            <p:calendar id="BusfechaFin" 
+                                                        value="#{mttoActividades.actividadBusqueda.fechafin}"
+                                                        pattern="dd-MM-yyyy" 
+                                                        mask="true"
+                                                        locale="es"
+                                                        navigator="true"
+                                                        >
+                                            </p:calendar>
+                                        </div>
+                                        <div class="ui-md-2">
+                                            <p:outputLabel for="listEstado" value="Estado:" />
+                                        </div>
+                                        <div class="ui-md-3">
+                                            <p:selectOneMenu id="listEstado" 
+                                                             value="#{mttoActividades.actividadBusqueda.estado.id}"
+                                                             >
+                                                <f:selectItem itemLabel="Todos" itemValue="0"/>
+                                                <f:selectItems value="#{mttoActividades.estadosActividad}" 
+                                                               var="estado" 
+                                                               itemLabel="#{estado.descripcion}"
+                                                               itemValue="#{estado.id}"
+
+                                                               />
+                                            </p:selectOneMenu>
+                                        </div>
+                                    </div>
                                     <p:dataTable id="tablaActividades" var = "act" 
                                                  widgetVar="tablaActividades"
                                                  value="#{mttoActividades.actividades}"
@@ -42,13 +110,16 @@
                                                  emptyMessage="Sin registros">
                                         <p:ajax event="rowSelect"
                                                 listener="#{mttoActividades.cargarActividadSeleccionada()}"
-                                                update=":formTabs:tabs"
+                                                update=":formTabs"
                                                 />
                                         <p:column headerText="Código">
                                             <h:outputText value="#{act.id}" />
                                         </p:column>
                                         <p:column headerText="Nombre">
                                             <h:outputText value="#{act.nombre}" />
+                                        </p:column>
+                                        <p:column headerText="Proyecto">
+                                            <h:outputText value="#{act.idproyecto.nombreCorto}" />
                                         </p:column>
                                         <p:column headerText="Fecha inicio">
                                             <h:outputText value="#{act.fechainicio}">
@@ -67,14 +138,14 @@
                                 </p:tab>
                             </div>
                             <div class="card">
-                                <p:tab id="actvidad" title="Actividad">
+                                <p:tab id="actividad" title="Actividad">
                                     <p:menubar>
                                         <p:menuitem 
                                             value="Guardar" 
                                             action="#{mttoActividades.guardarActividad()}" 
                                             icon="ui-icon-disk" 
                                             update=":formTabs:tabs:datosActividad"
-                                            process="@this txtNombre fechaInicio fechaFin"
+                                            process="@this txtProyecto txtNombre fechaInicio fechaFin txtDescripcion"
                                             >
                                         </p:menuitem>
                                         <p:menuitem 
@@ -90,14 +161,17 @@
                                                 <p:outputLabel for="txtProyecto" value="Proyecto:"/>
                                                 <div class="ui-inputgroup">
                                                     <p:inputText id="txtProyecto"
-                                                                 value="#{mttoActividades.actividadActual.idproyecto.nombreCorto}"
+                                                                 value="#{mttoActividades.proyectoActual.nombreCorto}"
                                                                  readonly="true"
+                                                                 validator="#{mttoActividades.validaciones.validarProyecto}"
                                                                  >
+                                                        <p:message for="txtProyecto"/>
                                                     </p:inputText>
                                                     <p:commandButton icon="ui-icon-search"  
                                                                      styleClass="white-button"
-                                                                     type="button"
-                                                                     onclick="PF('dialogProyectos').show()"/>  
+                                                                     process="@this"
+                                                                     update=":formDialogProyectos"
+                                                                     actionListener="#{mttoActividades.abrirModalAsignarProyecto()}"/>  
                                                 </div>
                                             </div>
                                             <div class="ui-g-3" >
@@ -142,6 +216,19 @@
                                                                  >
                                                 </p:inputTextarea>
                                             </div>
+                                            <div class="ui-g-3">
+                                                <p:outputLabel for="listEstadoActividad" value="Estado:" rendered="#{mttoActividades.verListEstado()}"/>
+                                                <p:selectOneMenu id="listEstadoActividad" 
+                                                                 value="#{mttoActividades.actividadActual.estado.id}"
+                                                                 rendered="#{mttoActividades.verListEstado()}"
+                                                                 >
+                                                    <f:selectItems value="#{mttoActividades.estadosActividad}" 
+                                                                   var="estado" 
+                                                                   itemLabel="#{estado.descripcion}"
+                                                                   itemValue="#{estado.id}"
+                                                                   />
+                                                </p:selectOneMenu>
+                                            </div>
                                         </div>    
                                     </div>
                                     <p:tabView id="tabsDetallesActvidad">
@@ -169,17 +256,17 @@
                                                     <p:message for="txtCostoUnitario"/>
                                                 </p:inputText>
                                             </h:panelGrid>
-                                            <p:menubar>
+                                            <p:menubar id="botonesRecurso">
                                                 <p:menuitem 
                                                     value="Agregar" 
                                                     actionListener="#{mttoActividades.accionBtnRecurso()}"
                                                     icon="ui-icon-plus"
                                                     process="@this txtRecurso txtCantidad txtCostoUnitario"
-                                                    update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos :formTabs:tabs:tabsDetallesActvidad:datosRecurso"
+                                                    update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos :formTabs:tabs:tabsDetallesActvidad:datosRecurso :formTabs:tabs:tabsDetallesActvidad:botonesRecurso"
                                                     />
                                                 <p:menuitem 
                                                     value="Limpiar" 
-                                                    actionListener="#{mttoActividades.limpirFormularioYtablaRecurso()}"
+                                                    actionListener="#{mttoActividades.limpiarFormularioYtablaRecurso()}"
                                                     icon="fa fa-eraser"
                                                     process="@this"
                                                     update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos :formTabs:tabs:tabsDetallesActvidad:datosRecurso"
@@ -189,7 +276,7 @@
                                                     actionListener="#{mttoActividades.cancelarEdicionRecurso()}"
                                                     icon="ui-icon-close"
                                                     process="@this"
-                                                    update=":formTabs:tabs:tabsDetallesActvidad:datosRecurso"
+                                                    update=":formTabs:tabs:tabsDetallesActvidad:datosRecurso :formTabs:tabs:tabsDetallesActvidad:botonesRecurso"
                                                     disabled="#{mttoActividades.habilitarBtnCancelarEdicionRecurso()}"
                                                     />
                                             </p:menubar>
@@ -213,6 +300,14 @@
                                                     <h:outputText value="#{recurso.total}"/>
                                                 </p:column>
                                                 <p:column headerText="Opciones" style="text-align: center;">
+                                                    <p:selectBooleanButton 
+                                                        class="#{mttoActividades.classBtnElminarRecursoDeBd(recurso)}"
+                                                        value="#{recurso.eliminar}" 
+                                                        onLabel="" offLabel="" 
+                                                        onIcon="ui-icon-close" 
+                                                        offIcon="ui-icon-trash"
+                                                        style="width: 30px;margin: 0px 10px 0px 10px;">
+                                                    </p:selectBooleanButton>
                                                     <p:commandButton 
                                                         icon="ui-icon-trash" 
                                                         style="width: 30px;margin: 0px 10px 0px 10px;"
@@ -224,7 +319,7 @@
                                                         icon="ui-icon-pencil" 
                                                         style="width: 30px;margin: 0px 10px 0px 10px;"
                                                         actionListener="#{mttoActividades.cargarRecursoSeleccionado(index, recurso)}"
-                                                        update=":formTabs:tabs:tabsDetallesActvidad:datosRecurso"
+                                                        update=":formTabs:tabs:tabsDetallesActvidad:datosRecurso :formTabs:tabs:tabsDetallesActvidad:botonesRecurso"
                                                         process="@this"
                                                         />
                                                 </p:column>
@@ -245,11 +340,11 @@
                               widgetVar="dialogProyectos" 
                               modal="true" 
                               header="Proyectos" 
-                              width="600" 
+                              width="800" 
                               height="300"
                               resizable="false"
                               >
-                        <p:scrollPanel id="contenedor-tree-dialog" style="width: 570px;height: 250px;">
+                        <p:scrollPanel id="contenedor-tree-dialog" style="width: 770px;height: 250px;">
                             <p:dataTable id="tablaProyectos" var = "pro" 
                                          widgetVar="tablaProyectos"
                                          value="#{mttoActividades.proyectos}"
@@ -259,7 +354,7 @@
                                          emptyMessage="Sin registros">
                                 <p:ajax event="rowSelect"
                                         listener="#{mttoActividades.cargarProyectoSeleccionado()}"
-                                        update=":formTabs:tabs"
+
                                         />
                                 <p:column headerText="Código">
                                     <h:outputText value="#{pro.codigo}" />
@@ -267,7 +362,7 @@
                                 <p:column headerText="Nombre">
                                     <h:outputText value="#{pro.nombre}" />
                                 </p:column>
-                                <p:column headerText="Nombre">
+                                <p:column headerText="Nombre Corto">
                                     <h:outputText value="#{pro.nombreCorto}" />
                                 </p:column>
                                 <p:column headerText="Fecha inicio">
@@ -288,8 +383,8 @@
                         <h:panelGrid columns="3">
                             <p:commandButton 
                                 value="Cancelar" 
-                                type="button"
-                                onclick="PF('dialogCuentas').hide()"
+                                process="@this"
+                                actionListener="#{mttoActividades.cerrarModalProyectos()}"
                                 />
                         </h:panelGrid>
                     </p:dialog>

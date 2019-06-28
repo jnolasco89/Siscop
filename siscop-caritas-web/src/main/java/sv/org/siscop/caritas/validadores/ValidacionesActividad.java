@@ -21,6 +21,11 @@ public class ValidacionesActividad {
         generales = new ValidacionesGenerales();
 
     }
+    
+    public void validarProyecto(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
+        generales.validarCadena("Formato de nombre incorrecto", value);
+    }
+    
     public void validarNombre(FacesContext fc, UIComponent component, Object value) throws ValidatorException {
         generales.validarCadena("Formato de nombre incorrecto", value);
     }

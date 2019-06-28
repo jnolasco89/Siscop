@@ -9,11 +9,8 @@
             <div class="ui-g-12 ui-lg-12">
                 <div class="card">
                     <h1 style="margin-top:0">Cotizaciones</h1>
-                    <h:form id="principal">
-                        
-                <p:defaultCommand target="dummy"/>
-                <p:commandButton id="dummy" process="@none" global="false" style="display:none;"/>
-                        
+                    <h:form id="principal">                       
+
                         <p:growl id="growl" showSummary="true" globalOnly="true"
                                  sticky="true" showDetail="true" for="msgGrowl"/>
                         <p:tabView id="tabs" activeIndex="#{mttoCotizacion.tabindex}">
@@ -49,7 +46,7 @@
                                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                      rowsPerPageTemplate="10,20,50">
                                             <p:ajax event="rowSelect" listener="#{mttoCotizacion.onRowSelectPlan(event)}"
-                                                    update="principal" />
+                                                    update="principal principal:tabs:otraInfo" />
                                             <p:column headerText="Id" width="10%">
                                                 <h:outputText value="#{plan.id}" />
                                             </p:column>
@@ -124,38 +121,47 @@
                                                                      update="principal" style="margin-right:20px;"
                                                                      icon="fa fa-search" />
                                                 </div>
-                                                <p:dataTable id="listaItemPlan" var = "item"
+                                                <p:dataTable id="listaItemPlan" var = "planitem"
                                                              value="#{mttoCotizacion.itemPlanCotizacionList}"
-                                                             selectionMode="single"
-                                                             widgetVar="cellLect"
-                                                             editable="true"
+                                                             widgetVar="cellItemsPlan"
+                                                             editable="true" 
                                                              editMode="cell"
-                                                             editingRow="true"
-                                                             rowKey="#{item.id}"
-                                                             selection="#{mttoCotizacion.planItemActual}"
-                                                             paginator="true"
-                                                             rows ="10"
-                                                             paginatorPosition="bottom"
-                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                             rowsPerPageTemplate="10,20,50">
-                                                    <p:ajax event="rowSelect"
-                                                            listener="#{mttoCotizacion.onRowSelectPlanItem(event)}"
-                                                            update="principal" />
-                                                    <p:ajax event="cellEdit" listener="#{mttoCotizacion.onCellEditPlanItem}"
-                                                            update="principal"/>
-                                                    <p:ajax event="rowEditCancel" listener="#{mttoCotizacion.onRowCancelPlanItem}"
-                                                            update="principal"/>
+                                                             draggableRows="true"                                                             
+                                                             >
+                                                    <p:ajax event="rowReorder" listener="#{mttoCotizacion.onRowReorderPlanItem}" 
+                                                            update="listaItemPlan" />
+                                                    <p:ajax event="cellEdit" listener="#{mttoCotizacion.onCellEditPlanItem}"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{mttoCotizacion.onRowCancelPlanItem}"/>
+                                                    <p:column headerText="Orden" width="10%">
+                                                        <h:outputText value="#{planitem.orden}" />
+                                                    </p:column>
                                                     <p:column headerText="Id" width="10%">
-                                                        <h:outputText value="#{item.id}" />
+                                                        <h:outputText value="#{planitem.id}" />
                                                     </p:column>
                                                     <p:column headerText="Producto">
-                                                        <h:outputText value="#{item.producto}" />
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{planitem.producto}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{planitem.producto}" 
+                                                                             style="width:96%"
+                                                                             label="Producto"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
                                                     </p:column>
                                                     <p:column headerText="Descripción">
-                                                        <h:outputText value="#{item.descripcion}" />
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{planitem.descripcion}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{planitem.descripcion}" 
+                                                                             style="width:96%"
+                                                                             label="Descripción"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
                                                     </p:column>
                                                     <p:column headerText="Unidad" width="10%">
-                                                        <h:outputText value="#{item.medida.descripcion}" />
+                                                        <h:outputText value="#{planitem.medida.descripcion}" />
                                                     </p:column>
                                                     <p:column headerText="Cantidad" width="10%" >
                                                         <f:facet name="header">
@@ -164,10 +170,10 @@
                                                         </f:facet>
                                                         <p:cellEditor>
                                                             <f:facet name="output">
-                                                                <h:outputText value="#{item.cantidad}" />
+                                                                <h:outputText value="#{planitem.cantidad}" />
                                                             </f:facet>
                                                             <f:facet name="input">
-                                                                <p:inputText  value="#{item.cantidad}"
+                                                                <p:inputText  value="#{planitem.cantidad}"
                                                                               style="width:94%; "
                                                                               label="Cantidad"/>
                                                             </f:facet>
@@ -175,7 +181,8 @@
                                                     </p:column>
                                                 </p:dataTable>
                                             </div>
-                                        </p:tab><p:tab id="cotizaciones" title="Cotizaciones">
+                                        </p:tab>
+                                        <p:tab id="cotizaciones" title="Cotizaciones">
                                             <div class="card ui-g" style="margin-top:0">
                                                 <div class="ui-g-3" >
                                                     <p:outputLabel value="Comentarios:" for="txtComentarioCot"/>
@@ -221,19 +228,21 @@
                                                     <h2>Ingrese detalle</h2>
                                                 </div>
                                                 <p:remoteCommand name="onCellEdit2"
-                                                                 update="listaItemCotizacion" />
-                                                <p:dataTable id="listaItemCotizacion" var = "item"
+                                                                 update="listaItemCotizacion :principal:growl" />                                                
+                                                <p:dataTable id="listaItemCotizacion" var="item"
                                                              value="#{mttoCotizacion.listaItemCotizacion}"
-                                                             rowKey="#{item.id}"                                                            
-                                                             paginator="true"
-                                                             paginatorAlwaysVisible="false"
-                                                             rows ="10"
-                                                             paginatorPosition="bottom"
-                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                             rowsPerPageTemplate="10,20,50">
-                                                    <p:column headerText="Id" width="10%">
-                                                        <h:outputText value="#{item.id}" />
-                                                    </p:column>
+                                                             editable="true" 
+                                                             editMode="cell"
+                                                             widgetVar="cellItemsCotizacion">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="#{mttoCotizacion.cotizacionActual.comentarios}" />
+                                                    </f:facet>
+                                                    <p:ajax event="cellEdit"
+                                                            listener="#{mttoCotizacion.onCellEditItemCotizacion}"/>
+                                                    <p:ajax event="rowEditCancel" 
+                                                            listener="#{mttoCotizacion.onRowCancelItemCotizacion}"
+                                                            update="listaItemCotizacion"
+                                                            oncomplete="onCellEdit2()"/>
                                                     <p:column headerText="Producto">
                                                         <h:outputText value="#{item.producto}" />
                                                     </p:column>
@@ -242,20 +251,36 @@
                                                     </p:column>
                                                     <p:column headerText="Unidad" width="10%">
                                                         <h:outputText value="#{item.medida.descripcion}" />
+                                                    </p:column>                                                    
+                                                    <p:column headerText="Cantidad" width="10%">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{item.cantidad}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{item.cantidad}" 
+                                                                             style="width:96%"
+                                                                             label="Cantidad"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
                                                     </p:column>
-                                                    <p:column headerText="Cantidad" width="10%" >
-                                                        <p:inputNumber  value="#{item.cantidad}"
-                                                                        style="width:100%; "
-                                                                        label="Cantidad">                                                                    
-                                                            <p:ajax update="listaItemCotizacion" />  
-                                                        </p:inputNumber>
-                                                    </p:column>
-                                                    <p:column headerText="Precio Unitario" width="10%" >
-                                                        <p:inputNumber  value="#{item.preciounitario}" id="cantidad"
-                                                                        style="width:100%;"
-                                                                        label="Cantidad">
-                                                            <p:ajax update="listaItemCotizacion" />  
-                                                        </p:inputNumber>
+                                                    <p:column headerText="Precio" width="10%">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{item.preciounitario}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputNumber value="#{item.preciounitario}"
+                                                                               decimalPlaces="2"
+                                                                               minValue="0.00"                                                                               
+                                                                               style="width:96%"
+                                                                               label="Precio">
+                                                                    <f:validateDoubleRange minimum="0.00" 
+                                                                                           maximum="999999999.99" />
+                                                                    <f:convertNumber minFractionDigits="2"/>
+                                                                    <p:ajax event="blur" oncomplete="onCellEdit2()" />
+                                                                </p:inputNumber>
+                                                            </f:facet>
+                                                        </p:cellEditor>
                                                     </p:column>
                                                     <p:column headerText="Total" width="10%">
                                                         <h:outputText id="total" value="#{item.total}">

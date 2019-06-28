@@ -88,5 +88,16 @@ public class PlantillaCotizacionFacade extends AbstractFacade<Plancotizacion> {
             throw new Exception(ex);
         }
     }
+    
+    public void actualizarPlanItem(Planitem item) throws Exception {
+        try {
+            this.getEntityManager().merge(item);
+
+        } catch (Exception ex) {
+
+            logger.log(Level.SEVERE, "Error en actualizarPlanItem", ex);
+            throw new Exception(ex);
+        }
+    }
 
 }

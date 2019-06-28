@@ -38,6 +38,12 @@ public class ServicioCotizacion implements ServicioCotizacionLocal {
         planCotizacionDao.create(c);
     }
 
+
+    @Override
+    public Plancotizacion actualizarPlancotizacion(Plancotizacion c) {
+        return planCotizacionDao.edit(c);
+    }
+
     @Override
     public void nuevoPlanItem(Planitem item) throws Exception {
         try {
@@ -47,12 +53,16 @@ public class ServicioCotizacion implements ServicioCotizacionLocal {
             throw ex;
         }
     }
-
+    
     @Override
-    public Plancotizacion actualizarPlancotizacion(Plancotizacion c) {
-        return planCotizacionDao.edit(c);
+    public void actualizarPlanItem(Planitem item) throws Exception {
+        try {
+            planCotizacionDao.actualizarPlanItem(item);
+        } catch (Exception ex) {
+            Logger.getLogger(ServicioCotizacion.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        }
     }
-
     public void nuevaCotizacion(Cotizacion c) {
         cotizacionDao.create(c);
     }

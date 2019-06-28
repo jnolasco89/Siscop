@@ -36,4 +36,6 @@ public interface ServicioCotizacionLocal {
 
     public void nuevoItemCotizacion(Itemcotizacion item) throws Exception;
 
+    public void actualizarPlanItem(Planitem item) throws Exception;
+
 }

@@ -5,7 +5,7 @@
 -- Dumped from database version 11.2
 -- Dumped by pg_dump version 11.2
 
--- Started on 2019-06-27 20:17:50
+-- Started on 2019-06-28 18:50:28
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -111,7 +111,8 @@ CREATE TABLE public.cotizacion (
     fecha date,
     total numeric(15,2),
     comentarios character varying(300),
-    validacionofac boolean
+    validacionofac boolean,
+    numero integer
 );
 
 
@@ -188,7 +189,7 @@ CREATE TABLE public.empleado (
 CREATE TABLE public.item_catalogo (
     id integer NOT NULL,
     codigo character(10),
-    descripcion character(50),
+    descripcion character varying(50),
     idcatalogo integer,
     activo boolean,
     fechacrea time without time zone,
@@ -639,20 +640,24 @@ INSERT INTO public.catalogo VALUES (30, 'Unidad de Medida                       
 -- Data for Name: cotizacion; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.cotizacion VALUES (3, 2, NULL, '2019-06-25', NULL, 'COTIZACION 1', NULL);
-INSERT INTO public.cotizacion VALUES (4, 2, NULL, '2019-06-25', NULL, 'COTIZACION 2', NULL);
-INSERT INTO public.cotizacion VALUES (5, 3, NULL, '2019-06-25', NULL, 'DFAF', NULL);
-INSERT INTO public.cotizacion VALUES (6, 3, NULL, '2019-06-25', NULL, 'OTRA', NULL);
-INSERT INTO public.cotizacion VALUES (7, 3, NULL, '2019-06-25', NULL, '', NULL);
-INSERT INTO public.cotizacion VALUES (8, 2, NULL, '2019-06-26', NULL, 'COTIZACION 3', NULL);
-INSERT INTO public.cotizacion VALUES (9, 2, NULL, '2019-06-26', NULL, 'TRE', NULL);
-INSERT INTO public.cotizacion VALUES (10, 3, NULL, '2019-06-26', NULL, 'EMPRESA 2', NULL);
-INSERT INTO public.cotizacion VALUES (11, 4, NULL, '2019-06-27', NULL, 'NIÑA CLAUDINA', NULL);
-INSERT INTO public.cotizacion VALUES (12, 4, NULL, '2019-06-27', NULL, 'MIKE', NULL);
-INSERT INTO public.cotizacion VALUES (13, 4, NULL, '2019-06-27', NULL, 'OLOCUILTA', NULL);
-INSERT INTO public.cotizacion VALUES (14, 5, NULL, '2019-06-27', NULL, 'MIKE', NULL);
-INSERT INTO public.cotizacion VALUES (15, 5, NULL, '2019-06-27', NULL, 'NIÑA CLAUDINA', NULL);
-INSERT INTO public.cotizacion VALUES (16, 5, NULL, '2019-06-27', NULL, 'OLOCUILTA', NULL);
+INSERT INTO public.cotizacion VALUES (3, 2, NULL, '2019-06-25', NULL, 'COTIZACION 1', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (4, 2, NULL, '2019-06-25', NULL, 'COTIZACION 2', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (5, 3, NULL, '2019-06-25', NULL, 'DFAF', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (6, 3, NULL, '2019-06-25', NULL, 'OTRA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (7, 3, NULL, '2019-06-25', NULL, '', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (8, 2, NULL, '2019-06-26', NULL, 'COTIZACION 3', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (9, 2, NULL, '2019-06-26', NULL, 'TRE', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (10, 3, NULL, '2019-06-26', NULL, 'EMPRESA 2', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (11, 4, NULL, '2019-06-27', NULL, 'NIÑA CLAUDINA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (12, 4, NULL, '2019-06-27', NULL, 'MIKE', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (13, 4, NULL, '2019-06-27', NULL, 'OLOCUILTA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (14, 5, NULL, '2019-06-27', NULL, 'MIKE', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (15, 5, NULL, '2019-06-27', NULL, 'NIÑA CLAUDINA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (16, 5, NULL, '2019-06-27', NULL, 'OLOCUILTA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (17, 5, NULL, '2019-06-27', NULL, 'MINA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (18, 6, NULL, '2019-06-28', NULL, 'NIÑA RINA', NULL, 1);
+INSERT INTO public.cotizacion VALUES (19, 6, NULL, '2019-06-28', NULL, 'JOSSELYN', NULL, 2);
+INSERT INTO public.cotizacion VALUES (20, 6, NULL, '2019-06-28', NULL, 'JUANA', NULL, 3);
 
 
 --
@@ -767,6 +772,8 @@ INSERT INTO public.itemcotizacion VALUES (2, 3, NULL, 'AVIONES', 'AVION DE VUELO
 INSERT INTO public.itemcotizacion VALUES (17, 8, NULL, 'CAMARA', 'DESCAMARA', 31, 3, 8.00, 24.00, NULL);
 INSERT INTO public.itemcotizacion VALUES (18, 8, NULL, 'AVIONES', 'AVION DE VUELO', 31, 3, 22.00, 66.00, NULL);
 INSERT INTO public.itemcotizacion VALUES (10, 6, NULL, 'PIÑA', 'TOMATE', 32, 5, 55.00, 275.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (62, 20, NULL, 'CHOCOLATE', 'MUY CALIENTE', 31, 22, 6.00, 132.00, 20);
+INSERT INTO public.itemcotizacion VALUES (57, 18, NULL, 'PAN FRANCES', '2', 31, 22, 3.00, 66.00, 21);
 INSERT INTO public.itemcotizacion VALUES (44, 14, NULL, 'CHOCOLATE', 'CON LECHE', 31, 6, 53.22, 319.32, NULL);
 INSERT INTO public.itemcotizacion VALUES (12, 6, NULL, 'DFA', 'FAF', 32, 5, 1.00, 5.00, NULL);
 INSERT INTO public.itemcotizacion VALUES (46, 15, NULL, 'CARNE ASADA', 'BIEN COCIDA', 31, 1, 6.36, 6.36, NULL);
@@ -780,16 +787,22 @@ INSERT INTO public.itemcotizacion VALUES (49, 16, NULL, 'CARNE ASADA', 'BIEN COC
 INSERT INTO public.itemcotizacion VALUES (42, 14, NULL, 'PUPUSAS CHICHARRON', 'DE POLLO', 31, 2, 3.33, 6.66, NULL);
 INSERT INTO public.itemcotizacion VALUES (43, 14, NULL, 'CARNE ASADA', 'BIEN COCIDA', 31, 3, 3.50, 10.50, NULL);
 INSERT INTO public.itemcotizacion VALUES (1, 3, NULL, 'CAMARA', 'DESCAMARA', 31, 6, 525.36, 3152.16, NULL);
+INSERT INTO public.itemcotizacion VALUES (51, 17, 1, 'DULCE', 'FRITO', 31, 3, NULL, NULL, 16);
+INSERT INTO public.itemcotizacion VALUES (53, 17, 1, 'PUPUSAS DE QUESO', 'DE POLLO', 31, 4, NULL, NULL, 15);
+INSERT INTO public.itemcotizacion VALUES (54, 17, NULL, 'PIZZA', 'PEPERONI', 31, NULL, NULL, NULL, 18);
 INSERT INTO public.itemcotizacion VALUES (14, 7, NULL, 'PIÑA', 'TOMATE', 32, 2, 3.36, 6.72, NULL);
 INSERT INTO public.itemcotizacion VALUES (16, 7, NULL, 'DFA', 'FAF', 32, 8, 5.36, 42.88, NULL);
 INSERT INTO public.itemcotizacion VALUES (9, 6, NULL, 'MANGO', 'DINERO', 31, 3, 5.52, 16.56, NULL);
 INSERT INTO public.itemcotizacion VALUES (11, 6, NULL, 'PIÑA', 'TOMATE', 32, 8, 85.33, 682.64, NULL);
 INSERT INTO public.itemcotizacion VALUES (7, 5, NULL, 'PIÑA', 'TOMATE', 32, 2, 6.33, 12.66, NULL);
+INSERT INTO public.itemcotizacion VALUES (52, 17, 2, 'CHOCOLATE', 'CON LECHE', 31, 6, NULL, NULL, 17);
 INSERT INTO public.itemcotizacion VALUES (15, 7, NULL, 'PIÑA', 'TOMATE', 32, 636, 6.00, 3816.00, NULL);
 INSERT INTO public.itemcotizacion VALUES (24, 10, NULL, 'PIÑA', 'TOMATE', 32, 63, NULL, NULL, NULL);
 INSERT INTO public.itemcotizacion VALUES (23, 10, NULL, 'MANGO', 'DINERO', 31, 12, NULL, NULL, NULL);
 INSERT INTO public.itemcotizacion VALUES (26, 10, NULL, 'DFA', 'FAF', 32, 2, NULL, NULL, NULL);
 INSERT INTO public.itemcotizacion VALUES (25, 10, NULL, 'PIÑA', 'TOMATE', 32, 63, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (55, 18, NULL, 'POLLO CAMPLERO', 'CALIENTE', 31, 22, 3.50, 77.00, 19);
+INSERT INTO public.itemcotizacion VALUES (56, 18, NULL, 'CHOCOLATE', 'MUY CALIENTE', 31, 22, 1.00, 22.00, 20);
 INSERT INTO public.itemcotizacion VALUES (4, 4, NULL, 'AVIONES', 'AVION DE VUELO', 31, 6, 3.76, 22.56, NULL);
 INSERT INTO public.itemcotizacion VALUES (19, 8, NULL, 'MASCARA', 'MASCARA', 32, 8, 6.36, 50.88, NULL);
 INSERT INTO public.itemcotizacion VALUES (3, 4, NULL, 'CAMARA', 'DESCAMARA', 31, 6, 9.79, 58.73, NULL);
@@ -804,6 +817,11 @@ INSERT INTO public.itemcotizacion VALUES (32, 12, NULL, 'PUPUSAS CHICHARRON', 'D
 INSERT INTO public.itemcotizacion VALUES (35, 12, NULL, 'PAN FRANCES', 'PARA EL TAMA', 31, 6, NULL, NULL, NULL);
 INSERT INTO public.itemcotizacion VALUES (33, 12, NULL, 'TAMAL', 'DE POLLO', 31, 15, NULL, NULL, NULL);
 INSERT INTO public.itemcotizacion VALUES (34, 12, NULL, 'CHOCOLATE', 'NO TAN CALIENTE', 31, 2, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (58, 19, NULL, 'POLLO CAMPLERO', 'CALIENTE', 31, 22, 3.00, 66.00, 19);
+INSERT INTO public.itemcotizacion VALUES (61, 20, NULL, 'POLLO CAMPLERO', 'CALIENTE', 31, 22, 2.00, 44.00, 19);
+INSERT INTO public.itemcotizacion VALUES (63, 20, NULL, 'PAN FRANCES', '2', 31, 22, 3.00, 66.00, 21);
+INSERT INTO public.itemcotizacion VALUES (59, 19, NULL, 'CHOCOLATE', 'MUY CALIENTE', 31, 22, 2.00, 44.00, 20);
+INSERT INTO public.itemcotizacion VALUES (60, 19, NULL, 'PAN FRANCES', '2', 31, 22, 3.00, 66.00, 21);
 INSERT INTO public.itemcotizacion VALUES (50, 16, NULL, 'CHOCOLATE', 'CON LECHE', 31, 6, 6.00, 36.00, NULL);
 
 
@@ -858,6 +876,7 @@ INSERT INTO public.plancotizacion VALUES (3, 1, 2, 'dsffsda', '2019-06-25', NULL
 INSERT INTO public.plancotizacion VALUES (2, 1, NULL, 'Prueba 84', '2019-06-24', NULL);
 INSERT INTO public.plancotizacion VALUES (4, NULL, 2, 'PUPUSAS PARA LA CENA', '2019-06-27', NULL);
 INSERT INTO public.plancotizacion VALUES (5, NULL, 2, 'CENA PARA MI ESPOSO BELLO', '2019-06-27', NULL);
+INSERT INTO public.plancotizacion VALUES (6, NULL, 2, 'DESAYUNO DIA DEL PADRE', '2019-06-28', NULL);
 
 
 --
@@ -878,9 +897,13 @@ INSERT INTO public.planitem VALUES (11, 4, NULL, 'TAMAL', 'DE POLLO', 31, 15);
 INSERT INTO public.planitem VALUES (12, 4, NULL, 'CHOCOLATE', 'NO TAN CALIENTE', 31, 2);
 INSERT INTO public.planitem VALUES (13, 4, NULL, 'PAN FRANCES', 'PARA EL TAMA', 31, 6);
 INSERT INTO public.planitem VALUES (14, 4, NULL, 'AGUACATE ', 'SIN SAL', 31, 8);
+INSERT INTO public.planitem VALUES (16, 5, 2, 'DULCE', 'FRITO', 31, 3);
+INSERT INTO public.planitem VALUES (15, 5, NULL, 'PUPUSAS DE QUESO', 'DE POLLO', 31, 4);
+INSERT INTO public.planitem VALUES (18, 5, NULL, 'PIZZA', 'PEPERONI', 31, NULL);
 INSERT INTO public.planitem VALUES (17, 5, NULL, 'CHOCOLATE', 'CON LECHE', 31, 6);
-INSERT INTO public.planitem VALUES (15, 5, NULL, 'PUPUSAS DE QUESO', 'DE POLLO', 31, 2);
-INSERT INTO public.planitem VALUES (16, 5, NULL, 'PESCADO', 'FRITO', 31, 3);
+INSERT INTO public.planitem VALUES (19, 6, NULL, 'POLLO CAMPLERO', 'CALIENTE', 31, 22);
+INSERT INTO public.planitem VALUES (20, 6, NULL, 'CHOCOLATE', 'MUY CALIENTE', 31, 22);
+INSERT INTO public.planitem VALUES (21, 6, NULL, 'PAN FRANCES', '2', 31, 22);
 
 
 --
@@ -972,7 +995,7 @@ SELECT pg_catalog.setval('public.seq_catalogo', 4, true);
 -- Name: seq_cotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_cotizacion', 16, true);
+SELECT pg_catalog.setval('public.seq_cotizacion', 20, true);
 
 
 --
@@ -1008,7 +1031,7 @@ SELECT pg_catalog.setval('public.seq_itemcatalogo', 2, true);
 -- Name: seq_itemcotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_itemcotizacion', 50, true);
+SELECT pg_catalog.setval('public.seq_itemcotizacion', 63, true);
 
 
 --
@@ -1026,7 +1049,7 @@ SELECT pg_catalog.setval('public.seq_persona', 14, true);
 -- Name: seq_plancotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_plancotizacion', 5, true);
+SELECT pg_catalog.setval('public.seq_plancotizacion', 6, true);
 
 
 --
@@ -1035,7 +1058,7 @@ SELECT pg_catalog.setval('public.seq_plancotizacion', 5, true);
 -- Name: seq_planitem; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_planitem', 17, true);
+SELECT pg_catalog.setval('public.seq_planitem', 21, true);
 
 
 --
@@ -1569,7 +1592,7 @@ ALTER TABLE ONLY public.usuario
     ADD CONSTRAINT usuario_persona_fk FOREIGN KEY (idpersona) REFERENCES public.persona(id);
 
 
--- Completed on 2019-06-27 20:17:51
+-- Completed on 2019-06-28 18:50:29
 
 --
 -- PostgreSQL database dump complete

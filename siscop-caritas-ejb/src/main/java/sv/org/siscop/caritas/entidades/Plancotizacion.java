@@ -55,9 +55,9 @@ public class Plancotizacion implements Serializable {
     @JoinColumn(name = "idactividad", referencedColumnName = "id")
     @ManyToOne
     private Actividad actividad;
-    @OneToMany(mappedBy = "plancotizacion")
+    @OneToMany(mappedBy = "plancotizacion", orphanRemoval = true)
     private List<Planitem> planitemList;
-    @OneToMany(mappedBy = "idplantilla")
+    @OneToMany(mappedBy = "plantilla",orphanRemoval = true)
     private List<Cotizacion> cotizacionList;
 
     public Plancotizacion() {

@@ -56,12 +56,14 @@ public class Cotizacion implements Serializable {
     private Boolean validacionofac;
     @JoinColumn(name = "idplantilla", referencedColumnName = "id")
     @ManyToOne
-    private Plancotizacion idplantilla;
+    private Plancotizacion plantilla;
     @JoinColumn(name = "idproveedor", referencedColumnName = "id")
     @ManyToOne
     private Proveedor proveedor;
     @OneToMany(mappedBy = "cotizacion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Itemcotizacion> itemcotizacionList;
+    @Column(name = "numero")
+    private Integer numero;
 
     public Cotizacion() {
     }
@@ -110,12 +112,20 @@ public class Cotizacion implements Serializable {
         this.validacionofac = validacionofac;
     }
 
-    public Plancotizacion getIdplantilla() {
-        return idplantilla;
+    public Integer getNumero() {
+        return numero;
     }
 
-    public void setIdplantilla(Plancotizacion idplantilla) {
-        this.idplantilla = idplantilla;
+    public void setNumero(Integer numero) {
+        this.numero = numero;
+    }
+
+    public Plancotizacion getPlantilla() {
+        return plantilla;
+    }
+
+    public void setPlantilla(Plancotizacion plantilla) {
+        this.plantilla = plantilla;
     }
 
     public Proveedor getProveedor() {

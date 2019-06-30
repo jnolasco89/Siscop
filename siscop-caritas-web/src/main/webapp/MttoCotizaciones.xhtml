@@ -62,17 +62,22 @@
                                     <p:menubar>
                                         <p:menuitem value="Nuevo" action="#{mttoCotizacion.nuevoPlancotizacion()}"
                                                     icon="ui-icon-search"
-                                                    update="lista 
-                                                    otraInfo
+                                                    update="@form
                                                     :principal:growl"
                                                     />
-                                        <p:menuitem value="Guardar" action="#{mttoCotizacion.guardarPlancotizacion()}" icon="fa fa-save"                                                
+                                        <p:menuitem value="Guardar"
+                                                    action="#{mttoCotizacion.guardarPlancotizacion()}" icon="fa fa-save"                                                
+                                                    update="lista :principal:growl otraInfo" />
+                                        <p:menuitem value="Imprimir comparativo" 
+                                                    action="#{mttoCotizacion.imprimirCuadroComparativo()}" 
+                                                    icon="fa fa-print"
+                                                    ajax="false" 
                                                     update="lista :principal:growl otraInfo" />
                                     </p:menubar>
                                     <div class="ui-g ui-panelgrid-blank">                                       
                                         <div class="ui-g-6" >
                                             <p:outputLabel value="Descripción:" for="txtDescripcion" />
-                                            <p:inputTextarea rows="4" id="txtDescripcion"
+                                            <p:inputTextarea rows="2" id="txtDescripcion"
                                                              value="#{mttoCotizacion.descripcion}"
                                                              autoResize="true"/>
                                         </div>
@@ -82,6 +87,7 @@
                                                         pattern="dd-MM-yyyy" mask="true"/>
                                         </div>
                                         <div class="ui-g-2" >
+                                            <p:outputLabel value=" "/>
                                             <p:commandButton value="Asignar proyecto" id="btnAsignarProy" 
                                                              actionListener="#{mttoCotizacion.abrirModalBuscarProyecto()}"
                                                              update="formbuscarProyecto" style="margin-right:20px;" icon="fa fa-search" />
@@ -89,10 +95,16 @@
                                         <div class="ui-g-2" >
                                             <p:outputLabel value="#{mttoCotizacion.proyectoActual.nombreCorto}" for="fecha" />
                                         </div>
+                                        <div class="ui-g-6" >
+                                            <p:outputLabel value="Análisis" for="txtAnalisis" />
+                                            <p:inputTextarea rows="3" id="txtAnalisis"
+                                                             value="#{mttoCotizacion.analisis}"
+                                                             autoResize="true"/>
+                                        </div>
                                     </div>
                                     <p:tabView id="otraInfo">
                                         <p:tab id="plantilla" title="Plantilla">
-                                            <div class="card ui-g">
+                                            <div class="card ui-g" style="margin-top: 0px">
                                                 <div class="ui-g-3" >
                                                     <p:outputLabel value="Producto" for="txtProducto"/>
                                                     <p:inputText id="txtProducto" value="#{mttoCotizacion.producto}"
@@ -116,24 +128,26 @@
                                                                  onkeyup="this.value = this.value.toUpperCase();"/>
                                                 </div>
                                                 <div class="ui-g-2" >
+                                                    <p:outputLabel value="Cantidad:" for="btnAgregarProducto"/>
                                                     <p:commandButton value="Agregar" id="btnAgregarProducto" 
                                                                      action="#{mttoCotizacion.agregarPlanItem()}" 
                                                                      update="principal" style="margin-right:20px;"
-                                                                     icon="fa fa-search" />
+                                                                     icon="fa fa-plus-circle" />
                                                 </div>
                                                 <p:dataTable id="listaItemPlan" var = "planitem"
                                                              value="#{mttoCotizacion.itemPlanCotizacionList}"
                                                              widgetVar="cellItemsPlan"
                                                              editable="true" 
                                                              editMode="cell"
-                                                             draggableRows="true"                                                             
+                                                             draggableRows="true"
+                                                             rowIndexVar="rowId"
                                                              >
-                                                    <p:ajax event="rowReorder" listener="#{mttoCotizacion.onRowReorderPlanItem}" 
-                                                            update="listaItemPlan" />
+                                                    <p:ajax event="rowReorder" listener="#{mttoCotizacion.onRowReorderPlanItem}"
+                                                            update="listaItemPlan"/>
                                                     <p:ajax event="cellEdit" listener="#{mttoCotizacion.onCellEditPlanItem}"/>
                                                     <p:ajax event="rowEditCancel" listener="#{mttoCotizacion.onRowCancelPlanItem}"/>
                                                     <p:column headerText="Orden" width="10%">
-                                                        <h:outputText value="#{planitem.orden}" />
+                                                        <h:outputText value="#{rowId}" />
                                                     </p:column>
                                                     <p:column headerText="Id" width="10%">
                                                         <h:outputText value="#{planitem.id}" />
@@ -179,6 +193,12 @@
                                                             </f:facet>
                                                         </p:cellEditor>
                                                     </p:column>
+                                                    <p:column width="5%">
+                                                        <p:commandButton icon="ui-icon-trash"
+                                                                         title="Eliminar"
+                                                                         actionListener="#{mttoCotizacion.eliminarPlanItem(planitem)}"
+                                                                         update="listaItemPlan :principal:growl"/>
+                                                    </p:column>
                                                 </p:dataTable>
                                             </div>
                                         </p:tab>
@@ -206,6 +226,7 @@
                                                              rowKey="#{coti.id}"
                                                              selection="#{mttoCotizacion.cotizacionActual}"
                                                              rows ="10"
+                                                             sortBy="#{coti.numero}"
                                                              style="width:50%"
                                                              >
                                                     <p:ajax event="rowSelect"
@@ -214,6 +235,9 @@
                                                             principal:tabs:otraInfo:listaItemCotizacion" />
                                                     <p:column headerText="Id" width="10%">
                                                         <h:outputText value="#{coti.id}" />
+                                                    </p:column>
+                                                    <p:column headerText="Número" width="10%">
+                                                        <h:outputText value="#{coti.numero}" />
                                                     </p:column>
                                                     <p:column headerText="Descripción">
                                                         <h:outputText value="#{coti.comentarios}" />
@@ -233,6 +257,7 @@
                                                              value="#{mttoCotizacion.listaItemCotizacion}"
                                                              editable="true" 
                                                              editMode="cell"
+                                                             sortBy="#{item.planItem.id}"
                                                              widgetVar="cellItemsCotizacion">
                                                     <f:facet name="header">
                                                         <h:outputText value="#{mttoCotizacion.cotizacionActual.comentarios}" />

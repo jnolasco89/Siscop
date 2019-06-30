@@ -14,3 +14,47 @@ and open the template in the editor.
 .input-cta-padre .ui-inputfield{
     opacity: 1!important;
 }
+
+.btn-eliminar-off{
+    background: #2399e5!important;
+    border: 1px solid #1f89ce!important;
+    color: #fff!important;
+}
+
+.btn-eliminar-on{
+    background: red!important;
+    border: 1px solid red!important;
+    color: #fff!important;
+}
+
+.strikeout {
+    position: relative;
+}
+.strikeout::after {
+    border-bottom: 3px solid rgba(255, 0, 0, 0.5);
+    content: "";
+    left: 0;
+    line-height: 1em;
+    margin-top: calc(0.125em / 2 * -1);
+    position: absolute;
+    right: 0;
+    top: 50%;
+}
+
+.texto-tachado{
+    position: relative!important;
+}
+.texto-tachado span:not(.ui-column-title){
+    border: solid 1px red;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 0;
+    position: absolute;
+    top: 50%;
+}
+/*
+text-decoration-line: line-through;
+
+text-decoration-color: red;
+*/

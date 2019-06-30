@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -60,7 +61,7 @@ public class Actividad implements Serializable {
     @Column(name = "fechafin")
     @Temporal(TemporalType.DATE)
     private Date fechafin;
-    @OneToMany(mappedBy = "idactividad", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "idactividad", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Recurso> recursoList;
     @JoinColumn(name = "estado", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
@@ -68,6 +69,7 @@ public class Actividad implements Serializable {
     @JoinColumn(name = "idproyecto", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.EAGER)
     private Proyecto idproyecto;
+  
 
     public Actividad() {
     }
@@ -140,6 +142,7 @@ public class Actividad implements Serializable {
     public void setIdproyecto(Proyecto idproyecto) {
         this.idproyecto = idproyecto;
     }
+
 
     @Override
     public int hashCode() {

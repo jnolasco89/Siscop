@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import javax.ejb.Local;
 import sv.org.siscop.caritas.entidades.Actividad;
+import sv.org.siscop.caritas.entidades.Recurso;
 
 /**
  *
@@ -16,7 +17,11 @@ import sv.org.siscop.caritas.entidades.Actividad;
  */
 @Local
 public interface ServicioActividadLocal {
+    public void agregarActividad(Actividad a);
+    public void agregarRecursos(List<Recurso> recursos);
+    public void editarActiviad(Actividad a);
     public List<Actividad> buscarActividadPorCualquierCampo(Map campos);
+    public List<Actividad> buscarActividadPorCualquierCampoCriterial(String campo);
     public List<Actividad> getAllActividades();
     public List<Actividad> getAllActividadesPorEstado(int estado);
 }

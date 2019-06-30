@@ -145,7 +145,7 @@
                                             action="#{mttoActividades.guardarActividad()}" 
                                             icon="ui-icon-disk" 
                                             update=":formTabs:tabs:datosActividad"
-                                            process="@this txtProyecto txtNombre fechaInicio fechaFin txtDescripcion"
+                                            process="@this datosActividad"
                                             >
                                         </p:menuitem>
                                         <p:menuitem 
@@ -160,9 +160,8 @@
                                             <div class="ui-g-3" >
                                                 <p:outputLabel for="txtProyecto" value="Proyecto:"/>
                                                 <div class="ui-inputgroup">
-                                                    <p:inputText id="txtProyecto"
+                                                    <p:inputText id="txtProyecto" 
                                                                  value="#{mttoActividades.proyectoActual.nombreCorto}"
-                                                                 readonly="true"
                                                                  validator="#{mttoActividades.validaciones.validarProyecto}"
                                                                  >
                                                         <p:message for="txtProyecto"/>
@@ -173,6 +172,21 @@
                                                                      update=":formDialogProyectos"
                                                                      actionListener="#{mttoActividades.abrirModalAsignarProyecto()}"/>  
                                                 </div>
+                                                <!-- <div class="ui-inputgroup">
+                                                     <p:inputText id="txtProyecto"
+                                                                  value="#{mttoActividades.proyectoActual.nombreCorto}"
+                                                                  readonly="true"
+                                                                  validator="#{mttoActividades.validaciones.validarProyecto}"
+                                                                  >
+                                                         <p:message for="txtProyecto"/>
+                                                     </p:inputText>
+                                                     <p:commandButton icon="ui-icon-search"  
+                                                                      styleClass="white-button"
+                                                                      process="@this"
+                                                                      update=":formDialogProyectos"
+                                                                      actionListener="#{mttoActividades.abrirModalAsignarProyecto()}"/>  
+                                                 </div>
+                                                -->
                                             </div>
                                             <div class="ui-g-3" >
                                                 <p:outputLabel for="txtNombre" value="Nombre:"/>
@@ -287,26 +301,34 @@
                                                          emptyMessage="Sin registros"
                                                          rowIndexVar="index"
                                                          >
-                                                <p:column headerText="Recurso">
+                                                <p:column headerText="Recurso" styleClass="#{mttoActividades.classTextoTachada(recurso)}">
                                                     <h:outputText value="#{recurso.nombre}" />
+                                                    <span></span>
                                                 </p:column>
-                                                <p:column headerText="Cantidad">
+                                                <p:column headerText="Cantidad" styleClass="#{mttoActividades.classTextoTachada(recurso)}">
                                                     <h:outputText value="#{recurso.cantidad}"/>
+                                                    <span></span>
                                                 </p:column>
-                                                <p:column headerText="Costo unitario">
+                                                <p:column headerText="Costo unitario" styleClass="#{mttoActividades.classTextoTachada(recurso)}">
                                                     <h:outputText value="#{recurso.costounitario}"/>
+                                                    <span></span>
                                                 </p:column>
-                                                <p:column headerText="Total">
+                                                <p:column headerText="Total" styleClass="#{mttoActividades.classTextoTachada(recurso)}">
                                                     <h:outputText value="#{recurso.total}"/>
+                                                    <span></span>
                                                 </p:column>
                                                 <p:column headerText="Opciones" style="text-align: center;">
                                                     <p:selectBooleanButton 
-                                                        class="#{mttoActividades.classBtnElminarRecursoDeBd(recurso)}"
+                                                        id="btnEliminarRecursoBD"
+                                                        styleClass="#{mttoActividades.classBtnElminarRecursoDeBd(recurso)}"
                                                         value="#{recurso.eliminar}" 
                                                         onLabel="" offLabel="" 
                                                         onIcon="ui-icon-close" 
                                                         offIcon="ui-icon-trash"
-                                                        style="width: 30px;margin: 0px 10px 0px 10px;">
+                                                        style="width: 30px;margin: 0px 10px 0px 10px;"
+                                                        rendered="#{mttoActividades.verBtnEliminarRecursoDeBd(recurso)}"
+                                                        >
+                                                        <p:ajax event="change" update="btnEliminarRecursoBD tablaRecursos" /> 
                                                     </p:selectBooleanButton>
                                                     <p:commandButton 
                                                         icon="ui-icon-trash" 
@@ -314,6 +336,7 @@
                                                         action="#{mttoActividades.eliminarRecurso(index)}" 
                                                         update=":formTabs:tabs:tabsDetallesActvidad:tablaRecursos"
                                                         process="@this"
+                                                        rendered="#{mttoActividades.verBtnEliminarRecursoVista(recurso)}"
                                                         />
                                                     <p:commandButton 
                                                         icon="ui-icon-pencil" 

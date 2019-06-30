@@ -58,6 +58,9 @@ public class Itemcotizacion implements Serializable {
     @JoinColumn(name = "idcotizacion", referencedColumnName = "id")
     @ManyToOne
     private Cotizacion cotizacion;
+    @JoinColumn(name = "idplanitem", referencedColumnName = "id")
+    @ManyToOne
+    private Planitem planItem;
 
     public Itemcotizacion() {
     }
@@ -123,6 +126,11 @@ public class Itemcotizacion implements Serializable {
     }
 
     public BigDecimal getTotal() {
+//        if (this.getPreciounitario() != null && this.getCantidad() != null) {
+//            BigDecimal tot = this.getPreciounitario()
+//                    .multiply(BigDecimal.valueOf(this.getCantidad()));
+//            this.setTotal(tot);
+//        }
         return total;
     }
 
@@ -136,6 +144,14 @@ public class Itemcotizacion implements Serializable {
 
     public void setCotizacion(Cotizacion cotizacion) {
         this.cotizacion = cotizacion;
+    }
+
+    public Planitem getPlanItem() {
+        return planItem;
+    }
+
+    public void setPlanItem(Planitem planItem) {
+        this.planItem = planItem;
     }
 
     @Override

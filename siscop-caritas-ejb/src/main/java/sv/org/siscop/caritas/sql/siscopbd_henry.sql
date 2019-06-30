@@ -5,7 +5,7 @@
 -- Dumped from database version 11.2
 -- Dumped by pg_dump version 11.2
 
--- Started on 2019-06-24 06:47:17
+-- Started on 2019-06-28 18:50:28
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,7 +26,7 @@ CREATE SCHEMA public;
 
 
 --
--- TOC entry 3029 (class 0 OID 0)
+-- TOC entry 3032 (class 0 OID 0)
 -- Dependencies: 3
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
 --
@@ -78,7 +78,8 @@ CREATE TABLE public.actividad (
     descripcion character(200),
     fechainicio date,
     fechafin date,
-    estado bigint
+    estado bigint,
+    idproyecto bigint
 );
 
 
@@ -110,7 +111,8 @@ CREATE TABLE public.cotizacion (
     fecha date,
     total numeric(15,2),
     comentarios character varying(300),
-    validacionofac boolean
+    validacionofac boolean,
+    numero integer
 );
 
 
@@ -187,7 +189,7 @@ CREATE TABLE public.empleado (
 CREATE TABLE public.item_catalogo (
     id integer NOT NULL,
     codigo character(10),
-    descripcion character(50),
+    descripcion character varying(50),
     idcatalogo integer,
     activo boolean,
     fechacrea time without time zone,
@@ -211,7 +213,8 @@ CREATE TABLE public.itemcotizacion (
     idmedida integer,
     cantidad integer,
     preciounitario numeric(15,2),
-    total numeric(15,2)
+    total numeric(15,2),
+    idplanitem bigint
 );
 
 
@@ -273,7 +276,7 @@ CREATE TABLE public.plancotizacion (
 
 
 --
--- TOC entry 3030 (class 0 OID 0)
+-- TOC entry 3033 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: TABLE plancotizacion; Type: COMMENT; Schema: public; Owner: -
 --
@@ -298,7 +301,7 @@ CREATE TABLE public.planitem (
 
 
 --
--- TOC entry 3031 (class 0 OID 0)
+-- TOC entry 3034 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: TABLE planitem; Type: COMMENT; Schema: public; Owner: -
 --
@@ -595,7 +598,7 @@ CREATE TABLE public.usuario (
 
 
 --
--- TOC entry 2993 (class 0 OID 16551)
+-- TOC entry 2996 (class 0 OID 16551)
 -- Dependencies: 200
 -- Data for Name: account; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -604,16 +607,16 @@ INSERT INTO public.account VALUES (1, 'hzometa', 'PBKDF2WithHmacSHA512:3072:jyoZ
 
 
 --
--- TOC entry 3012 (class 0 OID 16859)
+-- TOC entry 3015 (class 0 OID 16859)
 -- Dependencies: 219
 -- Data for Name: actividad; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.actividad VALUES (1, 'Actividad 1                                                                                         ', 'Es la actividad inicial                                                                                                                                                                                 ', '2019-06-23', '2019-06-23', 20);
+INSERT INTO public.actividad VALUES (1, 'Actividad 1                                                                                         ', 'Es la actividad inicial                                                                                                                                                                                 ', '2019-06-23', '2019-06-23', 20, NULL);
 
 
 --
--- TOC entry 2989 (class 0 OID 16529)
+-- TOC entry 2992 (class 0 OID 16529)
 -- Dependencies: 196
 -- Data for Name: catalogo; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -628,26 +631,58 @@ INSERT INTO public.catalogo VALUES (1, 'Tipo persona                            
 INSERT INTO public.catalogo VALUES (2, 'Estado Civil                                      ', true, NULL, NULL, NULL, NULL);
 INSERT INTO public.catalogo VALUES (20, 'Estados de proyecto                               ', true, NULL, NULL, NULL, NULL);
 INSERT INTO public.catalogo VALUES (10, 'Estados Actividad                                 ', true, NULL, NULL, NULL, NULL);
+INSERT INTO public.catalogo VALUES (30, 'Unidad de Medida                                  ', true, NULL, NULL, NULL, NULL);
 
 
 --
--- TOC entry 3020 (class 0 OID 16950)
+-- TOC entry 3023 (class 0 OID 16950)
 -- Dependencies: 227
 -- Data for Name: cotizacion; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.cotizacion VALUES (3, 2, NULL, '2019-06-25', NULL, 'COTIZACION 1', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (4, 2, NULL, '2019-06-25', NULL, 'COTIZACION 2', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (5, 3, NULL, '2019-06-25', NULL, 'DFAF', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (6, 3, NULL, '2019-06-25', NULL, 'OTRA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (7, 3, NULL, '2019-06-25', NULL, '', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (8, 2, NULL, '2019-06-26', NULL, 'COTIZACION 3', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (9, 2, NULL, '2019-06-26', NULL, 'TRE', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (10, 3, NULL, '2019-06-26', NULL, 'EMPRESA 2', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (11, 4, NULL, '2019-06-27', NULL, 'NIÑA CLAUDINA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (12, 4, NULL, '2019-06-27', NULL, 'MIKE', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (13, 4, NULL, '2019-06-27', NULL, 'OLOCUILTA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (14, 5, NULL, '2019-06-27', NULL, 'MIKE', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (15, 5, NULL, '2019-06-27', NULL, 'NIÑA CLAUDINA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (16, 5, NULL, '2019-06-27', NULL, 'OLOCUILTA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (17, 5, NULL, '2019-06-27', NULL, 'MINA', NULL, NULL);
+INSERT INTO public.cotizacion VALUES (18, 6, NULL, '2019-06-28', NULL, 'NIÑA RINA', NULL, 1);
+INSERT INTO public.cotizacion VALUES (19, 6, NULL, '2019-06-28', NULL, 'JOSSELYN', NULL, 2);
+INSERT INTO public.cotizacion VALUES (20, 6, NULL, '2019-06-28', NULL, 'JUANA', NULL, 3);
 
 
 --
--- TOC entry 3007 (class 0 OID 16760)
+-- TOC entry 3010 (class 0 OID 16760)
 -- Dependencies: 214
 -- Data for Name: cuenta; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.cuenta VALUES ('11', 'Activo Circulante', NULL, '1', true);
+INSERT INTO public.cuenta VALUES ('1141', 'Documentos por Cobrar', NULL, '114', true);
+INSERT INTO public.cuenta VALUES ('1122', 'Cuentas de Ahorro', NULL, '112', true);
+INSERT INTO public.cuenta VALUES ('112', 'Bancos', NULL, '11', true);
+INSERT INTO public.cuenta VALUES ('1131', 'Diocesis de Santa Ana', NULL, '113', true);
+INSERT INTO public.cuenta VALUES ('111', 'Cajas', NULL, '11', true);
+INSERT INTO public.cuenta VALUES ('1121', 'Cuentas Corrientes', NULL, '112', true);
+INSERT INTO public.cuenta VALUES ('114', 'Cuentas por cobrar', NULL, '11', true);
+INSERT INTO public.cuenta VALUES ('113', 'Asignaciones', NULL, '11', true);
+INSERT INTO public.cuenta VALUES ('1111', 'Caja Chica', NULL, '111', true);
+INSERT INTO public.cuenta VALUES ('1123', 'Depositos a Plazo Fijo', NULL, '112', true);
+INSERT INTO public.cuenta VALUES ('1', 'ACTIVO', NULL, NULL, true);
+INSERT INTO public.cuenta VALUES ('1142', 'Deudores Varios', NULL, '114', true);
 
 
 --
--- TOC entry 2997 (class 0 OID 16589)
+-- TOC entry 3000 (class 0 OID 16589)
 -- Dependencies: 204
 -- Data for Name: direccion; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -655,7 +690,7 @@ INSERT INTO public.catalogo VALUES (10, 'Estados Actividad                      
 
 
 --
--- TOC entry 2996 (class 0 OID 16577)
+-- TOC entry 2999 (class 0 OID 16577)
 -- Dependencies: 203
 -- Data for Name: documento; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -676,7 +711,7 @@ INSERT INTO public.documento VALUES (22, 11, 10, '243434', NULL, NULL, '2019-06-
 
 
 --
--- TOC entry 3015 (class 0 OID 16903)
+-- TOC entry 3018 (class 0 OID 16903)
 -- Dependencies: 222
 -- Data for Name: empleado; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -686,7 +721,7 @@ INSERT INTO public.empleado VALUES (4, NULL, NULL, '12:08:03.099', NULL, NULL);
 
 
 --
--- TOC entry 2990 (class 0 OID 16532)
+-- TOC entry 2993 (class 0 OID 16532)
 -- Dependencies: 197
 -- Data for Name: item_catalogo; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -715,18 +750,83 @@ INSERT INTO public.item_catalogo VALUES (64, NULL, 'Terminado                   
 INSERT INTO public.item_catalogo VALUES (63, '          ', 'En ejecución                                      ', 20, NULL, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (21, NULL, 'Terminada                                         ', 10, false, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (20, NULL, 'En Ejecución                                      ', 10, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (31, '4         ', 'Unidad                                            ', 30, true, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (32, NULL, 'Botellas                                          ', 30, true, NULL, NULL, NULL, NULL);
 
 
 --
--- TOC entry 3021 (class 0 OID 16971)
+-- TOC entry 3024 (class 0 OID 16971)
 -- Dependencies: 228
 -- Data for Name: itemcotizacion; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.itemcotizacion VALUES (13, 7, NULL, 'MANGO', 'DINERO', 31, 3, 3.00, 9.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (37, 13, NULL, 'PUPUSAS CHICHARRON', 'DE CERDO', 31, 3, 12.00, 36.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (38, 13, NULL, 'TAMAL', 'DE POLLO', 31, 15, 15.00, 225.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (39, 13, NULL, 'CHOCOLATE', 'NO TAN CALIENTE', 31, 2, 2.00, 4.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (20, 9, NULL, 'CAMARA', 'DESCAMARA', 31, 5, 5.00, 25.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (21, 9, NULL, 'AVIONES', 'AVION DE VUELO', 31, 665, 3.00, 1995.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (40, 13, NULL, 'PAN FRANCES', 'PARA EL TAMA', 31, 6, 2.00, 12.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (41, 13, NULL, 'AGUACATE ', 'SIN SAL', 31, 8, 2.00, 16.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (2, 3, NULL, 'AVIONES', 'AVION DE VUELO', 31, 5, 6.00, 30.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (17, 8, NULL, 'CAMARA', 'DESCAMARA', 31, 3, 8.00, 24.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (18, 8, NULL, 'AVIONES', 'AVION DE VUELO', 31, 3, 22.00, 66.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (10, 6, NULL, 'PIÑA', 'TOMATE', 32, 5, 55.00, 275.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (62, 20, NULL, 'CHOCOLATE', 'MUY CALIENTE', 31, 22, 6.00, 132.00, 20);
+INSERT INTO public.itemcotizacion VALUES (57, 18, NULL, 'PAN FRANCES', '2', 31, 22, 3.00, 66.00, 21);
+INSERT INTO public.itemcotizacion VALUES (44, 14, NULL, 'CHOCOLATE', 'CON LECHE', 31, 6, 53.22, 319.32, NULL);
+INSERT INTO public.itemcotizacion VALUES (12, 6, NULL, 'DFA', 'FAF', 32, 5, 1.00, 5.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (46, 15, NULL, 'CARNE ASADA', 'BIEN COCIDA', 31, 1, 6.36, 6.36, NULL);
+INSERT INTO public.itemcotizacion VALUES (47, 15, NULL, 'CHOCOLATE', 'CON LECHE', 31, 5, 9.01, 45.05, NULL);
+INSERT INTO public.itemcotizacion VALUES (5, 5, NULL, 'MANGO', 'DINERO', 31, 5, 8.75, 43.75, NULL);
+INSERT INTO public.itemcotizacion VALUES (45, 15, NULL, 'PUPUSAS CHICHARRON', 'DE POLLO', 31, 1, 3.25, 3.25, NULL);
+INSERT INTO public.itemcotizacion VALUES (8, 5, NULL, 'DFA', 'FAF', 32, 9, 9.00, 81.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (6, 5, NULL, 'PIÑA', 'TOMATE', 32, 8, 9.00, 72.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (48, 16, NULL, 'PUPUSAS CHICHARRON', 'DE POLLO', 31, 2, 5.25, 10.50, NULL);
+INSERT INTO public.itemcotizacion VALUES (49, 16, NULL, 'CARNE ASADA', 'BIEN COCIDA', 31, 3, 5.66, 16.98, NULL);
+INSERT INTO public.itemcotizacion VALUES (42, 14, NULL, 'PUPUSAS CHICHARRON', 'DE POLLO', 31, 2, 3.33, 6.66, NULL);
+INSERT INTO public.itemcotizacion VALUES (43, 14, NULL, 'CARNE ASADA', 'BIEN COCIDA', 31, 3, 3.50, 10.50, NULL);
+INSERT INTO public.itemcotizacion VALUES (1, 3, NULL, 'CAMARA', 'DESCAMARA', 31, 6, 525.36, 3152.16, NULL);
+INSERT INTO public.itemcotizacion VALUES (51, 17, 1, 'DULCE', 'FRITO', 31, 3, NULL, NULL, 16);
+INSERT INTO public.itemcotizacion VALUES (53, 17, 1, 'PUPUSAS DE QUESO', 'DE POLLO', 31, 4, NULL, NULL, 15);
+INSERT INTO public.itemcotizacion VALUES (54, 17, NULL, 'PIZZA', 'PEPERONI', 31, NULL, NULL, NULL, 18);
+INSERT INTO public.itemcotizacion VALUES (14, 7, NULL, 'PIÑA', 'TOMATE', 32, 2, 3.36, 6.72, NULL);
+INSERT INTO public.itemcotizacion VALUES (16, 7, NULL, 'DFA', 'FAF', 32, 8, 5.36, 42.88, NULL);
+INSERT INTO public.itemcotizacion VALUES (9, 6, NULL, 'MANGO', 'DINERO', 31, 3, 5.52, 16.56, NULL);
+INSERT INTO public.itemcotizacion VALUES (11, 6, NULL, 'PIÑA', 'TOMATE', 32, 8, 85.33, 682.64, NULL);
+INSERT INTO public.itemcotizacion VALUES (7, 5, NULL, 'PIÑA', 'TOMATE', 32, 2, 6.33, 12.66, NULL);
+INSERT INTO public.itemcotizacion VALUES (52, 17, 2, 'CHOCOLATE', 'CON LECHE', 31, 6, NULL, NULL, 17);
+INSERT INTO public.itemcotizacion VALUES (15, 7, NULL, 'PIÑA', 'TOMATE', 32, 636, 6.00, 3816.00, NULL);
+INSERT INTO public.itemcotizacion VALUES (24, 10, NULL, 'PIÑA', 'TOMATE', 32, 63, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (23, 10, NULL, 'MANGO', 'DINERO', 31, 12, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (26, 10, NULL, 'DFA', 'FAF', 32, 2, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (25, 10, NULL, 'PIÑA', 'TOMATE', 32, 63, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (55, 18, NULL, 'POLLO CAMPLERO', 'CALIENTE', 31, 22, 3.50, 77.00, 19);
+INSERT INTO public.itemcotizacion VALUES (56, 18, NULL, 'CHOCOLATE', 'MUY CALIENTE', 31, 22, 1.00, 22.00, 20);
+INSERT INTO public.itemcotizacion VALUES (4, 4, NULL, 'AVIONES', 'AVION DE VUELO', 31, 6, 3.76, 22.56, NULL);
+INSERT INTO public.itemcotizacion VALUES (19, 8, NULL, 'MASCARA', 'MASCARA', 32, 8, 6.36, 50.88, NULL);
+INSERT INTO public.itemcotizacion VALUES (3, 4, NULL, 'CAMARA', 'DESCAMARA', 31, 6, 9.79, 58.73, NULL);
+INSERT INTO public.itemcotizacion VALUES (22, 9, NULL, 'MASCARA', 'MASCARA', 32, 5, 566.34, 2831.68, NULL);
+INSERT INTO public.itemcotizacion VALUES (27, 11, NULL, 'PUPUSAS CHICHARRON', 'DE CERDO', 31, 3, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (31, 11, NULL, 'AGUACATE ', 'SIN SAL', 31, 8, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (29, 11, NULL, 'CHOCOLATE', 'NO TAN CALIENTE', 31, 2, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (28, 11, NULL, 'TAMAL', 'DE POLLO', 31, 15, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (30, 11, NULL, 'PAN FRANCES', 'PARA EL TAMA', 31, 6, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (36, 12, NULL, 'AGUACATE ', 'SIN SAL', 31, 8, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (32, 12, NULL, 'PUPUSAS CHICHARRON', 'DE CERDO', 31, 3, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (35, 12, NULL, 'PAN FRANCES', 'PARA EL TAMA', 31, 6, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (33, 12, NULL, 'TAMAL', 'DE POLLO', 31, 15, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (34, 12, NULL, 'CHOCOLATE', 'NO TAN CALIENTE', 31, 2, NULL, NULL, NULL);
+INSERT INTO public.itemcotizacion VALUES (58, 19, NULL, 'POLLO CAMPLERO', 'CALIENTE', 31, 22, 3.00, 66.00, 19);
+INSERT INTO public.itemcotizacion VALUES (61, 20, NULL, 'POLLO CAMPLERO', 'CALIENTE', 31, 22, 2.00, 44.00, 19);
+INSERT INTO public.itemcotizacion VALUES (63, 20, NULL, 'PAN FRANCES', '2', 31, 22, 3.00, 66.00, 21);
+INSERT INTO public.itemcotizacion VALUES (59, 19, NULL, 'CHOCOLATE', 'MUY CALIENTE', 31, 22, 2.00, 44.00, 20);
+INSERT INTO public.itemcotizacion VALUES (60, 19, NULL, 'PAN FRANCES', '2', 31, 22, 3.00, 66.00, 21);
+INSERT INTO public.itemcotizacion VALUES (50, 16, NULL, 'CHOCOLATE', 'CON LECHE', 31, 6, 6.00, 36.00, NULL);
 
 
 --
--- TOC entry 3011 (class 0 OID 16854)
+-- TOC entry 3014 (class 0 OID 16854)
 -- Dependencies: 218
 -- Data for Name: menu; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -741,11 +841,11 @@ INSERT INTO public.menu VALUES (203, 'Cuentas Contables', '/mattoCuentas/mtto.xh
 INSERT INTO public.menu VALUES (101, 'Catálogos', '/mattoCatalogos/mtto.xhtml', 'fa fa-tachometer', 1, true, 'S');
 INSERT INTO public.menu VALUES (108, 'Empleados', '/MttoEmpleados.xhtml', 'fa fa-users', 1, true, 'S');
 INSERT INTO public.menu VALUES (107, 'Usuarios', '/MttoUsuarios.xhtml', 'fa fa-users', 1, true, 'S');
-INSERT INTO public.menu VALUES (204, 'Cotizaciones', '/MttoCotizaciones.xhtml', 'fa fa-spinner', 2, true, 'S');
+INSERT INTO public.menu VALUES (204, 'Cotizaciones', '/MttoCotizaciones.xhtml', 'fa fa-file-text-o', 2, true, 'S');
 
 
 --
--- TOC entry 2991 (class 0 OID 16546)
+-- TOC entry 2994 (class 0 OID 16546)
 -- Dependencies: 198
 -- Data for Name: persona; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -766,24 +866,48 @@ INSERT INTO public.persona VALUES (14, 1, 'JUAN CARLOS CASTRO ZUNIGA', 'JUAN CAR
 
 
 --
--- TOC entry 3016 (class 0 OID 16913)
+-- TOC entry 3019 (class 0 OID 16913)
 -- Dependencies: 223
 -- Data for Name: plancotizacion; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.plancotizacion VALUES (1, NULL, NULL, 'Prueba', '2019-06-04', NULL);
+INSERT INTO public.plancotizacion VALUES (1, 1, NULL, 'Prueba', '2019-06-04', NULL);
+INSERT INTO public.plancotizacion VALUES (3, 1, 2, 'dsffsda', '2019-06-25', NULL);
+INSERT INTO public.plancotizacion VALUES (2, 1, NULL, 'Prueba 84', '2019-06-24', NULL);
+INSERT INTO public.plancotizacion VALUES (4, NULL, 2, 'PUPUSAS PARA LA CENA', '2019-06-27', NULL);
+INSERT INTO public.plancotizacion VALUES (5, NULL, 2, 'CENA PARA MI ESPOSO BELLO', '2019-06-27', NULL);
+INSERT INTO public.plancotizacion VALUES (6, NULL, 2, 'DESAYUNO DIA DEL PADRE', '2019-06-28', NULL);
 
 
 --
--- TOC entry 3017 (class 0 OID 16921)
+-- TOC entry 3020 (class 0 OID 16921)
 -- Dependencies: 224
 -- Data for Name: planitem; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.planitem VALUES (1, 3, NULL, 'MANGO', 'DINERO', 31, 12);
+INSERT INTO public.planitem VALUES (2, 3, NULL, 'PIÑA', 'TOMATE', 32, 63);
+INSERT INTO public.planitem VALUES (3, 3, NULL, 'PIÑA', 'TOMATE', 32, 63);
+INSERT INTO public.planitem VALUES (4, 3, NULL, 'DFA', 'FAF', 32, 2);
+INSERT INTO public.planitem VALUES (5, 2, NULL, 'CAMARA', 'DESCAMARA', 31, 1);
+INSERT INTO public.planitem VALUES (6, 2, NULL, 'AVIONES', 'AVION DE VUELO', 31, 2);
+INSERT INTO public.planitem VALUES (7, 2, NULL, 'MASCARA', 'MASCARA', 32, 10);
+INSERT INTO public.planitem VALUES (10, 4, NULL, 'PUPUSAS CHICHARRON', 'DE CERDO', 31, 3);
+INSERT INTO public.planitem VALUES (11, 4, NULL, 'TAMAL', 'DE POLLO', 31, 15);
+INSERT INTO public.planitem VALUES (12, 4, NULL, 'CHOCOLATE', 'NO TAN CALIENTE', 31, 2);
+INSERT INTO public.planitem VALUES (13, 4, NULL, 'PAN FRANCES', 'PARA EL TAMA', 31, 6);
+INSERT INTO public.planitem VALUES (14, 4, NULL, 'AGUACATE ', 'SIN SAL', 31, 8);
+INSERT INTO public.planitem VALUES (16, 5, 2, 'DULCE', 'FRITO', 31, 3);
+INSERT INTO public.planitem VALUES (15, 5, NULL, 'PUPUSAS DE QUESO', 'DE POLLO', 31, 4);
+INSERT INTO public.planitem VALUES (18, 5, NULL, 'PIZZA', 'PEPERONI', 31, NULL);
+INSERT INTO public.planitem VALUES (17, 5, NULL, 'CHOCOLATE', 'CON LECHE', 31, 6);
+INSERT INTO public.planitem VALUES (19, 6, NULL, 'POLLO CAMPLERO', 'CALIENTE', 31, 22);
+INSERT INTO public.planitem VALUES (20, 6, NULL, 'CHOCOLATE', 'MUY CALIENTE', 31, 22);
+INSERT INTO public.planitem VALUES (21, 6, NULL, 'PAN FRANCES', '2', 31, 22);
 
 
 --
--- TOC entry 3010 (class 0 OID 16843)
+-- TOC entry 3013 (class 0 OID 16843)
 -- Dependencies: 217
 -- Data for Name: proveedor; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -795,7 +919,7 @@ INSERT INTO public.proveedor VALUES (4, NULL, NULL, NULL, '2019-06-23', NULL, NU
 
 
 --
--- TOC entry 3000 (class 0 OID 16673)
+-- TOC entry 3003 (class 0 OID 16673)
 -- Dependencies: 207
 -- Data for Name: proyecto; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -805,7 +929,7 @@ INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', 
 
 
 --
--- TOC entry 3013 (class 0 OID 16862)
+-- TOC entry 3016 (class 0 OID 16862)
 -- Dependencies: 220
 -- Data for Name: recurso; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -813,7 +937,7 @@ INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', 
 
 
 --
--- TOC entry 2998 (class 0 OID 16606)
+-- TOC entry 3001 (class 0 OID 16606)
 -- Dependencies: 205
 -- Data for Name: telefono; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -822,7 +946,7 @@ INSERT INTO public.telefono VALUES (1, 6, 14, NULL, '3442-4242', '2019-06-13 22:
 
 
 --
--- TOC entry 2995 (class 0 OID 16562)
+-- TOC entry 2998 (class 0 OID 16562)
 -- Dependencies: 202
 -- Data for Name: token; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -830,7 +954,7 @@ INSERT INTO public.telefono VALUES (1, 6, 14, NULL, '3442-4242', '2019-06-13 22:
 
 
 --
--- TOC entry 2999 (class 0 OID 16616)
+-- TOC entry 3002 (class 0 OID 16616)
 -- Dependencies: 206
 -- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -839,7 +963,7 @@ INSERT INTO public.usuario VALUES (7, NULL, 7, NULL, '2019-06-23 08:35:34.856', 
 
 
 --
--- TOC entry 3032 (class 0 OID 0)
+-- TOC entry 3035 (class 0 OID 0)
 -- Dependencies: 199
 -- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -848,7 +972,7 @@ SELECT pg_catalog.setval('public.account_id_seq', 1, true);
 
 
 --
--- TOC entry 3033 (class 0 OID 0)
+-- TOC entry 3036 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: seq_actividad; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -857,7 +981,7 @@ SELECT pg_catalog.setval('public.seq_actividad', 1, false);
 
 
 --
--- TOC entry 3034 (class 0 OID 0)
+-- TOC entry 3037 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: seq_catalogo; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -866,16 +990,16 @@ SELECT pg_catalog.setval('public.seq_catalogo', 4, true);
 
 
 --
--- TOC entry 3035 (class 0 OID 0)
+-- TOC entry 3038 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: seq_cotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_cotizacion', 1, false);
+SELECT pg_catalog.setval('public.seq_cotizacion', 20, true);
 
 
 --
--- TOC entry 3036 (class 0 OID 0)
+-- TOC entry 3039 (class 0 OID 0)
 -- Dependencies: 210
 -- Name: seq_direccion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -884,7 +1008,7 @@ SELECT pg_catalog.setval('public.seq_direccion', 3, true);
 
 
 --
--- TOC entry 3037 (class 0 OID 0)
+-- TOC entry 3040 (class 0 OID 0)
 -- Dependencies: 211
 -- Name: seq_documento; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -893,7 +1017,7 @@ SELECT pg_catalog.setval('public.seq_documento', 22, true);
 
 
 --
--- TOC entry 3038 (class 0 OID 0)
+-- TOC entry 3041 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: seq_itemcatalogo; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -902,16 +1026,16 @@ SELECT pg_catalog.setval('public.seq_itemcatalogo', 2, true);
 
 
 --
--- TOC entry 3039 (class 0 OID 0)
+-- TOC entry 3042 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: seq_itemcotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_itemcotizacion', 1, false);
+SELECT pg_catalog.setval('public.seq_itemcotizacion', 63, true);
 
 
 --
--- TOC entry 3040 (class 0 OID 0)
+-- TOC entry 3043 (class 0 OID 0)
 -- Dependencies: 208
 -- Name: seq_persona; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -920,25 +1044,25 @@ SELECT pg_catalog.setval('public.seq_persona', 14, true);
 
 
 --
--- TOC entry 3041 (class 0 OID 0)
+-- TOC entry 3044 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: seq_plancotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_plancotizacion', 1, true);
+SELECT pg_catalog.setval('public.seq_plancotizacion', 6, true);
 
 
 --
--- TOC entry 3042 (class 0 OID 0)
+-- TOC entry 3045 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: seq_planitem; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_planitem', 1, false);
+SELECT pg_catalog.setval('public.seq_planitem', 21, true);
 
 
 --
--- TOC entry 3043 (class 0 OID 0)
+-- TOC entry 3046 (class 0 OID 0)
 -- Dependencies: 213
 -- Name: seq_proyecto; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -947,7 +1071,7 @@ SELECT pg_catalog.setval('public.seq_proyecto', 2, true);
 
 
 --
--- TOC entry 3044 (class 0 OID 0)
+-- TOC entry 3047 (class 0 OID 0)
 -- Dependencies: 209
 -- Name: seq_telefono; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -956,7 +1080,7 @@ SELECT pg_catalog.setval('public.seq_telefono', 3, true);
 
 
 --
--- TOC entry 3045 (class 0 OID 0)
+-- TOC entry 3048 (class 0 OID 0)
 -- Dependencies: 212
 -- Name: seq_usuario; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -965,7 +1089,7 @@ SELECT pg_catalog.setval('public.seq_usuario', 1, false);
 
 
 --
--- TOC entry 3046 (class 0 OID 0)
+-- TOC entry 3049 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1055,7 +1179,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 3047 (class 0 OID 0)
+-- TOC entry 3050 (class 0 OID 0)
 -- Dependencies: 2807
 -- Name: CONSTRAINT documento_numero_unique ON documento; Type: COMMENT; Schema: public; Owner: -
 --
@@ -1073,7 +1197,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 3048 (class 0 OID 0)
+-- TOC entry 3051 (class 0 OID 0)
 -- Dependencies: 2809
 -- Name: CONSTRAINT documento_persona_unique ON documento; Type: COMMENT; Schema: public; Owner: -
 --
@@ -1235,6 +1359,24 @@ ALTER TABLE ONLY public.usuario
 
 
 --
+-- TOC entry 2861 (class 2606 OID 17020)
+-- Name: recurso FK_ACTIVIDAD; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.recurso
+    ADD CONSTRAINT "FK_ACTIVIDAD" FOREIGN KEY (idactividad) REFERENCES public.actividad(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- TOC entry 2860 (class 2606 OID 17010)
+-- Name: actividad FK_PROYECTO; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.actividad
+    ADD CONSTRAINT "FK_PROYECTO" FOREIGN KEY (idproyecto) REFERENCES public.proyecto(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- TOC entry 2859 (class 2606 OID 16941)
 -- Name: actividad actividad_item_catalogo_fk1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
@@ -1244,7 +1386,7 @@ ALTER TABLE ONLY public.actividad
 
 
 --
--- TOC entry 2864 (class 2606 OID 16986)
+-- TOC entry 2866 (class 2606 OID 16986)
 -- Name: cotizacion cotizacion_plancotizacion_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1253,7 +1395,7 @@ ALTER TABLE ONLY public.cotizacion
 
 
 --
--- TOC entry 2865 (class 2606 OID 16991)
+-- TOC entry 2867 (class 2606 OID 16991)
 -- Name: cotizacion cotizacion_proveedor_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1298,7 +1440,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 3049 (class 0 OID 0)
+-- TOC entry 3052 (class 0 OID 0)
 -- Dependencies: 2850
 -- Name: CONSTRAINT documento_persona_fk ON documento; Type: COMMENT; Schema: public; Owner: -
 --
@@ -1307,7 +1449,7 @@ COMMENT ON CONSTRAINT documento_persona_fk ON public.documento IS 'd';
 
 
 --
--- TOC entry 2860 (class 2606 OID 16908)
+-- TOC entry 2862 (class 2606 OID 16908)
 -- Name: empleado empleado_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1325,7 +1467,16 @@ ALTER TABLE ONLY public.item_catalogo
 
 
 --
--- TOC entry 2866 (class 2606 OID 16978)
+-- TOC entry 2870 (class 2606 OID 17015)
+-- Name: itemcotizacion item_cotizacion_planitem_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.itemcotizacion
+    ADD CONSTRAINT item_cotizacion_planitem_fk FOREIGN KEY (idplanitem) REFERENCES public.itemcotizacion(id);
+
+
+--
+-- TOC entry 2868 (class 2606 OID 16978)
 -- Name: itemcotizacion itemcotizacion_cotizacion_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1334,7 +1485,7 @@ ALTER TABLE ONLY public.itemcotizacion
 
 
 --
--- TOC entry 2867 (class 2606 OID 17000)
+-- TOC entry 2869 (class 2606 OID 17000)
 -- Name: itemcotizacion itemcotizacion_item_catalogo_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1361,7 +1512,7 @@ ALTER TABLE ONLY public.persona
 
 
 --
--- TOC entry 2861 (class 2606 OID 16936)
+-- TOC entry 2863 (class 2606 OID 16936)
 -- Name: plancotizacion plancotizacion_actividad_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1370,7 +1521,7 @@ ALTER TABLE ONLY public.plancotizacion
 
 
 --
--- TOC entry 2863 (class 2606 OID 16931)
+-- TOC entry 2865 (class 2606 OID 16931)
 -- Name: planitem planitem_item_catalogo_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1379,7 +1530,7 @@ ALTER TABLE ONLY public.planitem
 
 
 --
--- TOC entry 2862 (class 2606 OID 16926)
+-- TOC entry 2864 (class 2606 OID 16926)
 -- Name: planitem planitem_plancotizacion_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1441,7 +1592,7 @@ ALTER TABLE ONLY public.usuario
     ADD CONSTRAINT usuario_persona_fk FOREIGN KEY (idpersona) REFERENCES public.persona(id);
 
 
--- Completed on 2019-06-24 06:47:19
+-- Completed on 2019-06-28 18:50:29
 
 --
 -- PostgreSQL database dump complete

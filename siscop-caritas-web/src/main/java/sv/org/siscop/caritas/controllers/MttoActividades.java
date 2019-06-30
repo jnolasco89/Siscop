@@ -194,9 +194,17 @@ public class MttoActividades implements Serializable {
         campos.put("estado", actividadBusqueda.getEstado());
 
         actividades = servAct.buscarActividadPorCualquierCampo(campos);
+        
+        if(actividadBusqueda.getIdproyecto()==null){
+            actividadBusqueda.setIdproyecto(new Proyecto());
+        }
+        if(actividadBusqueda.getEstado()==null){
+            actividadBusqueda.setEstado(new ItemCatalogo(0));
+        }
     }
 
     public void limpiarBusquedaActividad() {
+        tabActiva=0;
         actividadBusqueda = new Actividad();
         actividadBusqueda.setIdproyecto(new Proyecto());
         actividadBusqueda.setEstado(new ItemCatalogo(63));
@@ -213,6 +221,10 @@ public class MttoActividades implements Serializable {
 
     public void cargarActividadSeleccionada() {
         recursos = actividadActual.getRecursoList();
+        recursos.forEach((r) -> {
+            r.setEliminar(false);
+            r.setTotal(r.getCostounitario() * r.getCantidad());
+        });
         proyectoActual = actividadActual.getIdproyecto();
 
         postSeleccionActividadAeditar();
@@ -223,12 +235,6 @@ public class MttoActividades implements Serializable {
         String msjGrwol = null;
 
         if (modoActividad == 1) {
-//            actividadActual.setEstado(new ItemCatalogo(63));
-//            servAct.agregarActividad(actividadActual);
-//            recursos.forEach((r) -> {
-//                r.setIdactividad(actividadActual);
-//            });
-//            servAct.agregarRecursos(recursos);
             actividadActual.setEstado(new ItemCatalogo(63));
             recursos.forEach((r) -> {
                 r.setIdactividad(actividadActual);
@@ -239,7 +245,13 @@ public class MttoActividades implements Serializable {
 
             postCreacionActividad();
         } else if (modoActividad == 2) {
-            System.out.println("MODO EDICION ACTIVADO");
+            recursos.forEach((r)->{
+                r.setIdactividad(actividadActual);
+            });
+            actividadActual.setRecursoList(recursos);
+            servAct.editarActiviad(actividadActual);
+            postEdicionActividad();
+            msjGrwol = "Actividad editada";
         }
 
         FacesContext.getCurrentInstance()
@@ -253,6 +265,9 @@ public class MttoActividades implements Serializable {
 
     public void limpiarFormularioActividadYbusqueda() {
         modoActividad = 1;
+        actividadActual.getRecursoList().forEach((r)->{
+            r.setEliminar(false);
+        });
         actividadActual = new Actividad();
         actividadActual.setEstado(new ItemCatalogo());
         recursos = new ArrayList<>();
@@ -277,6 +292,7 @@ public class MttoActividades implements Serializable {
 
     public void agregarRecurso() {
         recursoActual.setTotal(recursoActual.getCantidad() * recursoActual.getCostounitario());
+        recursoActual.setNuevo(true);
         recursos.add(recursoActual);
         recursoActual = new Recurso();
         modoRecurso = 1;
@@ -319,17 +335,42 @@ public class MttoActividades implements Serializable {
 
     }
 
-    public boolean verListEstado(){
-        return modoActividad==2;
+    public boolean verListEstado() {
+        return modoActividad == 2;
     }
-    
-    public String classBtnElminarRecursoDeBd(Recurso r){
-        if(r.isEliminar()){
+
+    public boolean verBtnEliminarRecursoDeBd(Recurso r) {
+        return modoActividad == 2 && !r.isNuevo();
+    }
+
+    public boolean verBtnEliminarRecursoVista(Recurso r) {
+        if(modoActividad==1 && r.isNuevo()){
+            return true;
+        }else if(modoActividad==2 && r.isNuevo()){
+            return true;
+        }
+        
+        return false;
+    }
+
+    public String classBtnElminarRecursoDeBd(Recurso r) {
+        if (r.isEliminar()) {
             return "btn-eliminar-on";
-        }else{
+        } else {
             return "btn-eliminar-off";
         }
     }
+
+    public String classTextoTachada(Recurso r) {
+        if (r == null) {
+            return "";
+        } else if (r.isEliminar()) {
+            return "texto-tachado";
+        } else {
+            return "";
+        }
+    }
+
     //---- Modal buscar Proyecto ----
     public void cargarProyectoSeleccionado() {
         if (opcionesSeteoActividad == 1) {
@@ -349,6 +390,20 @@ public class MttoActividades implements Serializable {
 
     //================== ESTADOS DE LA VISTA ================
     public void postCreacionActividad() {
+        //Propiedades para la logica de la ui
+        tabActiva = 1;
+        modoRecurso = 1;
+        modoActividad = 1;
+        actividades = servAct.getAllActividades();
+        //Propiedades para el modelo de catalogo
+        actividadActual = new Actividad();
+        actividadActual.setEstado(new ItemCatalogo());
+        recursoActual = new Recurso();
+        recursos = new ArrayList<>();
+        proyectoActual = new Proyecto();
+    }
+
+    public void postEdicionActividad() {
         //Propiedades para la logica de la ui
         tabActiva = 1;
         modoRecurso = 1;

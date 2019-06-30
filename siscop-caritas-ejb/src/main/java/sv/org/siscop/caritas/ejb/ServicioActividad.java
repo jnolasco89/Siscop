@@ -47,6 +47,20 @@ public class ServicioActividad implements ServicioActividadLocal {
     }
     
     @Override
+    public void editarActiviad(Actividad a){
+       for(int i=0;i<a.getRecursoList().size();i++){
+           if(a.getRecursoList().get(i).isEliminar()){
+               recursoDao.remove(a.getRecursoList().get(i));
+               a.getRecursoList().remove(i);
+           }else{
+               a.getRecursoList().get(i).setIdactividad(a);
+               recursoDao.edit(a.getRecursoList().get(i));
+           }
+       }
+       actividadDao.edit(a);
+    }
+    
+    @Override
     public List<Actividad> buscarActividadPorCualquierCampoCriterial(String campo) {
         return actividadDao.buscarActividadPorCualquierCampoCriterial(campo);
     }

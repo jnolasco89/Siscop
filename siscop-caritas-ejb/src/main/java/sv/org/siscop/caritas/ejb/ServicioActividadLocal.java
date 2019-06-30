@@ -19,6 +19,7 @@ import sv.org.siscop.caritas.entidades.Recurso;
 public interface ServicioActividadLocal {
     public void agregarActividad(Actividad a);
     public void agregarRecursos(List<Recurso> recursos);
+    public void editarActiviad(Actividad a);
     public List<Actividad> buscarActividadPorCualquierCampo(Map campos);
     public List<Actividad> buscarActividadPorCualquierCampoCriterial(String campo);
     public List<Actividad> getAllActividades();

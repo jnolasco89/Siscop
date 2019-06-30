@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -59,7 +60,7 @@ public class Cotizacion implements Serializable {
     @JoinColumn(name = "idproveedor", referencedColumnName = "id")
     @ManyToOne
     private Proveedor proveedor;
-    @OneToMany(mappedBy = "cotizacion")
+    @OneToMany(mappedBy = "cotizacion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Itemcotizacion> itemcotizacionList;
 
     public Cotizacion() {

@@ -4,17 +4,15 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/template.xhtml">
-
     <ui:define name="content">
         <div class="ui-g ui-fluid">
             <div class="ui-g-12 ui-lg-12">
                 <div class="card">
                     <h1 style="margin-top:0">Cotizaciones</h1>
-                    <h:form id="principal">
+                    <h:form id="principal">                       
+
                         <p:growl id="growl" showSummary="true" globalOnly="true"
                                  sticky="true" showDetail="true" for="msgGrowl"/>
-
-
                         <p:tabView id="tabs" activeIndex="#{mttoCotizacion.tabindex}">
                             <div class="card">
                                 <p:tab id="busqueda" title="Búsqueda">
@@ -36,7 +34,6 @@
                                             <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
                                             <f:selectItems value="#{mttoCotizacion.itemEstadoActividad}"/>
                                         </p:selectOneMenu>
-
                                     </p:panelGrid>
                                     <div class="card">
                                         <p:dataTable id="lista" var = "plan" value="#{mttoCotizacion.planCotizacionList}"
@@ -48,8 +45,8 @@
                                                      paginatorPosition="bottom"
                                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                      rowsPerPageTemplate="10,20,50">
-                                            <p:ajax event="rowSelect" listener="#{mttoCotizacion.onRowSelect(event)}"
-                                                    update="principal" />
+                                            <p:ajax event="rowSelect" listener="#{mttoCotizacion.onRowSelectPlan(event)}"
+                                                    update="principal principal:tabs:otraInfo" />
                                             <p:column headerText="Id" width="10%">
                                                 <h:outputText value="#{plan.id}" />
                                             </p:column>
@@ -72,7 +69,6 @@
                                         <p:menuitem value="Guardar" action="#{mttoCotizacion.guardarPlancotizacion()}" icon="fa fa-save"                                                
                                                     update="lista :principal:growl otraInfo" />
                                     </p:menubar>
-
                                     <div class="ui-g ui-panelgrid-blank">                                       
                                         <div class="ui-g-6" >
                                             <p:outputLabel value="Descripción:" for="txtDescripcion" />
@@ -85,17 +81,214 @@
                                             <p:calendar id="fecha" value="#{mttoCotizacion.fecha}"
                                                         pattern="dd-MM-yyyy" mask="true"/>
                                         </div>
+                                        <div class="ui-g-2" >
+                                            <p:commandButton value="Asignar proyecto" id="btnAsignarProy" 
+                                                             actionListener="#{mttoCotizacion.abrirModalBuscarProyecto()}"
+                                                             update="formbuscarProyecto" style="margin-right:20px;" icon="fa fa-search" />
+                                        </div>
+                                        <div class="ui-g-2" >
+                                            <p:outputLabel value="#{mttoCotizacion.proyectoActual.nombreCorto}" for="fecha" />
+                                        </div>
                                     </div>
                                     <p:tabView id="otraInfo">
-
                                         <p:tab id="plantilla" title="Plantilla">
-
+                                            <div class="card ui-g">
+                                                <div class="ui-g-3" >
+                                                    <p:outputLabel value="Producto" for="txtProducto"/>
+                                                    <p:inputText id="txtProducto" value="#{mttoCotizacion.producto}"
+                                                                 onkeyup="this.value = this.value.toUpperCase();"/>
+                                                </div> 
+                                                <div class="ui-g-4" >
+                                                    <p:outputLabel value="Descripcion:" for="txtDescProducto"/>                                           
+                                                    <p:inputText id="txtDescProducto" value="#{mttoCotizacion.descproducto}"
+                                                                 onkeyup="this.value = this.value.toUpperCase();"/>
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:outputLabel for="selectOneMedida" value="Unidad" />
+                                                    <p:selectOneMenu id="selectOneMedida" value="#{mttoCotizacion.idItemMedida}">
+                                                        <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                        <f:selectItems value="#{mttoCotizacion.itemMedida}"/>
+                                                    </p:selectOneMenu>
+                                                </div>
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel value="Cantidad:" for="txtCantidadProd"/>
+                                                    <p:inputText id="txtCantidadProd" value="#{mttoCotizacion.cantidad}"
+                                                                 onkeyup="this.value = this.value.toUpperCase();"/>
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:commandButton value="Agregar" id="btnAgregarProducto" 
+                                                                     action="#{mttoCotizacion.agregarPlanItem()}" 
+                                                                     update="principal" style="margin-right:20px;"
+                                                                     icon="fa fa-search" />
+                                                </div>
+                                                <p:dataTable id="listaItemPlan" var = "planitem"
+                                                             value="#{mttoCotizacion.itemPlanCotizacionList}"
+                                                             widgetVar="cellItemsPlan"
+                                                             editable="true" 
+                                                             editMode="cell"
+                                                             draggableRows="true"                                                             
+                                                             >
+                                                    <p:ajax event="rowReorder" listener="#{mttoCotizacion.onRowReorderPlanItem}" 
+                                                            update="listaItemPlan" />
+                                                    <p:ajax event="cellEdit" listener="#{mttoCotizacion.onCellEditPlanItem}"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{mttoCotizacion.onRowCancelPlanItem}"/>
+                                                    <p:column headerText="Orden" width="10%">
+                                                        <h:outputText value="#{planitem.orden}" />
+                                                    </p:column>
+                                                    <p:column headerText="Id" width="10%">
+                                                        <h:outputText value="#{planitem.id}" />
+                                                    </p:column>
+                                                    <p:column headerText="Producto">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{planitem.producto}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{planitem.producto}" 
+                                                                             style="width:96%"
+                                                                             label="Producto"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column headerText="Descripción">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{planitem.descripcion}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{planitem.descripcion}" 
+                                                                             style="width:96%"
+                                                                             label="Descripción"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column headerText="Unidad" width="10%">
+                                                        <h:outputText value="#{planitem.medida.descripcion}" />
+                                                    </p:column>
+                                                    <p:column headerText="Cantidad" width="10%" >
+                                                        <f:facet name="header">
+                                                            <i class="fa fa-edit" />
+                                                            <h:outputText value="Cantidad"/>
+                                                        </f:facet>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{planitem.cantidad}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText  value="#{planitem.cantidad}"
+                                                                              style="width:94%; "
+                                                                              label="Cantidad"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </div>
                                         </p:tab>
-
                                         <p:tab id="cotizaciones" title="Cotizaciones">
-                                            <p:panelGrid id="datosTel" columns="5" styleClass="ui-panelgrid-blank">
-                                            </p:panelGrid>
-
+                                            <div class="card ui-g" style="margin-top:0">
+                                                <div class="ui-g-3" >
+                                                    <p:outputLabel value="Comentarios:" for="txtComentarioCot"/>
+                                                    <p:inputText id="txtComentarioCot" value="#{mttoCotizacion.comenCotizacion}"
+                                                                 onkeyup="this.value = this.value.toUpperCase();"/>
+                                                </div> 
+                                                <div class="ui-g-2" >
+                                                    <p:outputLabel value="Fecha:" for="fecha" />
+                                                    <p:calendar id="fecha" value="#{mttoCotizacion.fechaCotizacion}"
+                                                                pattern="dd-MM-yyyy" mask="true"/>
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:commandButton value="Agregar" id="btnAgregarCotizacion" 
+                                                                     action="#{mttoCotizacion.agregarCotizacion()}" 
+                                                                     update="principal:tabs:otraInfo:tableCotizaciones" style="margin-right:20px;"
+                                                                     icon="fa fa-search" />
+                                                </div>
+                                                <p:dataTable id="tableCotizaciones" var = "coti"
+                                                             value="#{mttoCotizacion.listaCotizaciones}"
+                                                             selectionMode="single"
+                                                             rowKey="#{coti.id}"
+                                                             selection="#{mttoCotizacion.cotizacionActual}"
+                                                             rows ="10"
+                                                             style="width:50%"
+                                                             >
+                                                    <p:ajax event="rowSelect"
+                                                            listener="#{mttoCotizacion.onRowSelectCotizacion(event)}"
+                                                            update="principal:tabs:otraInfo:tableCotizaciones
+                                                            principal:tabs:otraInfo:listaItemCotizacion" />
+                                                    <p:column headerText="Id" width="10%">
+                                                        <h:outputText value="#{coti.id}" />
+                                                    </p:column>
+                                                    <p:column headerText="Descripción">
+                                                        <h:outputText value="#{coti.comentarios}" />
+                                                    </p:column>
+                                                    <p:column headerText="Fecha" width="30%">
+                                                        <h:outputText value="#{coti.fecha}" >
+                                                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                                        </h:outputText>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <div class="ui-g-12" >
+                                                    <h2>Ingrese detalle</h2>
+                                                </div>
+                                                <p:remoteCommand name="onCellEdit2"
+                                                                 update="listaItemCotizacion :principal:growl" />                                                
+                                                <p:dataTable id="listaItemCotizacion" var="item"
+                                                             value="#{mttoCotizacion.listaItemCotizacion}"
+                                                             editable="true" 
+                                                             editMode="cell"
+                                                             widgetVar="cellItemsCotizacion">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="#{mttoCotizacion.cotizacionActual.comentarios}" />
+                                                    </f:facet>
+                                                    <p:ajax event="cellEdit"
+                                                            listener="#{mttoCotizacion.onCellEditItemCotizacion}"/>
+                                                    <p:ajax event="rowEditCancel" 
+                                                            listener="#{mttoCotizacion.onRowCancelItemCotizacion}"
+                                                            update="listaItemCotizacion"
+                                                            oncomplete="onCellEdit2()"/>
+                                                    <p:column headerText="Producto">
+                                                        <h:outputText value="#{item.producto}" />
+                                                    </p:column>
+                                                    <p:column headerText="Descripción">
+                                                        <h:outputText value="#{item.descripcion}" />
+                                                    </p:column>
+                                                    <p:column headerText="Unidad" width="10%">
+                                                        <h:outputText value="#{item.medida.descripcion}" />
+                                                    </p:column>                                                    
+                                                    <p:column headerText="Cantidad" width="10%">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{item.cantidad}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{item.cantidad}" 
+                                                                             style="width:96%"
+                                                                             label="Cantidad"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column headerText="Precio" width="10%">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{item.preciounitario}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputNumber value="#{item.preciounitario}"
+                                                                               decimalPlaces="2"
+                                                                               minValue="0.00"                                                                               
+                                                                               style="width:96%"
+                                                                               label="Precio">
+                                                                    <f:validateDoubleRange minimum="0.00" 
+                                                                                           maximum="999999999.99" />
+                                                                    <f:convertNumber minFractionDigits="2"/>
+                                                                    <p:ajax event="blur" oncomplete="onCellEdit2()" />
+                                                                </p:inputNumber>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column headerText="Total" width="10%">
+                                                        <h:outputText id="total" value="#{item.total}">
+                                                            <f:convertNumber pattern="¤#,##0.00" currencySymbol="$" />
+                                                        </h:outputText>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </div>
                                         </p:tab>                                       
                                     </p:tabView>
                                 </p:tab>
@@ -105,6 +298,61 @@
                 </div>
             </div>
         </div>
-
+        <p:dialog id="busqProyModal"
+                  header="Seleccionar Proyecto"
+                  widgetVar="modalBusqProyecto"
+                  modal="true" showEffect="fade" hideEffect="fade"
+                  resizable="true" responsive="true"
+                  height="500"
+                  width="800">
+            <h:form id="formbuscarProyecto">
+                <div class="card">
+                    <p:tab id="busqueda" title="Búsqueda">
+                        <p:menubar>
+                            <p:menuitem value="Buscar" actionListener="#{mttoCotizacion.buscarProyectos()}" 
+                                        icon="ui-icon-search" update="@form"  />
+                            <p:menuitem value="Limpiar" action="#{mttoCotizacion.limpiarBusquedaProyectos()}"
+                                        update="formbuscarProyecto" icon="ui-icon-refresh" />
+                        </p:menubar>
+                        <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                     styleClass="ui-panelgrid-blank">
+                            <p:outputLabel for="txtNombreB" value="Nombre:" />
+                            <p:inputText id="txtNombreB" value="#{mttoCotizacion.nombreB}"                                                     
+                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                            <p:outputLabel for="txtNombreCortoB" value="Nombre Corto:" />
+                            <p:inputText id="txtNombreCortoB" value="#{mttoCotizacion.nombreCortoB}"
+                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                            <p:outputLabel for="txtCodigo" value="Código:" />
+                            <p:inputText id="txtCodigo" value="#{mttoCotizacion.codigoB}"/>
+                            <p:outputLabel for="selectOneEstado" value="Estado" />
+                            <p:selectOneMenu id="selectOneEstado" value="#{mttoCotizacion.idEstadoB}">
+                                <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                <f:selectItems value="#{mttoCotizacion.itemEstado}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <div class="card">
+                            <p:dataTable id="lista" var = "proy" value="#{mttoCotizacion.proyectosList}"
+                                         selectionMode="single"
+                                         selection="#{mttoCotizacion.proyectoB}"
+                                         rowKey="#{proy.id}"
+                                         paginator="true"
+                                         rows ="10"
+                                         paginatorPosition="bottom"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,20,50">
+                                <p:ajax event="rowSelect" listener="#{mttoCotizacion.onRowSelectProyecto(event)}"
+                                        update="principal" />
+                                <p:column headerText="Id" width="10%">
+                                    <h:outputText value="#{proy.id}" />
+                                </p:column>
+                                <p:column headerText="Proyecto">
+                                    <h:outputText value="#{proy.nombreCorto}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                </div>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>

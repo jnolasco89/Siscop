@@ -15,9 +15,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import sv.org.siscop.caritas.entidades.Plancotizacion;
+import sv.org.siscop.caritas.entidades.Planitem;
 
 @Stateless
 public class PlantillaCotizacionFacade extends AbstractFacade<Plancotizacion> {
+
+    private final static Logger logger = Logger.getLogger(PlantillaCotizacionFacade.class.getName());
 
     @PersistenceContext(unitName = "siscop_pu")
     private EntityManager em;
@@ -71,6 +74,28 @@ public class PlantillaCotizacionFacade extends AbstractFacade<Plancotizacion> {
             return lista;
         } catch (Exception ex) {
             Logger.getLogger(PlantillaCotizacionFacade.class.getName()).log(Level.SEVERE, "Error en buscarPlancotizaciones(): {0}", ex);
+            throw new Exception(ex);
+        }
+    }
+
+    public void nuevoPlanItem(Planitem item) throws Exception {
+        try {
+            this.getEntityManager().persist(item);
+
+        } catch (Exception ex) {
+
+            logger.log(Level.SEVERE, "Error en nuevoPlanItem", ex);
+            throw new Exception(ex);
+        }
+    }
+    
+    public void actualizarPlanItem(Planitem item) throws Exception {
+        try {
+            this.getEntityManager().merge(item);
+
+        } catch (Exception ex) {
+
+            logger.log(Level.SEVERE, "Error en actualizarPlanItem", ex);
             throw new Exception(ex);
         }
     }

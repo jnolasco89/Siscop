@@ -60,6 +60,8 @@ public class Recurso implements Serializable {
     private int indiceEnList;
     @Transient
     private boolean eliminar;
+    @Transient
+    private boolean nuevo;
 
     public Recurso() {
     }
@@ -132,6 +134,14 @@ public class Recurso implements Serializable {
         this.eliminar = eliminar;
     }
 
+    public boolean isNuevo() {
+        return nuevo;
+    }
+
+    public void setNuevo(boolean nuevo) {
+        this.nuevo = nuevo;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;

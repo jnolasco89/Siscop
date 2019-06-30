@@ -8,8 +8,8 @@
     <ui:define name="content">
         <div class="ui-g ui-fluid">
             <div class="ui-g-12 ui-lg-12">
-                <p:layoutUnit position="center">
-                    <h3 style="margin-top:0">Mantenimiento de cuentas contables</h3>
+                <div class="card">
+                    <h1 style="margin-top:0">Mantenimiento de cuentas contables</h1>
                     <h:form id="formTabs">
                         <p:growl id="growl" 
                                  showDetail="true"
@@ -19,17 +19,67 @@
                                    activeIndex="#{cuentasControllerTree.tabActiva}" 
                                    >
                             <p:tab id="busqueda" title="Búsqueda">
-                              
+                                <p:menubar>
+                                    <p:menuitem 
+                                        value="Buscar" 
+                                        actionListener="#{mttoActividades.buscarActividad()}" 
+                                        icon="ui-icon-search"
+                                        update="tablaProyectos"
+                                        process="@this datosBusquedaProyecto"
+                                        />
+                                    <p:menuitem 
+                                        value="Limpiar" 
+                                        action="#{mttoActividades.limpiarBusquedaActividad()}" 
+                                        update=":formTabs:tabs"
+                                        icon="fa fa-eraser" 
+                                        process="@this"
+                                        />
+                                </p:menubar>
+                                <p:panelGrid id="datosBusquedaProyecto" columns="4" layout="grid" style="border:0px !important; background:none;"
+                                             styleClass="ui-panelgrid-blank">
+                                    <p:outputLabel for="txtNombreB" value="Nombre:" />
+                                    <p:inputText id="txtNombreB" value="#{mttoProyecto.nombreB}"                                                     
+                                                 onkeyup="this.value = this.value.toUpperCase();"/>
+                                    <p:outputLabel for="txtNombreCortoB" value="Nombre Corto:" />
+                                    <p:inputText id="txtNombreCortoB" value="#{mttoProyecto.nombreCortoB}"
+                                                 onkeyup="this.value = this.value.toUpperCase();"/>
+                                    <p:outputLabel for="txtCodigo" value="Código:" />
+                                    <p:inputText id="txtCodigo" value="#{mttoProyecto.codigoB}"/>
+
+                                </p:panelGrid>
+                                <div class="card">
+                                    <p:dataTable id="tablaProyectos" var = "proy" value="#{mttoProyecto.proyectosList}"
+                                                 selectionMode="single"
+                                                 selection="#{mttoProyecto.proyectoB}"
+                                                 rowKey="#{proy.id}"
+                                                 paginator="true"
+                                                 rows ="10"
+                                                 paginatorPosition="bottom"
+                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                 rowsPerPageTemplate="10,20,50">
+                                        <p:ajax event="rowSelect" listener="#{mttoProyecto.onRowSelect(event)}"
+                                                update="formTabs" />
+                                        <p:column headerText="Id" width="10%">
+                                            <h:outputText value="#{proy.id}" />
+                                        </p:column>
+                                        <p:column headerText="Proyecto">
+                                            <h:outputText value="#{proy.nombreCorto}" />
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                                
+                            </p:tab>
+                            <p:tab id="catalogo" title="Catalogo">
                                 <p:tree
-                                        id="tree-catalogo-cuentas" 
-                                        value="#{cuentasControllerTree.arbolCuentas}" 
-                                        var="nodo" 
-                                        selectionMode="single"
-                                        selection="#{cuentasControllerTree.nodoActual}"
-                                        filterBy="#{nodo}"
-                                        animate="true"
-                                        styleClass="tree-cuentas"
-                                        >
+                                    id="tree-catalogo-cuentas" 
+                                    value="#{cuentasControllerTree.arbolCuentas}" 
+                                    var="nodo" 
+                                    selectionMode="single"
+                                    selection="#{cuentasControllerTree.nodoActual}"
+                                    filterBy="#{nodo}"
+                                    animate="true"
+                                    styleClass="tree-cuentas"
+                                    >
                                     <p:ajax event="select" 
                                             update=":formTabs" 
                                             listener="#{cuentasControllerTree.cargarCuentaSeleccionada()}"/>
@@ -40,7 +90,7 @@
                             </p:tab>
                             <p:tab id="detalle" title="Detalle">
                                 <p:panelGrid>
-                                    
+
                                     <p:menubar>
                                         <p:menuitem
                                             value="Guardar"
@@ -53,7 +103,7 @@
                                             />
                                         <p:menuitem
                                             value="Limpiar"
-                                            icon="ui-icon-refresh"
+                                            icon="fa fa-eraser"
                                             update=":formTabs"
                                             />
                                     </p:menubar>
@@ -128,15 +178,15 @@
                                         </div>
                                     </div>
                                 </p:panel>
-                                 <p:fileUpload fileUploadListener="#{cuentasControllerTree.subirYprocesarArchivo}" 
-                                      mode="advanced" 
-                                      dragDropSupport="false"
-                                      sizeLimit="10000000" 
-                                      fileLimit="1" 
-                                      allowTypes="/(\.|\/)(xlsx|xls)$/" 
-                                      label="Buscar"
-                                      uploadLabel="Subir"
-                                      cancelLabel="Cancelar"/>
+                                <p:fileUpload fileUploadListener="#{cuentasControllerTree.subirYprocesarArchivo}" 
+                                              mode="advanced" 
+                                              dragDropSupport="false"
+                                              sizeLimit="10000000" 
+                                              fileLimit="1" 
+                                              allowTypes="/(\.|\/)(xlsx|xls)$/" 
+                                              label="Buscar"
+                                              uploadLabel="Subir"
+                                              cancelLabel="Cancelar"/>
                             </p:tab>
                         </p:tabView>
                     </h:form>
@@ -179,7 +229,7 @@
                             </h:panelGrid>
                         </p:dialog>
                     </h:form>
-                </p:layoutUnit>
+                </div>
             </div>
         </div>
     </ui:define>

@@ -23,6 +23,7 @@ public interface ServiciosCuentaLocal {
     int contarTodo();
     void procesarArchivo(InputStream archivo);
     Cuenta getCuenta(Long id);
+    public List<Cuenta> buscarCuentas(Map filtro);
     List<Cuenta> getCuentasPadres();
     List<Cuenta> getTodasLasCuentas();
 }

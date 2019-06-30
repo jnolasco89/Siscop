@@ -3,7 +3,8 @@
                 xmlns:f="http://java.sun.com/jsf/core"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
-                template="/WEB-INF/template.xhtml">
+                template="/WEB-INF/template.xhtml"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
 
     <ui:define name="content">
         <div class="ui-g ui-fluid">
@@ -16,59 +17,112 @@
                                  for="msgGrowl"
                                  />
                         <p:tabView id="tabs" 
-                                   activeIndex="#{cuentasControllerTree.tabActiva}" 
+                                   activeIndex="#{mttoCuentasContables.tabActiva}" 
                                    >
-                            <p:tab id="busqueda" title="Búsqueda">
-                                <p:menubar>
-                                    <p:menuitem 
-                                        value="Buscar" 
-                                        actionListener="#{mttoActividades.buscarActividad()}" 
-                                        icon="ui-icon-search"
-                                        update="tablaProyectos"
-                                        process="@this datosBusquedaProyecto"
-                                        />
-                                    <p:menuitem 
-                                        value="Limpiar" 
-                                        action="#{mttoActividades.limpiarBusquedaActividad()}" 
-                                        update=":formTabs:tabs"
-                                        icon="fa fa-eraser" 
-                                        process="@this"
-                                        />
-                                </p:menubar>
-                                <p:panelGrid id="datosBusquedaProyecto" columns="4" layout="grid" style="border:0px !important; background:none;"
-                                             styleClass="ui-panelgrid-blank">
-                                    <p:outputLabel for="txtNombreB" value="Nombre:" />
-                                    <p:inputText id="txtNombreB" value="#{mttoProyecto.nombreB}"                                                     
-                                                 onkeyup="this.value = this.value.toUpperCase();"/>
-                                    <p:outputLabel for="txtNombreCortoB" value="Nombre Corto:" />
-                                    <p:inputText id="txtNombreCortoB" value="#{mttoProyecto.nombreCortoB}"
-                                                 onkeyup="this.value = this.value.toUpperCase();"/>
-                                    <p:outputLabel for="txtCodigo" value="Código:" />
-                                    <p:inputText id="txtCodigo" value="#{mttoProyecto.codigoB}"/>
-
-                                </p:panelGrid>
-                                <div class="card">
-                                    <p:dataTable id="tablaProyectos" var = "proy" value="#{mttoProyecto.proyectosList}"
-                                                 selectionMode="single"
-                                                 selection="#{mttoProyecto.proyectoB}"
-                                                 rowKey="#{proy.id}"
-                                                 paginator="true"
-                                                 rows ="10"
-                                                 paginatorPosition="bottom"
-                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                 rowsPerPageTemplate="10,20,50">
-                                        <p:ajax event="rowSelect" listener="#{mttoProyecto.onRowSelect(event)}"
-                                                update="formTabs" />
-                                        <p:column headerText="Id" width="10%">
-                                            <h:outputText value="#{proy.id}" />
-                                        </p:column>
-                                        <p:column headerText="Proyecto">
-                                            <h:outputText value="#{proy.nombreCorto}" />
-                                        </p:column>
-                                    </p:dataTable>
-                                </div>
-                                
-                            </p:tab>
+                            <div class="card">
+                                <p:tab id="busqueda" title="Búsqueda">
+                                    <p:menubar>
+                                        <p:menuitem 
+                                            value="Buscar" 
+                                            actionListener="#{mttoCuentasContables.buscarProyecto()}" 
+                                            icon="ui-icon-search"
+                                            update="tablaProyectos"
+                                            process="@this datosProyectoBuscado"
+                                            />
+                                        <p:menuitem 
+                                            value="Limpiar" 
+                                            action="#{mttoCuentasContables.limpiarBusquedaProyecto()}" 
+                                            update=":formTabs:tabs"
+                                            icon="fa fa-eraser" 
+                                            process="@this :formTabs:tabs:busqueda"
+                                            />
+                                    </p:menubar>
+                                    <p:panelGrid 
+                                        id="datosProyectoBuscado"
+                                        columns="4" 
+                                        layout="grid" 
+                                        style="border:0px !important; background:none;"
+                                        styleClass="ui-panelgrid-blank">
+                                        <p:outputLabel for="txtCodigoProyectoB" value="Codigo:" />
+                                        <p:inputText id="txtCodigoProyectoB" value="#{mttoCuentasContables.proyectoActual.codigo}"                                                     
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:outputLabel for="txtNombreProyectoB" value="Nombre:" />
+                                        <p:inputText id="txtNombreProyectoB" value="#{mttoCuentasContables.proyectoActual.nombre}"                                                     
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:outputLabel for="txtNombreCortoB" value="Nombre Corto:" />
+                                        <p:inputText id="txtNombreCortoB" value="#{mttoCuentasContables.proyectoActual.nombreCorto}"
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                                        <p:outputLabel for="fechaInicioB" value="Fecha inicio:" />
+                                        <p:calendar id="fechaInicioB" 
+                                                    value="#{mttoCuentasContables.proyectoActual.fechaini}"
+                                                    pattern="dd-MM-yyyy" 
+                                                    mask="true"
+                                                    locale="es"
+                                                    navigator="true"
+                                                    >
+                                        </p:calendar>    
+                                        <p:outputLabel for="fechaFinB" value="Fecha finalizacion:" />
+                                        <p:calendar id="fechaFinB" 
+                                                    value="#{mttoCuentasContables.proyectoActual.fechafin}"
+                                                    pattern="dd-MM-yyyy" 
+                                                    mask="true"
+                                                    locale="es"
+                                                    navigator="true"
+                                                    >
+                                        </p:calendar>
+                                        <p:outputLabel for="listEstado" value="Estado:" />
+                                        <p:selectOneMenu id="listEstado" 
+                                                         value="#{mttoCuentasContables.proyectoActual.estado.id}"
+                                                         >
+                                            <f:selectItem itemLabel="Todos" itemValue="0"/>
+                                            <f:selectItems value="#{mttoCuentasContables.estadosProyecto}" 
+                                                           var="estado" 
+                                                           itemLabel="#{estado.descripcion}"
+                                                           itemValue="#{estado.id}"
+                                                           />
+                                        </p:selectOneMenu>
+                                    </p:panelGrid>
+                                    <div class="card">
+                                        <p:dataTable id="tablaProyectos" var = "pro" 
+                                                     widgetVar="tablaProyectos"
+                                                     value="#{mttoCuentasContables.proyectos}"
+                                                     selectionMode="single"
+                                                     selection="#{mttoCuentasContables.proyectoCatalogo}"
+                                                     rowKey="#{pro.id}"
+                                                     emptyMessage="Sin registros">
+                                            <p:ajax event="rowSelect"
+                                                    listener="#{mttoCuentasContables.cargarCatalogoDeCuentasProyecto()}"
+                                                    update=":formTabs"
+                                                    />
+                                            <p:column headerText="Id">
+                                                <h:outputText value="#{pro.id}" />
+                                            </p:column>
+                                            <p:column headerText="Codigo">
+                                                <h:outputText value="#{pro.codigo}" />
+                                            </p:column>
+                                            <p:column headerText="Nombre">
+                                                <h:outputText value="#{pro.nombre}" />
+                                            </p:column>
+                                            <p:column headerText="Nombre corto">
+                                                <h:outputText value="#{pro.nombreCorto}" />
+                                            </p:column>
+                                            <p:column headerText="Fecha inicio">
+                                                <h:outputText value="#{pro.fechaini}">
+                                                    <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Fecha finalizacion">
+                                                <h:outputText value="#{pro.fechafin}" >
+                                                    <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Estado">
+                                                <h:outputText value="#{pro.estado.descripcion}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:tab>
+                            </div>
                             <p:tab id="catalogo" title="Catalogo">
                                 <p:tree
                                     id="tree-catalogo-cuentas" 

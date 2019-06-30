@@ -53,6 +53,11 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
             throw new Exception("El codigo de cuenta ingresado ya se encuentra registrado");
         }
     }
+    
+    @Override
+    public List<Cuenta> buscarCuentas(Map filtro){
+        return cuentaDao.buscarCuentas(filtro);
+    }
 
     @Override
     public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros) {

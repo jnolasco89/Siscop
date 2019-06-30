@@ -38,6 +38,12 @@ public class ServicioProyecto implements ServicioProyectoLocal {
 
     }
     
+    
+    @Override
+    public List<Proyecto> buscarProyetosCriterial(Map params){
+        return proyectoDao.buscarProyetosCriterial(params);
+    }
+    
     @Override
     public List<Proyecto> getAllProyectos(){
         return proyectoDao.findAll();

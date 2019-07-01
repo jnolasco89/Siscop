@@ -6,7 +6,6 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;

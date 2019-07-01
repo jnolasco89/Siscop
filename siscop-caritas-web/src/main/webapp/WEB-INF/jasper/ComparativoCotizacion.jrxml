@@ -142,7 +142,7 @@ where plan.id= $P{id}]]>
 					</textElement>
 					<text><![CDATA[Unidad de Medida]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="350" y="11" width="130" height="24" uuid="4e41684d-646c-4443-bb7c-32f79492d315"/>
 					<box>
 						<topPen lineWidth="0.5"/>
@@ -230,7 +230,7 @@ where plan.id= $P{id}]]>
 					</textElement>
 					<text><![CDATA[PRECIO UNITARIO]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="480" y="11" width="130" height="24" uuid="d5fe8e99-906b-483f-ad57-86d217c1b9a9"/>
 					<box>
 						<topPen lineWidth="0.5"/>
@@ -258,7 +258,7 @@ where plan.id= $P{id}]]>
 					</textElement>
 					<text><![CDATA[TOTAL]]></text>
 				</staticText>
-				<textField>
+				<textField isBlankWhenNull="true">
 					<reportElement x="610" y="11" width="130" height="24" uuid="043b132c-43fb-4bae-9591-97e84608a20e"/>
 					<box>
 						<topPen lineWidth="0.5"/>
@@ -425,7 +425,7 @@ $F{proyecto}+"\n"+
 	</title>
 	<detail>
 		<band height="18" splitType="Stretch">
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="ContainerHeight" x="210" y="0" width="75" height="18" isPrintWhenDetailOverflows="true" uuid="64b7007a-b60d-48f4-a59d-c98c04aa81c5">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="d27d5301-7981-4819-b729-a25f820aacfd"/>
 				</reportElement>
@@ -439,7 +439,7 @@ $F{proyecto}+"\n"+
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{medida}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="$#,##0.00">
+			<textField isStretchWithOverflow="true" pattern="$#,##0.00" isBlankWhenNull="true">
 				<reportElement stretchType="ContainerHeight" x="350" y="0" width="65" height="18" isPrintWhenDetailOverflows="true" uuid="d8a92393-0d29-4a28-ab09-d5e5e01cfc84">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4642046e-4b89-428f-b8b3-0acec1b14bc0"/>
 				</reportElement>
@@ -452,7 +452,7 @@ $F{proyecto}+"\n"+
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio1}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="$#,##0.00">
+			<textField isStretchWithOverflow="true" pattern="$#,##0.00" isBlankWhenNull="true">
 				<reportElement stretchType="ContainerHeight" x="415" y="0" width="65" height="18" isPrintWhenDetailOverflows="true" uuid="62655b3d-24cf-421c-aeda-af38e6057326">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="94531355-96f5-4c74-9042-84e4324cadcc"/>
 				</reportElement>
@@ -465,7 +465,7 @@ $F{proyecto}+"\n"+
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total1}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement stretchType="ContainerHeight" x="285" y="0" width="65" height="18" isPrintWhenDetailOverflows="true" uuid="ca4580eb-9e06-46c8-8df5-462e37ae2693">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="eb2b7709-0849-49e8-b7b7-840a1bca18fe"/>
 				</reportElement>
@@ -476,7 +476,7 @@ $F{proyecto}+"\n"+
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="$#,##0.00">
+			<textField isStretchWithOverflow="true" pattern="$#,##0.00" isBlankWhenNull="true">
 				<reportElement stretchType="ContainerHeight" x="545" y="0" width="65" height="18" isPrintWhenDetailOverflows="true" uuid="c104ea95-f5db-404f-b1c0-43782611bbe8">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="94531355-96f5-4c74-9042-84e4324cadcc"/>
 				</reportElement>
@@ -489,7 +489,7 @@ $F{proyecto}+"\n"+
 				</textElement>
 				<textFieldExpression><![CDATA[$F{total2}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="$#,##0.00">
+			<textField isStretchWithOverflow="true" pattern="$#,##0.00" isBlankWhenNull="true">
 				<reportElement stretchType="ContainerHeight" x="480" y="0" width="65" height="18" isPrintWhenDetailOverflows="true" uuid="43af994e-3656-4783-8467-3dc9f580f8ae">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4642046e-4b89-428f-b8b3-0acec1b14bc0"/>
 				</reportElement>
@@ -502,7 +502,7 @@ $F{proyecto}+"\n"+
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio2}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="$#,##0.00">
+			<textField isStretchWithOverflow="true" pattern="$#,##0.00" isBlankWhenNull="true">
 				<reportElement stretchType="ContainerHeight" x="610" y="0" width="65" height="18" isPrintWhenDetailOverflows="true" uuid="4d489a0e-1066-4931-bfe6-e675f2f83ab1">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4642046e-4b89-428f-b8b3-0acec1b14bc0"/>
 				</reportElement>
@@ -515,7 +515,7 @@ $F{proyecto}+"\n"+
 				</textElement>
 				<textFieldExpression><![CDATA[$F{precio3}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" pattern="$#,##0.00">
+			<textField isStretchWithOverflow="true" pattern="$#,##0.00" isBlankWhenNull="true">
 				<reportElement stretchType="ContainerHeight" x="675" y="0" width="65" height="18" isPrintWhenDetailOverflows="true" uuid="a058e5dc-73cf-4fa4-bde5-e46d4f684d65">
 					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="94531355-96f5-4c74-9042-84e4324cadcc"/>
 				</reportElement>

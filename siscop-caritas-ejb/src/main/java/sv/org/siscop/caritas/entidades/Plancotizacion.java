@@ -57,8 +57,18 @@ public class Plancotizacion implements Serializable {
     private Actividad actividad;
     @OneToMany(mappedBy = "plancotizacion", orphanRemoval = true)
     private List<Planitem> planitemList;
-    @OneToMany(mappedBy = "plantilla",orphanRemoval = true)
+    @OneToMany(mappedBy = "plantilla", orphanRemoval = true)
     private List<Cotizacion> cotizacionList;
+
+    @JoinColumn(name = "idcotizacionsel", referencedColumnName = "id")
+    @ManyToOne
+    private Cotizacion cotizacionSel;
+    @JoinColumn(name = "idordencompra", referencedColumnName = "id")
+    @ManyToOne
+    private Ordencompra ordenCompra;
+    @JoinColumn(name = "idrequisicion", referencedColumnName = "id")
+    @ManyToOne
+    private Requisicion requisicion;
 
     public Plancotizacion() {
     }
@@ -121,6 +131,30 @@ public class Plancotizacion implements Serializable {
 
     public void setActividad(Actividad actividad) {
         this.actividad = actividad;
+    }
+
+    public Cotizacion getCotizacionSel() {
+        return cotizacionSel;
+    }
+
+    public void setCotizacionSel(Cotizacion cotizacionSel) {
+        this.cotizacionSel = cotizacionSel;
+    }
+
+    public Ordencompra getOrdenCompra() {
+        return ordenCompra;
+    }
+
+    public void setOrdenCompra(Ordencompra ordenCompra) {
+        this.ordenCompra = ordenCompra;
+    }
+
+    public Requisicion getRequisicion() {
+        return requisicion;
+    }
+
+    public void setRequisicion(Requisicion requisicion) {
+        this.requisicion = requisicion;
     }
 
     public List<Cotizacion> getCotizacionList() {

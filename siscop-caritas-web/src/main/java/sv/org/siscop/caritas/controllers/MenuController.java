@@ -60,6 +60,9 @@ public class MenuController implements Serializable {
         model.addElement(rootItem1);
 
         for (Menu m : lista) {
+            if (!m.getActivo()) {
+                continue;
+            }
             DefaultSubMenu sm = new DefaultSubMenu();
             sm.setLabel(m.getNombre());
             sm.setExpanded(true);

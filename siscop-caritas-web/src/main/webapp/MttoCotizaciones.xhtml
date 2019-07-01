@@ -30,7 +30,7 @@
                                                      onkeyup="this.value = this.value.toUpperCase();"/>                                        
                                         <p:outputLabel for="txtIdProyecto" value="Id Proyecto:" />
                                         <p:inputText id="txtIdProyecto" value="#{mttoCotizacion.idProyectoB}"/>
-                                        <p:outputLabel for="selectOneEstado" value="Estado" />
+                                        <p:outputLabel for="selectOneEstado" value="Estado:" />
                                         <p:selectOneMenu id="selectOneEstado" value="#{mttoCotizacion.estadoActividadB}">
                                             <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
                                             <f:selectItems value="#{mttoCotizacion.itemEstadoActividad}"/>
@@ -81,16 +81,33 @@
                                                     url="https://sanctionssearch.ofac.treas.gov/"/>
                                     </p:menubar>
                                     <div class="ui-g ui-panelgrid-blank">                                       
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Fecha:" for="fecha" />
+                                        </div>
+                                        <div class="ui-g-2" >
+                                            <p:calendar id="fecha" value="#{mttoCotizacion.fecha}"
+                                                        pattern="dd-MM-yyyy" mask="true"/>
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Actividad:" for="txtBusProyecto" />
+                                        </div>
+                                        <div class="ui-g-5">
+                                            <div class="ui-inputgroup">
+                                                <p:inputText id="txtBusProyecto"
+                                                             value="#{mttoCotizacion.actividadActual.nombre}"
+                                                             readonly="true"
+                                                             >
+                                                </p:inputText>
+                                                <p:commandButton icon="ui-icon-search"  
+                                                                 styleClass="white-button"
+                                                                 actionListener="#{mttoCotizacion.abrirModalBuscarProveedores()}"/>  
+                                            </div>
+                                        </div>
                                         <div class="ui-g-6" >
                                             <p:outputLabel value="Descripción:" for="txtDescripcion" />
                                             <p:inputTextarea rows="2" id="txtDescripcion"
                                                              value="#{mttoCotizacion.descripcion}"
                                                              autoResize="true"/>
-                                        </div>
-                                        <div class="ui-g-2" >
-                                            <p:outputLabel value="Fecha:" for="fecha" />
-                                            <p:calendar id="fecha" value="#{mttoCotizacion.fecha}"
-                                                        pattern="dd-MM-yyyy" mask="true"/>
                                         </div>
                                         <div class="ui-g-2" >
                                             <p:outputLabel value=" "/>
@@ -107,6 +124,22 @@
                                                              value="#{mttoCotizacion.analisis}"
                                                              autoResize="true"/>
                                         </div>
+                                        <div class="ui-g-1" >
+                                            <h:outputText value="Ganador:" />
+                                        </div>
+                                        <div class="ui-g-5">
+                                            <div class="ui-inputgroup">
+                                                <p:inputText id="txtCotizacionSel"
+                                                             value="#{mttoCotizacion.cotizacionSel.comentarios}"
+                                                             readonly="true"
+                                                             >
+                                                </p:inputText>
+                                                <p:commandButton icon="ui-icon-search"  
+                                                                 styleClass="white-button"
+                                                                 actionListener="#{mttoCotizacion.abrirModalSelCotizacion()}"/>  
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <p:tabView id="otraInfo" style="border: 1px">
                                         <p:tab id="plantilla" title="Plantilla">
@@ -211,14 +244,14 @@
                                                 <div class="ui-g-1" >
                                                     <p:outputLabel value="Nombre:" for="txtComentarioCot"/>
                                                 </div> 
-                                                <div class="ui-g-4" >
+                                                <div class="ui-g-5" >
                                                     <p:inputText id="txtComentarioCot" value="#{mttoCotizacion.comenCotizacion}"
                                                                  onkeyup="this.value = this.value.toUpperCase();"/>
                                                 </div>
                                                 <div class="ui-g-1" >
                                                     <h:outputText value="Proveedor:" />
                                                 </div>
-                                                <div class="ui-md-5">
+                                                <div class="ui-g-5">
                                                     <div class="ui-inputgroup">
                                                         <p:inputText id="txtBusProyecto"
                                                                      value="#{mttoCotizacion.proveedorActual.persona.razsocial}"
@@ -238,7 +271,7 @@
                                                                 pattern="dd-MM-yyyy" mask="true"/>
                                                 </div>
                                                 <div class="ui-g-2" >
-                                                    <h:outputText value="Consulta OFAC " />
+                                                    <h:outputText value="Consulta OFAC:" />
                                                 </div>
                                                 <div class="ui-g-2" >
                                                     <p:inputSwitch value="#{mttoCotizacion.consultaOFAC}" 
@@ -273,6 +306,14 @@
                                                         </f:facet>
                                                         <p:column headerText="Id" width="10%">
                                                             <h:outputText value="#{coti.id}" />
+                                                        </p:column>
+                                                        <p:column headerText="req" width="10%">
+                                                            <p:commandButton icon="fa fa-check"
+                                                                             style="width: 20px; height: 20px"
+                                                                             title="Crear Requisición"
+                                                                             actionListener="#{mttoCotizacion.crearRequisicion(coti)}"
+                                                                             update="principal:tabs:otraInfo
+                                                                             :principal:growl"/>
                                                         </p:column>
                                                         <p:column headerText="Número" width="10%">
                                                             <h:outputText value="#{coti.numero}" />
@@ -357,7 +398,36 @@
                                                     </p:column>
                                                 </p:dataTable>
                                             </div>
-                                        </p:tab>                                       
+                                        </p:tab>
+                                        <p:tab id="requisiciones" title="Requisiciones"
+                                               rendered="#{not empty mttoCotizacion.requisicion
+                                                           and not empty mttoCotizacion.requisicion.id}">
+                                            <div class="card ui-g" style="margin-top:0">
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel value="Numero:"/>
+                                                </div> 
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel value="#{mttoCotizacion.requisicion.numero}"/>
+                                                </div>
+                                                <div class="ui-g-3" >
+                                                    <p:outputLabel value="#{mttoCotizacion.requisicion.cotizacion.comentarios}"/>
+                                                </div>
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel value="Fecha:" for="fechaReq" />
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:calendar id="fechaReq" value="#{mttoCotizacion.fechaRequisicion}"
+                                                                pattern="dd-MM-yyyy" mask="true"/>
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:outputLabel value="Descripcion:" for="txtDestino"/>            
+                                                </div>
+                                                <div class="ui-g-5" >                                                                                  
+                                                    <p:inputText id="txtDestino" value="#{mttoCotizacion.destino}"/>
+                                                </div>
+                                            </div>
+
+                                        </p:tab>
                                     </p:tabView>
                                 </p:tab>
                             </div>
@@ -376,51 +446,73 @@
                   width="800">
             <h:form id="formbuscarProveedor">
                 <div class="card">
+                    <p:menubar>
+                        <p:menuitem value="Buscar" actionListener="#{mttoCotizacion.buscarProveedores()}" 
+                                    icon="fa fa-search" update="@form"  />
+                        <p:menuitem value="Limpiar" action="#{mttoCotizacion.limpiarBusquedaProveedores()}"
+                                    update="@form" icon="fa fa-eraser" />
+                    </p:menubar>
+                    <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                 styleClass="ui-panelgrid-blank">
+                        <p:outputLabel for="txtNombre1" value="Primer Nombre" />
+                        <p:inputText id="txtNombre1" value="#{mttoCotizacion.nombre1ProvB}"                                                     
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtNombre2" value="Segundo Nombre" />
+                        <p:inputText id="txtNombre2" value="#{mttoCotizacion.nombre2ProvB}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtApellido1" value="Primer Apellido" />
+                        <p:inputText id="txtApellido1" value="#{mttoCotizacion.apellido1ProvB}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtApellido1" value="Segundo Apellido" />
+                        <p:inputText id="txtApellido2" value="#{mttoCotizacion.apellido2ProvB}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtDui" value="DUI" />
+                        <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoCotizacion.duiProvB}"/>
+                    </p:panelGrid>
+                    <p:dataTable id="lista" var = "prov" value="#{mttoCotizacion.lstProveedores}"
+                                 selectionMode="single"
+                                 selection="#{mttoCotizacion.proveedorSelB}"
+                                 rowKey="#{prov.id}"
+                                 paginator="true"
+                                 rows ="10"
+                                 paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,20,50">
+                        <p:ajax event="rowSelect" listener="#{mttoCotizacion.onRowSelectProveedor(event)}"
+                                update="principal" />
+                        <p:column headerText="Id" width="10%">
+                            <h:outputText value="#{prov.id}" />
+                        </p:column>
+                        <p:column headerText="Proveedor">
+                            <h:outputText value="#{prov.persona.nomcom}" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </h:form>
+        </p:dialog>
 
-                    <p:tab id="busqueda" title="Búsqueda">
-                        <p:menubar>
-                            <p:menuitem value="Buscar" actionListener="#{mttoCotizacion.buscarProveedores()}" 
-                                        icon="fa fa-search" update="@form"  />
-                            <p:menuitem value="Limpiar" action="#{mttoCotizacion.limpiarBusquedaProveedores()}"
-                                        update="@form" icon="fa fa-eraser" />
-                        </p:menubar>
-                        <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
-                                     styleClass="ui-panelgrid-blank">
-                            <p:outputLabel for="txtNombre1" value="Primer Nombre" />
-                            <p:inputText id="txtNombre1" value="#{mttoCotizacion.nombre1ProvB}"                                                     
-                                         onkeyup="this.value = this.value.toUpperCase();"/>
-                            <p:outputLabel for="txtNombre2" value="Segundo Nombre" />
-                            <p:inputText id="txtNombre2" value="#{mttoCotizacion.nombre2ProvB}"
-                                         onkeyup="this.value = this.value.toUpperCase();"/>
-                            <p:outputLabel for="txtApellido1" value="Primer Apellido" />
-                            <p:inputText id="txtApellido1" value="#{mttoCotizacion.apellido1ProvB}"
-                                         onkeyup="this.value = this.value.toUpperCase();"/>
-                            <p:outputLabel for="txtApellido1" value="Segundo Apellido" />
-                            <p:inputText id="txtApellido2" value="#{mttoCotizacion.apellido2ProvB}"
-                                         onkeyup="this.value = this.value.toUpperCase();"/>
-                            <p:outputLabel for="txtDui" value="DUI" />
-                            <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoCotizacion.duiProvB}"/>
-                        </p:panelGrid>
-                        <p:dataTable id="lista" var = "prov" value="#{mttoCotizacion.lstProveedores}"
-                                     selectionMode="single"
-                                     selection="#{mttoCotizacion.proveedorSelB}"
-                                     rowKey="#{prov.id}"
-                                     paginator="true"
-                                     rows ="10"
-                                     paginatorPosition="bottom"
-                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                     rowsPerPageTemplate="10,20,50">
-                            <p:ajax event="rowSelect" listener="#{mttoCotizacion.onRowSelectProveedor(event)}"
-                                    update="principal" />
-                            <p:column headerText="Id" width="10%">
-                                <h:outputText value="#{prov.id}" />
-                            </p:column>
-                            <p:column headerText="Proveedor">
-                                <h:outputText value="#{prov.persona.nomcom}" />
-                            </p:column>
-                        </p:dataTable>
-                    </p:tab>
-
+        <p:dialog id="selCotizacionModal"
+                  header="Seleccionar Cotización"
+                  widgetVar="modalSelCotizacion"
+                  modal="true" showEffect="fade" hideEffect="fade"
+                  resizable="true" responsive="true"
+                  height="200"
+                  width="400">
+            <h:form id="formSelCotizacion">
+                <div class="card">
+                    <p:dataTable id="lista" var = "cot" value="#{mttoCotizacion.listaCotizaciones}"
+                                 selectionMode="single"
+                                 selection="#{mttoCotizacion.cotizacionSel}"
+                                 rowKey="#{cot.id}">
+                        <p:ajax event="rowSelect" listener="#{mttoCotizacion.onRowSelectCotizacionSeleccionada(event)}"
+                                update="principal" />
+                        <p:column headerText="Id" width="10%">
+                            <h:outputText value="#{cot.id}" />
+                        </p:column>
+                        <p:column headerText="Nombre">
+                            <h:outputText value="#{cot.comentarios}" />
+                        </p:column>
+                    </p:dataTable>
                 </div>
             </h:form>
         </p:dialog>

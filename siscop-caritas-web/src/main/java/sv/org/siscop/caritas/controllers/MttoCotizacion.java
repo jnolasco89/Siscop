@@ -48,12 +48,14 @@ import sv.org.siscop.caritas.ejb.ServicioProveedorLocal;
 import sv.org.siscop.caritas.ejb.ServicioProyectoLocal;
 import sv.org.siscop.caritas.entidades.Plancotizacion;
 import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
+import sv.org.siscop.caritas.entidades.Actividad;
 import sv.org.siscop.caritas.entidades.Cotizacion;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.Itemcotizacion;
 import sv.org.siscop.caritas.entidades.Planitem;
 import sv.org.siscop.caritas.entidades.Proveedor;
 import sv.org.siscop.caritas.entidades.Proyecto;
+import sv.org.siscop.caritas.entidades.Requisicion;
 import sv.org.siscop.caritas.util.Catalogos;
 
 /**
@@ -88,8 +90,10 @@ public class MttoCotizacion implements Serializable {
     private Plancotizacion planCotizacionActual = new Plancotizacion();
     private Planitem planItemActual = new Planitem();
     private Plancotizacion plancotizacionB = new Plancotizacion();
+    private Actividad actividadActual = new Actividad();
     boolean esPlantillaNueva = false;
     private String descripcion;
+    private Long idActividad;
     private String analisis;
     private Date fecha = new Date();
 
@@ -189,6 +193,14 @@ public class MttoCotizacion implements Serializable {
         this.plancotizacionB = plancotizacionB;
     }
 
+    public Actividad getActividadActual() {
+        return actividadActual;
+    }
+
+    public void setActividadActual(Actividad actividadActual) {
+        this.actividadActual = actividadActual;
+    }
+
     public String getDescripcion() {
         return descripcion;
     }
@@ -271,11 +283,13 @@ public class MttoCotizacion implements Serializable {
 
         planCotizacionActual = new Plancotizacion();
         itemPlanCotizacionList = new ArrayList<>();
+        actividadActual = new Actividad();
+        cotizacionSel = new Cotizacion();
         fecha = null;
         descripcion = "";
         proyectoActual = new Proyecto();
         limpiarCotizaciones();
-        
+
     }
 
     public void onRowSelectPlan(SelectEvent event) throws IOException {
@@ -287,6 +301,8 @@ public class MttoCotizacion implements Serializable {
 
             descripcion = planCotizacionActual.getDescripcion();
             fecha = planCotizacionActual.getFecha();
+            actividadActual = planCotizacionActual.getActividad();
+            cotizacionSel =planCotizacionActual.getCotizacionSel();
             itemPlanCotizacionList = planCotizacionActual.getPlanitemList();
             listaCotizaciones = planCotizacionActual.getCotizacionList();
 
@@ -358,8 +374,10 @@ public class MttoCotizacion implements Serializable {
             this.planCotizacionActual.setCotizacionList(listaCotizaciones);
             if (proyectoActual != null) {
                 this.planCotizacionActual.setIdproyecto(proyectoActual.getId());
-            }
+            }           
 
+            this.planCotizacionActual.setCotizacionSel(cotizacionSel);
+            //this.planCotizacionActual.setRequisicion(new Requisicion());
             if (esPlantillaNueva) {
                 this.servCotizacion.nuevoPlancotizacion(planCotizacionActual);
             } else {
@@ -854,6 +872,20 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
+    public void crearRequisicion(Cotizacion coti) {
+        try {
+           
+            requisicion = new Requisicion(1L);
+            requisicion.setNumero(44L);
+            requisicion.setCotizacion(coti);
+            
+            
+            
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void eliminarCotizacion(Cotizacion coti) {
         try {
             listaCotizaciones.remove(coti);
@@ -865,6 +897,39 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
+    
+    private Requisicion requisicion = new Requisicion();
+    private Date fechaRequisicion = null; 
+    private String destino = "";
+
+    public Requisicion getRequisicion() {
+        return requisicion;
+    }
+
+    public void setRequisicion(Requisicion requisicion) {
+        this.requisicion = requisicion;
+    }
+
+    public Date getFechaRequisicion() {
+        return fechaRequisicion;
+    }
+
+    public void setFechaRequisicion(Date fechaRequisicion) {
+        this.fechaRequisicion = fechaRequisicion;
+    }
+
+    public String getDestino() {
+        return destino;
+    }
+
+    public void setDestino(String destino) {
+        this.destino = destino;
+    }
+    
+    
+    
+    
+    
     //Campos de búsqueda de proyecto
     private Long codigoB;
     private String nombreB;
@@ -1003,6 +1068,37 @@ public class MttoCotizacion implements Serializable {
         PrimeFaces.current().ajax().update(":formbuscarProyecto");
         PrimeFaces.current().executeScript("PF('modalBusqProyecto').show();");
     }
+    
+    
+    private Cotizacion cotizacionSel = new Cotizacion();
+    
+    
+  public void abrirModalSelCotizacion() {
+        PrimeFaces.current().ajax().update(":formSelCotizacion");
+        PrimeFaces.current().executeScript("PF('modalSelCotizacion').show();");
+    }
+
+    public Cotizacion getCotizacionSel() {
+        return cotizacionSel;
+    }
+
+    public void setCotizacionSel(Cotizacion cotizacionSel) {
+        this.cotizacionSel = cotizacionSel;
+    }
+  
+  
+  
+  
+  public void onRowSelectCotizacionSeleccionada(SelectEvent event) throws IOException {
+        try {
+           
+            PrimeFaces.current().executeScript("PF('modalSelCotizacion').hide();");
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
 
     private String duiProvB;
     private String nombre1ProvB;
@@ -1085,7 +1181,7 @@ public class MttoCotizacion implements Serializable {
         PrimeFaces.current().ajax().update(":formbuscarProveedor");
         PrimeFaces.current().executeScript("PF('modalbusqProveedor').show();");
     }
-
+   
     public void buscarProveedores() {
 
         try {

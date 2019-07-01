@@ -49,7 +49,7 @@ public class Plancotizacion implements Serializable {
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    @Size(max = 200)
+    @Size(max = 2000)
     @Column(name = "analisis")
     private String analisis;
     @JoinColumn(name = "idactividad", referencedColumnName = "id")

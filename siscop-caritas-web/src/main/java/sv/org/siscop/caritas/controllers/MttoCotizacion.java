@@ -44,6 +44,7 @@ import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 import sv.org.siscop.caritas.ejb.ServicioCotizacionLocal;
+import sv.org.siscop.caritas.ejb.ServicioProveedorLocal;
 import sv.org.siscop.caritas.ejb.ServicioProyectoLocal;
 import sv.org.siscop.caritas.entidades.Plancotizacion;
 import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
@@ -51,6 +52,7 @@ import sv.org.siscop.caritas.entidades.Cotizacion;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.Itemcotizacion;
 import sv.org.siscop.caritas.entidades.Planitem;
+import sv.org.siscop.caritas.entidades.Proveedor;
 import sv.org.siscop.caritas.entidades.Proyecto;
 import sv.org.siscop.caritas.util.Catalogos;
 
@@ -68,6 +70,8 @@ public class MttoCotizacion implements Serializable {
     private ServiciosCatalogoLocal servCat;
     @EJB
     private ServicioProyectoLocal servProyecto;
+    @EJB
+    private ServicioProveedorLocal servProveedor;
 
     private final static Logger logger = Logger.getLogger(MttoCotizacion.class.getName());
 
@@ -270,6 +274,8 @@ public class MttoCotizacion implements Serializable {
         fecha = null;
         descripcion = "";
         proyectoActual = new Proyecto();
+        limpiarCotizaciones();
+        
     }
 
     public void onRowSelectPlan(SelectEvent event) throws IOException {
@@ -297,6 +303,7 @@ public class MttoCotizacion implements Serializable {
 
             limpiarPlancotizacion();
             limpiarItemPlan();
+            limpiarCotizaciones();
             esPlantillaNueva = true;
 
             this.showMessage(FacesMessage.SEVERITY_WARN,
@@ -456,11 +463,52 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
+    public boolean validarPlanItem() {
+        boolean hay = false;
+        try {
+            List<String> campos = new ArrayList<>();
+            List<String> mensajes = new ArrayList<>();
+
+            if (producto == null || producto.isEmpty()) {
+                campos.add("Producto");
+            }
+            if (descproducto == null || descproducto.isEmpty()) {
+                campos.add("Descripción");
+            }
+            if (idItemMedida == 0) {
+                campos.add("Unidad de Medida");
+            }
+            if (cantidad == null) {
+                mensajes.add("Cantidad");
+            }
+
+            String camposFaltan = campos.stream().collect(Collectors.joining(", "));
+            if (!camposFaltan.isEmpty()) {
+                mensajes.add("Verifique los siguientes campos: " + camposFaltan);
+            }
+
+            for (String msj : mensajes) {
+                hay = true;
+                this.showMessage(FacesMessage.SEVERITY_WARN, msj, null);
+            }
+
+        } catch (Exception ex) {
+            this.showMessage(FacesMessage.SEVERITY_WARN,
+                    "Error al validar Plantilla.", ex.getLocalizedMessage());
+            logger.log(Level.SEVERE, null, ex);
+        }
+        return hay;
+    }
+
     public void agregarPlanItem() {
         try {
             if (esPlantillaNueva) {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "Error al guardar plantilla.", "Guarde la planitalla primero.");
+                return;
+            }
+
+            if (validarPlanItem()) {
                 return;
             }
 
@@ -513,9 +561,8 @@ public class MttoCotizacion implements Serializable {
 
         this.servCotizacion.actualizarPlanItem(entity);
     }
-    
-    
-     public void eliminarPlanItem(Planitem item) {
+
+    public void eliminarPlanItem(Planitem item) {
         try {
             item.setPlancotizacion(null);
             itemPlanCotizacionList.remove(item);
@@ -566,7 +613,8 @@ public class MttoCotizacion implements Serializable {
     private Cotizacion cotizacionActual = new Cotizacion();
     private Itemcotizacion itemCotizacionActual = new Itemcotizacion();
     private String comenCotizacion = new String();
-    private Date fechaCotizacion = new Date();
+    private Date fechaCotizacion = null;
+    private boolean consultaOFAC = false;
 
     public List<Cotizacion> getListaCotizaciones() {
         return listaCotizaciones;
@@ -614,6 +662,14 @@ public class MttoCotizacion implements Serializable {
 
     public void setFechaCotizacion(Date fechaCotizacion) {
         this.fechaCotizacion = fechaCotizacion;
+    }
+
+    public boolean isConsultaOFAC() {
+        return consultaOFAC;
+    }
+
+    public void setConsultaOFAC(boolean consultaOFAC) {
+        this.consultaOFAC = consultaOFAC;
     }
 
     public void onRowSelectCotizacion(SelectEvent event) throws IOException {
@@ -691,23 +747,74 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
-    public void limpiarItemCotizacion() {
+    public void limpiarCotizaciones() {
         try {
             itemCotizacionActual = new Itemcotizacion();
             fechaCotizacion = null;
             comenCotizacion = "";
+            consultaOFAC = false;
+            proveedorActual = new Proveedor();
+            listaItemCotizacion = new ArrayList<>();
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
 
+    public void consultarOFAC() {
+        String summary = consultaOFAC ? "Consultada" : "Sin consultar";
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(summary));
+    }
+
+    public boolean validarCotizacion() {
+        boolean hay = false;
+        try {
+            List<String> campos = new ArrayList<>();
+            List<String> mensajes = new ArrayList<>();
+
+            if (comenCotizacion == null || comenCotizacion.isEmpty()) {
+                campos.add("Nombre");
+            }
+            if (proveedorActual.getId() == null) {
+                campos.add("Seleccione proveedor");
+            }
+            if (fechaCotizacion == null) {
+                campos.add("Fecha de cotización");
+            }
+            if (!consultaOFAC) {
+                campos.add("Consulta OFAC");
+            }
+
+            String camposFaltan = campos.stream().collect(Collectors.joining(", "));
+            if (!camposFaltan.isEmpty()) {
+                mensajes.add("Verifique los siguientes campos: " + camposFaltan);
+            }
+
+            for (String msj : mensajes) {
+                hay = true;
+                this.showMessage(FacesMessage.SEVERITY_WARN, msj, null);
+            }
+
+        } catch (Exception ex) {
+            this.showMessage(FacesMessage.SEVERITY_WARN,
+                    "Error al validar Plantilla.", ex.getLocalizedMessage());
+            logger.log(Level.SEVERE, null, ex);
+        }
+        return hay;
+    }
+
     public void agregarCotizacion() {
         try {
+
+            if (validarCotizacion()) {
+                return;
+            }
+
             Cotizacion coti = new Cotizacion();
             coti.setComentarios(comenCotizacion);
             coti.setFecha(fechaCotizacion);
+            coti.setProveedor(proveedorActual);
             coti.setPlantilla(planCotizacionActual);
-            coti.setProveedor(null);
+            coti.setValidacionofac(consultaOFAC);
 
             List<Itemcotizacion> listaItemCotiza = new ArrayList<>();
 
@@ -726,11 +833,33 @@ public class MttoCotizacion implements Serializable {
             }
 
             coti.setItemcotizacionList(listaItemCotiza);
+
+            Integer maxOrden = 0;
+            for (Cotizacion cotiza : listaCotizaciones) {
+                if (cotiza.getNumero() != null) {
+                    if (cotiza.getNumero() > maxOrden) {
+                        maxOrden = cotiza.getNumero();
+                    }
+                }
+            }
+            coti.setNumero(maxOrden + 1);
+
             servCotizacion.nuevaCotizacion(coti);
             listaCotizaciones.add(coti);
 
-            limpiarItemCotizacion();
+            limpiarCotizaciones();
 
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void eliminarCotizacion(Cotizacion coti) {
+        try {
+            listaCotizaciones.remove(coti);
+            this.showMessage(FacesMessage.SEVERITY_INFO,
+                    "Eliminado de la lista.", null);
+            listaItemCotizacion = new ArrayList<>();
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
@@ -875,6 +1004,163 @@ public class MttoCotizacion implements Serializable {
         PrimeFaces.current().executeScript("PF('modalBusqProyecto').show();");
     }
 
+    private String duiProvB;
+    private String nombre1ProvB;
+    private String nombre2ProvB;
+    private String apellido1ProvB;
+    private String apellido2ProvB;
+
+    boolean nuevoProveedor = false;
+
+    private Proveedor proveedorActual = new Proveedor();
+    private Proveedor proveedorSelB = new Proveedor();
+
+    private List<Proveedor> lstProveedores = new ArrayList<>();
+
+    public String getDuiProvB() {
+        return duiProvB;
+    }
+
+    public void setDuiProvB(String duiProvB) {
+        this.duiProvB = duiProvB;
+    }
+
+    public String getNombre1ProvB() {
+        return nombre1ProvB;
+    }
+
+    public void setNombre1ProvB(String nombre1ProvB) {
+        this.nombre1ProvB = nombre1ProvB;
+    }
+
+    public String getNombre2ProvB() {
+        return nombre2ProvB;
+    }
+
+    public void setNombre2ProvB(String nombre2ProvB) {
+        this.nombre2ProvB = nombre2ProvB;
+    }
+
+    public String getApellido1ProvB() {
+        return apellido1ProvB;
+    }
+
+    public void setApellido1ProvB(String apellido1ProvB) {
+        this.apellido1ProvB = apellido1ProvB;
+    }
+
+    public String getApellido2ProvB() {
+        return apellido2ProvB;
+    }
+
+    public void setApellido2ProvB(String apellido2ProvB) {
+        this.apellido2ProvB = apellido2ProvB;
+    }
+
+    public Proveedor getProveedorActual() {
+        return proveedorActual;
+    }
+
+    public void setProveedorActual(Proveedor proveedorActual) {
+        this.proveedorActual = proveedorActual;
+    }
+
+    public Proveedor getProveedorSelB() {
+        return proveedorSelB;
+    }
+
+    public void setProveedorSelB(Proveedor proveedorSelB) {
+        this.proveedorSelB = proveedorSelB;
+    }
+
+    public List<Proveedor> getLstProveedores() {
+        return lstProveedores;
+    }
+
+    public void setLstProveedores(List<Proveedor> lstProveedores) {
+        this.lstProveedores = lstProveedores;
+    }
+
+    public void abrirModalBuscarProveedores() {
+        PrimeFaces.current().ajax().update(":formbuscarProveedor");
+        PrimeFaces.current().executeScript("PF('modalbusqProveedor').show();");
+    }
+
+    public void buscarProveedores() {
+
+        try {
+            Map filtro = new HashMap();
+
+            boolean hayDui = false;
+            if (duiProvB != null && !duiProvB.isEmpty()) {
+                filtro.put("dui", duiProvB);
+                hayDui = true;
+            }
+            if (nombre1ProvB != null && !nombre1ProvB.isEmpty()) {
+                filtro.put("nombre1", nombre1ProvB);
+            }
+            if (nombre2ProvB != null && !nombre2ProvB.isEmpty()) {
+                filtro.put("nombre2", nombre2ProvB);
+            }
+            if (apellido1ProvB != null && !apellido1ProvB.isEmpty()) {
+                filtro.put("apellido1", apellido1ProvB);
+            }
+            if (apellido2ProvB != null && !apellido2ProvB.isEmpty()) {
+                filtro.put("apellido2", apellido2ProvB);
+            }
+
+            if (filtro.isEmpty()) {
+                this.showMessage(FacesMessage.SEVERITY_WARN,
+                        "Agregue un parámetro de búsqueda", null);
+                return;
+            }
+
+            if (hayDui) {
+                this.showMessage(FacesMessage.SEVERITY_WARN,
+                        "No se encontró metodo.", null);
+            } else {
+                lstProveedores = servProveedor.buscarProveedors(filtro);
+            }
+
+            if (lstProveedores.isEmpty()) {
+                this.showMessage(FacesMessage.SEVERITY_WARN,
+                        "No se encontró ningún resultado.", null);
+            }
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void limpiarBusquedaProveedores() {
+        lstProveedores = new ArrayList<>();
+        duiProvB = "";
+        nombre1ProvB = "";
+        nombre2ProvB = "";
+        apellido1ProvB = "";
+        apellido2ProvB = "";
+    }
+
+    public void limpiarProveedor() {
+
+    }
+
+    public void onRowSelectProveedor(SelectEvent event) throws IOException {
+        try {
+            limpiarProveedor();
+
+            proveedorActual = new Proveedor();
+
+            proveedorActual = proveedorSelB;
+            limpiarBusquedaProveedores();
+            PrimeFaces.current().executeScript("PF('modalbusqProveedor').hide();");
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void imprimirCuadroComparativo() {
         Map parametros = new HashMap<>();
         Long id = planCotizacionActual.getId();
@@ -885,13 +1171,13 @@ public class MttoCotizacion implements Serializable {
         this.generarReporte(reporte, nombreArchivo, parametros);
 
     }
-    
+
     private void generarReporte(String reporte, String nombreArchivo, Map params) {
         try {
 
             ServletContext servletContext
                     = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-            String path = servletContext.getRealPath("/WEB-INF/jasper/"+reporte);
+            String path = servletContext.getRealPath("/WEB-INF/jasper/" + reporte);
             System.out.println(path);
             File jasper = new File(path);
             InitialContext initialContext = new InitialContext();

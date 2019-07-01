@@ -8,10 +8,8 @@ package sv.org.siscop.caritas.entidades;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -26,7 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Nolasco
+ * @author Leonardo Martinez
  */
 @Entity
 @Table(name = "cuenta")
@@ -39,7 +37,9 @@ public class Cuenta implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 30)
+    @Column(name = "id")
+    private Long id;
+    @Size(max = 50)
     @Column(name = "codigo")
     private String codigo;
     @Size(max = 100)
@@ -48,19 +48,28 @@ public class Cuenta implements Serializable {
     @Size(max = 200)
     @Column(name = "descripcion")
     private String descripcion;
-    @Column(name = "estado")
-    private Boolean estado;
-    @OneToMany(mappedBy = "codigoctapadre", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "idctapadre")
     private List<Cuenta> cuentaList;
-    @JoinColumn(name = "codigoctapadre", referencedColumnName = "codigo")
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Cuenta codigoctapadre;
+    @JoinColumn(name = "idctapadre", referencedColumnName = "id")
+    @ManyToOne
+    private Cuenta idctapadre;
+    @JoinColumn(name = "idproyecto", referencedColumnName = "id")
+    @ManyToOne
+    private Proyecto idproyecto;
 
     public Cuenta() {
     }
 
-    public Cuenta(String codigo) {
-        this.codigo = codigo;
+    public Cuenta(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCodigo() {
@@ -87,14 +96,6 @@ public class Cuenta implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Boolean getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Boolean estado) {
-        this.estado = estado;
-    }
-
     @XmlTransient
     public List<Cuenta> getCuentaList() {
         return cuentaList;
@@ -104,18 +105,26 @@ public class Cuenta implements Serializable {
         this.cuentaList = cuentaList;
     }
 
-    public Cuenta getCodigoctapadre() {
-        return codigoctapadre;
+    public Cuenta getIdctapadre() {
+        return idctapadre;
     }
 
-    public void setCodigoctapadre(Cuenta codigoctapadre) {
-        this.codigoctapadre = codigoctapadre;
+    public void setIdctapadre(Cuenta idctapadre) {
+        this.idctapadre = idctapadre;
+    }
+
+    public Proyecto getIdproyecto() {
+        return idproyecto;
+    }
+
+    public void setIdproyecto(Proyecto idproyecto) {
+        this.idproyecto = idproyecto;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (codigo != null ? codigo.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -126,7 +135,7 @@ public class Cuenta implements Serializable {
             return false;
         }
         Cuenta other = (Cuenta) object;
-        if ((this.codigo == null && other.codigo != null) || (this.codigo != null && !this.codigo.equals(other.codigo))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -134,12 +143,7 @@ public class Cuenta implements Serializable {
 
     @Override
     public String toString() {
-        //return "sv.org.siscop.caritas.entidades.Cuenta[ codigo=" + codigo + " ]";
-        if(this.codigo!=null && this.nombre!=null){
-            return this.codigo+" - "+this.nombre;
-        }
-        
-        return "";
+        return "sv.org.siscop.caritas.entidades.Cuenta[ id=" + id + " ]";
     }
     
 }

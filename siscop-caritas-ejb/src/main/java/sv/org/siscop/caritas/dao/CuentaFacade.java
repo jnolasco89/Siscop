@@ -72,7 +72,7 @@ public class CuentaFacade extends AbstractFacade<Cuenta> {
         
         if(filtro.containsKey("cuentasPrincipales")){
            if((boolean)filtro.containsKey("cuentasPrincipales")){
-               predicados.add(constructor.isNull(tabla.get("codigoctapadre")));
+               predicados.add(constructor.isNull(tabla.get("idctapadre")));
            }
         }
         
@@ -110,8 +110,8 @@ public class CuentaFacade extends AbstractFacade<Cuenta> {
             q.setParameter(1, cuenta.getCodigo());
             q.setParameter(2, cuenta.getNombre());
             q.setParameter(3, cuenta.getDescripcion());
-            if (cuenta.getCodigoctapadre() != null) {
-                q.setParameter(4, cuenta.getCodigoctapadre().getCodigo());
+            if (cuenta.getIdctapadre() != null) {
+                q.setParameter(4, cuenta.getIdctapadre().getCodigo());
             } else {
                 q.setParameter(4, null);
             }

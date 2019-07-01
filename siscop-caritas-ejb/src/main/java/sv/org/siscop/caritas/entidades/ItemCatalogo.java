@@ -41,7 +41,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "ItemCatalogo.findAll", query = "SELECT i FROM ItemCatalogo i")})
 public class ItemCatalogo implements Serializable {
-
     @Size(max = 10)
     @Column(name = "codigo")
     private String codigo;

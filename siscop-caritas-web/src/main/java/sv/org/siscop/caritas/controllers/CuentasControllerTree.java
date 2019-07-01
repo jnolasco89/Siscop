@@ -132,12 +132,11 @@ public class CuentasControllerTree implements Serializable {
         try {
             //Agregando la cuenta nueva
             if (cuentaPadreActual.getCodigo() == null) {
-                cuentaActual.setCodigoctapadre(null);
+                cuentaActual.setIdctapadre(null);
             } else {
-                cuentaActual.setCodigoctapadre(cuentaPadreActual);
+                cuentaActual.setIdctapadre(cuentaPadreActual);
             }
             
-            cuentaActual.setEstado(true);
             cuentaActual.setCuentaList(new ArrayList<Cuenta>());
             servCtas.agregarCuenta(cuentaActual);
             
@@ -169,12 +168,11 @@ public class CuentasControllerTree implements Serializable {
         try {
             //Agregando la cuenta nueva
             if (cuentaPadreActual.getCodigo() == null) {
-                cuentaActual.setCodigoctapadre(null);
+                cuentaActual.setIdctapadre(null);
             } else {
-                cuentaActual.setCodigoctapadre(cuentaPadreActual);
+                cuentaActual.setIdctapadre(cuentaPadreActual);
             }
             
-            cuentaActual.setEstado(true);
             servCtas.editarCuenta(codCtaAeditar,cuentaActual);
             
             //Limpiando las variables despues de
@@ -203,7 +201,7 @@ public class CuentasControllerTree implements Serializable {
 
     public void cargarCuentaSeleccionada() {
         cuentaActual = (Cuenta) nodoActual.getData();
-        cuentaPadreActual = cuentaActual.getCodigoctapadre();
+        cuentaPadreActual = cuentaActual.getIdctapadre();
         tabActiva = 1;
         codCtaAeditar=cuentaActual.getCodigo();
         modoFormulario=2;
@@ -229,7 +227,7 @@ public class CuentasControllerTree implements Serializable {
         for (Cuenta cuenta : cuentas) {
             TreeNode nodo = new DefaultTreeNode(cuenta, padre);
 
-            if (cuenta.getCodigoctapadre() == null) {
+            if (cuenta.getIdctapadre() == null) {
                 nodo.setExpanded(true);
             }
             

@@ -9,11 +9,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import org.apache.poi.ss.usermodel.Cell;
@@ -55,6 +59,11 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
     }
 
     @Override
+    public List<Cuenta> buscarCuentas(Map filtro) {
+        return cuentaDao.buscarCuentas(filtro);
+    }
+
+    @Override
     public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros) {
         List<Cuenta> cuentas = cuentaDao.paginacion(inicio, tamanio, filtros);
         return cuentas;
@@ -78,6 +87,147 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
     @Override
     public List<Cuenta> getTodasLasCuentas() {
         return cuentaDao.findAll();
+    }
+
+    @Override
+    public List<Cuenta> leerArchivo(InputStream archivo) {
+        List<Cuenta> cuentas = new ArrayList<>();
+        try {
+            //FileInputStream fis=new FileInputStream(archivo);
+            XSSFWorkbook libro = new XSSFWorkbook(archivo);
+
+            XSSFSheet hoja = libro.getSheetAt(0);
+
+            Iterator<Row> filasHoja = hoja.iterator();
+
+            int indexFila = 0;
+            while (filasHoja.hasNext()) {
+                Row fila = filasHoja.next();
+
+                //Para empezar a cargar las cuentas desde la fila
+                //numero 2. La fila numero 1 contiene los encabezados
+                //de la tabla de cuentas
+                if (indexFila > 0) {
+                    Cuenta cuenta = new Cuenta();
+
+                    //Para leer solamente dos columnas
+                    //de la fila, la columna 0 que es
+                    //donde se coloca el nombre de la cuenta
+                    //y la columna 1 que es donde se coloca
+                    //el codigo de la cuenta
+                    for (int i = 0; i <= 1; i++) {
+                        Cell celda = fila.getCell(i);
+                        celda.setCellType(CellType.STRING);
+
+                        switch (i) {
+                            case 0:
+                                cuenta.setNombre(celda.getStringCellValue());
+                                break;
+                            case 1:
+                                cuenta.setCodigo(celda.getStringCellValue());
+                                break;
+                        }
+                    }
+
+                    String codigoCtaPadre = getCodigoPadre(cuenta.getCodigo());
+                    if (codigoCtaPadre == null) {
+                        cuenta.setIdctapadre(null);
+                    } else {
+                        Cuenta padre = new Cuenta();
+                        padre.setCodigo(codigoCtaPadre);
+                        cuenta.setIdctapadre(padre);
+                    }
+                    cuenta.setCuentaList(new ArrayList<>());
+                    cuentas.add(cuenta);
+                }
+
+                indexFila++;
+            }
+
+            libro.close();
+
+            Cuenta ctaRaiz = new Cuenta();
+            ctaRaiz.setCodigo(null);
+            ctaRaiz.setCuentaList(new ArrayList<>());
+            anidarCuentas(ctaRaiz, cuentas);
+
+            return ctaRaiz.getCuentaList();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ServiciosCuenta.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ServiciosCuenta.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return cuentas;
+    }
+
+    public void anidarCuentas(Cuenta ctaPadre, List<Cuenta> ctsAanidar) {
+        for (int x=0;x<ctsAanidar.size();x++) {
+            Cuenta cta=ctsAanidar.get(x);
+            String codigoCta = cta.getIdctapadre() == null ? null : cta.getIdctapadre().getCodigo();
+            String codigoPadre = ctaPadre.getCodigo();
+
+            if (codigoCta == null ? codigoPadre == null : codigoCta.equals(codigoPadre)) {
+                ctsAanidar.remove(cta);
+                ctaPadre.getCuentaList().add(cta);
+                anidarCuentas(cta, ctsAanidar);
+                x=-1;
+            }
+
+        }
+
+    }
+
+    public String getCodigoPadre(String codigoHijo) {
+        List<Integer> codificacionAP = new ArrayList<>();
+        codificacionAP.add(1);//Grupo
+        codificacionAP.add(1);//Subgrupo
+        codificacionAP.add(1);//Rubro
+        codificacionAP.add(1);//Cuenta
+        codificacionAP.add(1);//Subcuenta
+
+        List<Integer> codificacionGastos = new ArrayList<>();
+        codificacionGastos.add(1);//Grupo
+        codificacionGastos.add(2);//Subgrupo
+        codificacionGastos.add(1);//Rubro
+        codificacionGastos.add(1);//Cuenta
+        codificacionGastos.add(1);//Subcuenta
+
+        List<Integer> codificacion = codificacionAP;
+
+        int rubro = Integer.parseInt(codigoHijo.substring(0, 1));
+        if (rubro > 1 && rubro < 4) {
+            codificacion = codificacionAP;
+        } else if (rubro == 5) {
+            codificacion = codificacionGastos;
+        }
+
+        //---------------
+        int longitudCodigo = codigoHijo.length();
+        int contadorDigitosCodigo = 0;
+        int indiceCodificacion = 0;
+
+        while (contadorDigitosCodigo < longitudCodigo) {
+            if (indiceCodificacion > codificacion.size() - 1) {
+                contadorDigitosCodigo += codificacion.get(codificacion.size() - 1);
+            } else {
+                contadorDigitosCodigo += codificacion.get(indiceCodificacion);
+            }
+            indiceCodificacion++;
+        }
+
+        //Substring indiceInicial: Comienza desde cero
+        //indice final: es el numero del indice - 1
+        //Ejemplo:
+        //"Chaitanya".substring(2,5) retorna "ait"
+        int indiceFinal = codigoHijo.length() - codificacion.get(indiceCodificacion - 1);
+
+        //No tiene padre
+        if (indiceFinal == 0) {
+            return null;
+        } else {
+            return codigoHijo.substring(0, indiceFinal);
+        }
     }
 
     @Override
@@ -116,11 +266,10 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
 
                     String codigoCtaPadre = obtenerCodigoPadre(cuenta.getCodigo());
                     if (codigoCtaPadre == null) {
-                        cuenta.setCodigoctapadre(null);
+                        cuenta.setIdctapadre(null);
                     } else {
-                        cuenta.setCodigoctapadre(new Cuenta(codigoCtaPadre));
+                        cuenta.setIdctapadre(new Cuenta(Long.parseLong(codigoCtaPadre)));
                     }
-                    cuenta.setEstado(true);
                     cuentas.add(cuenta);
 
 //                    Iterator<Cell> celdas = fila.cellIterator();

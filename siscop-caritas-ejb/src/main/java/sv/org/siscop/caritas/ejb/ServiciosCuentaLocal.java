@@ -21,8 +21,10 @@ public interface ServiciosCuentaLocal {
     public void editarCuenta(String codigoOriginalCta, Cuenta c) throws Exception;
     public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros);
     int contarTodo();
+    public List<Cuenta> leerArchivo(InputStream archivo);
     void procesarArchivo(InputStream archivo);
     Cuenta getCuenta(Long id);
+    public List<Cuenta> buscarCuentas(Map filtro);
     List<Cuenta> getCuentasPadres();
     List<Cuenta> getTodasLasCuentas();
 }

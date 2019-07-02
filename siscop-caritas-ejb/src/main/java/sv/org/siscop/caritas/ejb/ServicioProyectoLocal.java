@@ -22,6 +22,8 @@ public interface ServicioProyectoLocal {
     public Proyecto actualizarProyecto(Proyecto c);
 
     public List<Proyecto> buscarProyectos(Map params) throws Exception;
+    
+    public List<Proyecto> buscarProyetosCriterial(Map params);
 
     public List<Proyecto> getAllProyectos();
     

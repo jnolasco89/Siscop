@@ -8,6 +8,7 @@ package sv.org.siscop.caritas.entidades;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -36,8 +37,9 @@ public class Cuenta implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @NotNull
-    @Column(name = "id")
+//    @NotNull
+    @Column(name = "id", nullable = true)
+  //  @JoinColumn(nullable = true)
     private Long id;
     @Size(max = 50)
     @Column(name = "codigo")
@@ -48,10 +50,11 @@ public class Cuenta implements Serializable {
     @Size(max = 200)
     @Column(name = "descripcion")
     private String descripcion;
-    @OneToMany(mappedBy = "idctapadre")
+    @OneToMany(mappedBy = "idctapadre", cascade = CascadeType.PERSIST)
     private List<Cuenta> cuentaList;
-    @JoinColumn(name = "idctapadre", referencedColumnName = "id")
-    @ManyToOne
+    
+    @JoinColumn(name = "idctapadre", referencedColumnName = "id", nullable = true  )
+    @ManyToOne(optional = true)
     private Cuenta idctapadre;
     @JoinColumn(name = "idproyecto", referencedColumnName = "id")
     @ManyToOne

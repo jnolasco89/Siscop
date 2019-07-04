@@ -27,6 +27,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import sv.org.siscop.caritas.dao.CuentaFacade;
 import sv.org.siscop.caritas.entidades.Cuenta;
+import sv.org.siscop.caritas.entidades.Proyecto;
 
 /**
  *
@@ -38,6 +39,41 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
     @EJB
     private CuentaFacade cuentaDao;
 
+    @Override
+    public void registraCatalogoDeCuentas(List<Cuenta> cuentas, Proyecto proyecto){
+//        for(Cuenta c:cuentas){
+//            if(c.getIdctapadre().getId()==null){
+//                c.setIdctapadre(null);
+//            }
+//            c.setIdproyecto(proyecto);
+//            asignarProyecto(c.getCuentaList(),proyecto);
+//            cuentaDao.create(c);
+//        }
+        for (Cuenta cuenta : cuentas) {
+//            if(cuenta.getIdctapadre().getId()==null){
+//                cuenta.setIdctapadre(null);
+//            }
+//            List<Cuenta> hijos=cuenta.getCuentaList();
+            
+            cuenta.setIdproyecto(proyecto);
+            cuenta.setCuentaList(null);
+            cuentaDao.create(cuenta);
+            
+//            if(hijos.size()>0){
+//                registraCatalogoDeCuentas(hijos, proyecto);
+//            }
+        }
+    }
+    
+ private void asignarProyecto(List<Cuenta> cuentas, Proyecto p){
+     for (Cuenta cuenta : cuentas) {
+         cuenta.setIdproyecto(p);
+         if(cuenta.getCuentaList().size()>0){
+             asignarProyecto(cuenta.getCuentaList(), p);
+         }
+     }
+ }
+    
     @Override
     public void agregarCuenta(Cuenta c) throws Exception {
         Cuenta ctaEnBd = cuentaDao.find(c.getCodigo());
@@ -169,6 +205,7 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
 
             if (codigoCta == null ? codigoPadre == null : codigoCta.equals(codigoPadre)) {
                 ctsAanidar.remove(cta);
+                cta.setIdctapadre(ctaPadre);//--->
                 ctaPadre.getCuentaList().add(cta);
                 anidarCuentas(cta, ctsAanidar);
                 x=-1;

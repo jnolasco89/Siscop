@@ -136,7 +136,8 @@
                                             id="mnGuardarCatalogo"
                                             value="Guardar" 
                                             action="#{mttoCuentasContables.guardarCatalogo()}"
-                                            icon="fa fa-save"                                                
+                                            icon="fa fa-save"
+                                            process="@this txtProyecto"
                                             />
                                     </p:menubar>
                                     <div jsf:id="datosProyectoCatalogo" class="ui-g ui-fluid">
@@ -170,13 +171,8 @@
                                                       allowTypes="/(\.|\/)(xlsx|xls)$/" 
                                                       label="Buscar"
                                                       uploadLabel="Subir"
-                                                      cancelLabel="Cancelar" 
+                                                      cancelLabel="Cancelar"
                                                       />
-                                        <p:progressBar id="barraProgreso" 
-                                                       style="height:6px" 
-                                                       mode="indeterminate"
-                                                       rendered="#{mttoCuentasContables.verBarraDeCarga()}"
-                                                       />
                                         <div class="ui-g-12 ui-md-12">
                                             <p:staticMessage 
                                                 severity="info" 

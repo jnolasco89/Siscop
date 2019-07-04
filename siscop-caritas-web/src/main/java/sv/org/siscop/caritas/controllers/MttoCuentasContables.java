@@ -45,7 +45,6 @@ public class MttoCuentasContables implements Serializable {
     //Variables para la ui
     private int tabActiva;
     private int modoProyecto;
-    private boolean procesandoArchivo;
     private List<Proyecto> proyectosTabla;
     private List<Proyecto> proyectosModal;
     private List<ItemCatalogo> estadosProyecto;
@@ -69,8 +68,7 @@ public class MttoCuentasContables implements Serializable {
     @PostConstruct
     public void init() {
         tabActiva = 0;
-        modoProyecto=1;//1 Para agregar, 2 para editar
-        procesandoArchivo=false;
+        modoProyecto = 1;//1 Para agregar, 2 para editar
         msjs = new HashMap();
         msjs.put("vacio", "El proyecto no posee catalogo de cuentas. Para crear un nuevo catalogo cree cuentas desde la pestaña \"detalle\" o cargue un archivo con las cuentas que desea registrar.");
         msjs.put("seleccionar", "Seleccione un proyecto para cargar el catalogo de cuentas o cree un nuevo catalogo. Para crear un nuevo catalogo cree cuentas desde la pestaña \"detalle\" o cargue un archivo con las cuentas que desea registrar.");
@@ -192,13 +190,7 @@ public class MttoCuentasContables implements Serializable {
         this.proyectoBusquedaTabla = proyectoBusquedaTabla;
     }
 
-    public boolean isProcesandoArchivo() {
-        return procesandoArchivo;
-    }
 
-    public void setProcesandoArchivo(boolean procesandoArchivo) {
-        this.procesandoArchivo = procesandoArchivo;
-    }
     // =================== METODOS =========================
     // ----- Pestaña busqueda --
     public void buscarProyectoEnTabla() {
@@ -267,12 +259,13 @@ public class MttoCuentasContables implements Serializable {
         arbolCuentas = new DefaultTreeNode("Raiz", null);
         recorrerCuentas(catalogoDeCuentas, arbolCuentas);
         tabActiva = 1;
-        modoProyecto=2;
+        modoProyecto = 2;
     }
 
     // ----- Pestaña catalogo -----------
     public void guardarCatalogo() {
-        System.out.println("Guardar catalogo");
+        System.out.println("LLega aquio");
+        servCuenta.registraCatalogoDeCuentas(catalogoDeCuentas,proyectoActual);
     }
 
     public void limpiarPestaniaCatalogo() {
@@ -281,7 +274,7 @@ public class MttoCuentasContables implements Serializable {
         catalogoDeCuentas = null;
         arbolCuentas = null;
         msjPestaniaCatalogo = msjs.get("seleccionar").toString();
-        modoProyecto=1;
+        modoProyecto = 1;
     }
 
     // ----- Pestaña detalle ------------
@@ -299,22 +292,17 @@ public class MttoCuentasContables implements Serializable {
 
     public void subirYprocesarArchivo(FileUploadEvent event) {
         try {
-            System.out.println("Iniciando...");
-            procesandoArchivo=true;
-            PrimeFaces.current().ajax().update(":formTabs:tabs:barraProgreso");
-            
+
             catalogoDeCuentas = servCuenta.leerArchivo(event.getFile().getInputstream());
             arbolCuentas = new DefaultTreeNode("Raiz", null);
             recorrerCuentas(catalogoDeCuentas, arbolCuentas);
             
-            procesandoArchivo=false;
-            PrimeFaces.current().ajax().update(":formTabs:tabs:barraProgreso");
-            System.out.println("Finalizado");
             PrimeFaces.current().ajax().update(":formTabs:tabs:catalogo");
         } catch (IOException ex) {
             Logger.getLogger(MttoCuentasContables.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
 
     // ----- Render y enabled para componentes -----
     public boolean verArbolCuentas() {
@@ -338,12 +326,10 @@ public class MttoCuentasContables implements Serializable {
     }
 
     public boolean deshabilitarInputProyecto() {
-        return modoProyecto==2;
+        return modoProyecto == 2;
     }
 
-    public boolean verBarraDeCarga(){
-        return procesandoArchivo;
-    }
+
     // ---- Metodos modal buscar proyecto ----
     public void buscarProyectoEnModal() {
         proyectosModal = buscarProyecto(proyectoBusquedaModal);

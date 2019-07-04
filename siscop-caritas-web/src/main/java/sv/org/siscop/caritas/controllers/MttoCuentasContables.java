@@ -54,7 +54,8 @@ public class MttoCuentasContables implements Serializable {
     private Map msjs;
     private TreeNode nodoActual;
     //Modelo para la vista
-    private Proyecto proyectoActual;
+    private Proyecto proyectoActualCatalogo;
+    private Proyecto proyectoActualDetalle;//SIN USAR POR EL MOMENTO!!!!!!!!!!!!!!!!!!****>>>
     private Proyecto proyectoBusquedaTabla;
     private Proyecto proyectoBusquedaModal;
     private List<Cuenta> catalogoDeCuentas;
@@ -83,8 +84,10 @@ public class MttoCuentasContables implements Serializable {
         proyectosModal = servProyecto.buscarProyetosCriterial(filtroProMod);
         estadosProyecto = servCatalogo.findCatalogoById(20).getItemCatalogoList();
 
-        proyectoActual = new Proyecto();
-        proyectoActual.setEstado(new ItemCatalogo());
+        proyectoActualCatalogo = new Proyecto();
+        proyectoActualCatalogo.setEstado(new ItemCatalogo());
+        proyectoActualDetalle = new Proyecto();
+        proyectoActualDetalle.setEstado(new ItemCatalogo());
         proyectoBusquedaTabla = new Proyecto();
         proyectoBusquedaTabla.setEstado(new ItemCatalogo(63));
         proyectoBusquedaModal = new Proyecto();
@@ -93,6 +96,7 @@ public class MttoCuentasContables implements Serializable {
         catalogoDeCuentas = null;
         arbolCuentas = null;
         cuentaActual = new Cuenta();
+        cuentaActual.setObjProyecto(new Proyecto());
     }
 
     // ================== GETTER Y SETTER ==================
@@ -112,12 +116,12 @@ public class MttoCuentasContables implements Serializable {
         this.proyectosTabla = proyectos;
     }
 
-    public Proyecto getProyectoActual() {
-        return proyectoActual;
+    public Proyecto getProyectoActualCatalogo() {
+        return proyectoActualCatalogo;
     }
 
-    public void setProyectoActual(Proyecto proyectoActual) {
-        this.proyectoActual = proyectoActual;
+    public void setProyectoActualCatalogo(Proyecto proyectoActual) {
+        this.proyectoActualCatalogo = proyectoActual;
     }
 
     public List<ItemCatalogo> getEstadosProyecto() {
@@ -192,6 +196,14 @@ public class MttoCuentasContables implements Serializable {
         this.proyectoBusquedaTabla = proyectoBusquedaTabla;
     }
 
+    public Proyecto getProyectoActualDetalle() {
+        return proyectoActualDetalle;
+    }
+
+    public void setProyectoActualDetalle(Proyecto proyectoActualDetalle) {
+        this.proyectoActualDetalle = proyectoActualDetalle;
+    }
+
     // =================== METODOS =========================
     // ----- Pestaña busqueda --
     public void buscarProyectoEnTabla() {
@@ -243,6 +255,7 @@ public class MttoCuentasContables implements Serializable {
     }
 
     public void limpiarBusquedaProyectoEnTabla() {
+        tabActiva = 0;
         proyectoBusquedaTabla = new Proyecto();
         proyectoBusquedaTabla.setEstado(new ItemCatalogo(63));
 
@@ -254,7 +267,7 @@ public class MttoCuentasContables implements Serializable {
     public void cargarCatalogoDeCuentasDelProyecto() {
         Map filtros = new HashMap();
         filtros.put("cuentasPrincipales", true);
-        filtros.put("proyecto", proyectoActual);
+        filtros.put("proyecto", proyectoActualCatalogo);
         catalogoDeCuentas = servCuenta.buscarCuentas(filtros);
 
         arbolCuentas = new DefaultTreeNode("Raiz", null);
@@ -265,22 +278,22 @@ public class MttoCuentasContables implements Serializable {
 
     // ----- Pestaña catalogo -----------
     public void guardarCatalogo() {
-        servCuenta.registraCatalogoDeCuentas(catalogoDeCuentas, proyectoActual);
-        
+        servCuenta.registraCatalogoDeCuentas(catalogoDeCuentas, proyectoActualCatalogo);
+
         FacesContext.getCurrentInstance()
                 .addMessage("msgGrowl",
                         new FacesMessage(
                                 FacesMessage.SEVERITY_INFO,
                                 "Operacion exitosa",
                                 "Catalogo registrado"));
-
-        PrimeFaces.current().ajax().update(":formTabs:tabs:catalogo");
+        tabActiva = 1;
+        PrimeFaces.current().ajax().update(":formTabs");
 
     }
 
     public void limpiarPestaniaCatalogo() {
-        proyectoActual = new Proyecto();
-        proyectoActual.setId(null);
+        proyectoActualCatalogo = new Proyecto();
+        proyectoActualCatalogo.setId(null);
         catalogoDeCuentas = null;
         arbolCuentas = null;
         msjPestaniaCatalogo = msjs.get("seleccionar").toString();
@@ -297,9 +310,11 @@ public class MttoCuentasContables implements Serializable {
     }
 
     public void cargarCuentaSeleccionada() {
-        cuentaActual=(Cuenta) nodoActual.getData();
+        cuentaActual = (Cuenta) nodoActual.getData();
+        cuentaActual.setObjProyecto(proyectoActualCatalogo);
         //update=":formTabs:tabs:detalle" 
-        PrimeFaces.current().ajax().update(":formTabs:tabs:detalle");
+        tabActiva=2;
+        PrimeFaces.current().ajax().update(":formTabs:tabs");
     }
 
     public void subirYprocesarArchivo(FileUploadEvent event) {
@@ -309,7 +324,7 @@ public class MttoCuentasContables implements Serializable {
             arbolCuentas = new DefaultTreeNode("Raiz", null);
             recorrerCuentas(catalogoDeCuentas, arbolCuentas, true);
 
-            PrimeFaces.current().ajax().update(":formTabs:tabs:catalogo");
+            PrimeFaces.current().ajax().update(":formTabs:tabs:contenedorArbolCuentas");
         } catch (IOException ex) {
             Logger.getLogger(MttoCuentasContables.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -355,12 +370,28 @@ public class MttoCuentasContables implements Serializable {
     }
 
     public void cargarProyectoSeleccionadoEnModal() {
+        if (tabActiva == 1) {
+            proyectoActualCatalogo=proyectoBusquedaModal;
+            PrimeFaces.current().ajax().update(":formTabs:tabs:datosProyectoCatalogo");
+        } else if (tabActiva == 2) {
+            cuentaActual.setObjProyecto(proyectoBusquedaModal);
+            PrimeFaces.current().ajax().update(":formTabs:tabs:txtProyectoCta");
+        }
+        
         PrimeFaces.current().executeScript("PF('dialogProyectos').hide()");
-        PrimeFaces.current().ajax().update(":formTabs:tabs:datosProyectoCatalogo");
     }
 
-    public void abrirModalBuscarProyecto() {
+    public void abrirModalBuscarProyectoEnTabCatalogo() {
+        proyectoBusquedaModal = proyectoActualCatalogo;
         PrimeFaces.current().executeScript("PF('dialogProyectos').show()");
+        tabActiva = 1;
+    }
+
+    public void abrirModalBuscarProyectoEnTabDetalle() {
+        cuentaActual.getObjProyecto().setEstado(new ItemCatalogo(0));
+        proyectoBusquedaModal = cuentaActual.getObjProyecto();
+        PrimeFaces.current().executeScript("PF('dialogProyectos').show()");
+        tabActiva = 2;
     }
 
     public void cerrarModalBuscarProyecto() {

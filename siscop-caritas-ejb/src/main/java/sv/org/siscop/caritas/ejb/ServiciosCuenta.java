@@ -237,8 +237,8 @@ public class ServiciosCuenta implements ServiciosCuentaLocal {
 
         List<Integer> codificacionGastos = new ArrayList<>();
         codificacionGastos.add(1);//Grupo
-        codificacionGastos.add(2);//Subgrupo
-        codificacionGastos.add(1);//Rubro
+        codificacionGastos.add(1);//Subgrupo
+        codificacionGastos.add(2);//Rubro
         codificacionGastos.add(1);//Cuenta
         codificacionGastos.add(1);//Subcuenta
 

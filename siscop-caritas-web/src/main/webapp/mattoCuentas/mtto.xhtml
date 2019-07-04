@@ -87,7 +87,7 @@
                                                      widgetVar="tablaProyectos"
                                                      value="#{mttoCuentasContables.proyectosTabla}"
                                                      selectionMode="single"
-                                                     selection="#{mttoCuentasContables.proyectoActual}"
+                                                     selection="#{mttoCuentasContables.proyectoActualCatalogo}"
                                                      rowKey="#{pro.id}"
                                                      emptyMessage="Sin registros">
                                             <p:ajax event="rowSelect"
@@ -123,7 +123,7 @@
                                     </div>
                                 </p:tab>
                             </div>
-                            <div class="card">
+                            <div  class="card">
                                 <p:tab id="catalogo" title="Catalogo">
                                     <p:menubar>
                                         <p:menuitem
@@ -132,7 +132,7 @@
                                             process="@this"
                                             action="#{mttoCuentasContables.limpiarPestaniaCatalogo()}"
                                             icon="fa fa-user-plus"
-                                            update=":formTabs:tabs:catalogo"
+                                            update=":formTabs:tabs:datosProyectoCatalogo :formTabs:tabs:contenedorArbolCuentas"
                                             />                                       
                                         <p:menuitem 
                                             id="mnGuardarCatalogo"
@@ -140,45 +140,59 @@
                                             action="#{mttoCuentasContables.guardarCatalogo()}"
                                             icon="fa fa-save"
                                             process="@this txtProyecto"
+                                            onclick="onComplete();"
                                             />
                                     </p:menubar>
-                                    <div jsf:id="datosProyectoCatalogo" class="ui-g ui-fluid">
-                                        <div class="ui-md-1">
-                                            <p:outputLabel for="txtProyecto" value="Proyecto:" />
-                                        </div>
-                                        <div class="ui-md-3">
-                                            <div class="ui-inputgroup">
-                                                <p:inputText id="txtProyecto"
-                                                             value="#{mttoCuentasContables.proyectoActual.nombreCorto}"
-                                                             readonly="true"
-                                                             >
-                                                </p:inputText>
-                                                <p:commandButton icon="ui-icon-search"  
-                                                                 styleClass="white-button"
-                                                                 process="@this"
-                                                                 update=":formDialogProyectos"
-                                                                 actionListener="#{mttoCuentasContables.abrirModalBuscarProyecto()}"
-                                                                 disabled="#{mttoCuentasContables.deshabilitarInputProyecto()}"
-                                                                 />  
+                                    <div jsf:id="datosProyectoCatalogo" class="ui-g ui-panelgrid-blank">
+                                        <div class="ui-g">
+                                            <div class="ui-g-4">
+                                                <p:outputLabel for="txtProyecto" value="Proyecto:" />
+                                            </div>
+                                            <div class="ui-g-8">
+                                                <div class="ui-inputgroup">
+                                                    <p:inputText id="txtProyecto"
+                                                                 value="#{mttoCuentasContables.proyectoActualCatalogo.nombreCorto}"
+                                                                 readonly="true"
+                                                                 >
+                                                    </p:inputText>
+                                                    <p:commandButton icon="ui-icon-search"  
+                                                                     styleClass="white-button"
+                                                                     process="@this"
+                                                                     update=":formDialogProyectos"
+                                                                     actionListener="#{mttoCuentasContables.abrirModalBuscarProyectoEnTabCatalogo()}"
+                                                                     disabled="#{mttoCuentasContables.deshabilitarInputProyecto()}"
+                                                                     />  
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="card">
-                                        <p:outputLabel value="Cargar catalogo desde archivo"/>
-                                        <p:fileUpload fileUploadListener="#{mttoCuentasContables.subirYprocesarArchivo}" 
-                                                      mode="advanced" 
-                                                      dragDropSupport="false"
-                                                      sizeLimit="10000000" 
-                                                      fileLimit="1" 
-                                                      allowTypes="/(\.|\/)(xlsx|xls)$/" 
-                                                      label="Buscar"
-                                                      uploadLabel="Subir"
-                                                      cancelLabel="Cancelar"
-                                                      onstart="onStart();"
-                                                      oncomplete="onComplete();"
-                                                      />
-                                        <p:progressBar id="barraDeProgreso" style="height:6px;display: none;" mode="indeterminate" />
-                                        <div class="ui-g-12 ui-md-12">
+                                    <div jsf:id="contenedorArbolCuentas" class="ui-g ui-panelgrid-blank">
+                                        <div class="ui-g" >
+                                            <div class="ui-g-4" >
+                                                <p:outputLabel value="Archivo:" for="fileLoader"/>
+                                            </div>
+                                            <div class="ui-g-12" >
+                                                <p:fileUpload 
+                                                    id="fileLoader"
+                                                    fileUploadListener="#{mttoCuentasContables.subirYprocesarArchivo}" 
+                                                    mode="advanced" 
+                                                    dragDropSupport="false"
+                                                    sizeLimit="10000000" 
+                                                    fileLimit="1" 
+                                                    allowTypes="/(\.|\/)(xlsx|xls)$/" 
+                                                    label="Buscar"
+                                                    uploadLabel="Subir"
+                                                    cancelLabel="Cancelar"
+                                                    onstart="onStart();"
+                                                    oncomplete="onComplete();"
+                                                    />
+                                            </div>
+                                        </div>
+                                        <div id="divBarraDeProgreso" class="ui-lg-12 ui-md-12 ui-sm-12" style="display: none;">
+                                            <h3>Procesando archivo...</h3>
+                                            <p:progressBar id="barraDeProgreso" style="height:6px;" mode="indeterminate" />
+                                        </div>
+                                        <div class="ui-lg-12 ui-md-12 ui-sm-12">
                                             <p:staticMessage 
                                                 severity="info" 
                                                 summary="Informacion: " 
@@ -198,7 +212,7 @@
                                             rendered="#{mttoCuentasContables.verArbolCuentas()}"
                                             >
                                             <p:ajax event="select" 
-                                                    
+
                                                     listener="#{mttoCuentasContables.cargarCuentaSeleccionada()}"/>
                                             <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
                                                 <h:outputText value="#{nodo}" />
@@ -228,7 +242,23 @@
                                     </p:menubar>
                                     <div jsf:id="panel-cuenta" class="ui-g ui-panelgrid-blank">
                                         <div class="ui-g-12" >
-                                            <div class="ui-g-4" >
+                                            <div class="ui-g-6">
+                                                <p:outputLabel for="txtProyectoCta" value="Proyecto:" />
+                                                <div class="ui-inputgroup">
+                                                    <p:inputText id="txtProyectoCta"
+                                                                 value="#{mttoCuentasContables.cuentaActual.objProyecto.nombreCorto}"
+                                                                 readonly="true"
+                                                                 >
+                                                    </p:inputText>
+                                                    <p:commandButton icon="ui-icon-search"  
+                                                                     styleClass="white-button"
+                                                                     process="@this"
+                                                                     update=":formDialogProyectos"
+                                                                     actionListener="#{mttoCuentasContables.abrirModalBuscarProyectoEnTabDetalle()}"
+                                                                     />  
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-6" >
                                                 <p:outputLabel for="txtSubcuentaDe" value="Subcuenta de:"/>
                                                 <div class="ui-inputgroup input-cta-padre">
                                                     <p:inputText id="txtSubcuentaDe"
@@ -242,7 +272,7 @@
                                                                      onclick="PF('dialogCuentas').show()"/>  
                                                 </div>
                                             </div>
-                                            <div class="ui-g-4" >
+                                            <div class="ui-g-6" >
                                                 <p:outputLabel for="txtCodigoCuenta" value="Codigo: "/>
                                                 <p:inputText id="txtCodigoCuenta" 
                                                              value="#{mttoCuentasContables.cuentaActual.cuentaPK.codigo}"
@@ -250,7 +280,7 @@
                                                     <p:message for="txtCodigoCuenta"/>
                                                 </p:inputText>
                                             </div>
-                                            <div class="ui-g-4" >
+                                            <div class="ui-g-6" >
                                                 <p:outputLabel for="txtNombreCuenta" value="Nombre: "/>
                                                 <p:inputText id="txtNombreCuenta"
                                                              value="#{mttoCuentasContables.cuentaActual.nombre}"
@@ -258,7 +288,7 @@
                                                     <p:message for="txtNombreCuenta"/>
                                                 </p:inputText>
                                             </div>
-                                            <div class="ui-g-4" >
+                                            <div class="ui-g-6" >
                                                 <p:outputLabel for="txtDescripcionCuenta" value="Descripcion: "/>
                                                 <p:inputTextarea id="txtDescripcionCuenta"
                                                                  rows="5" 
@@ -352,7 +382,7 @@
                                              widgetVar="tablaProyectosModal"
                                              value="#{mttoCuentasContables.proyectosModal}"
                                              selectionMode="single"
-                                             selection="#{mttoCuentasContables.proyectoActual}"
+                                             selection="#{mttoCuentasContables.proyectoBusquedaModal}"
                                              rowKey="#{pro.id}"
                                              emptyMessage="Sin registros">
                                     <p:ajax event="rowSelect"
@@ -395,13 +425,17 @@
 
 
                     <script type="text/javascript">
-                            function onStart(){
-                                $('#barraDeProgreso').show();
-                            }
-                            
-                            function onComplete(){
-                                $('#barraDeProgreso').hide();
-                            }
+                        window.addEventListener("load", function () {
+                            onComplete();
+                        });
+
+                        function onStart() {
+                            document.getElementById("divBarraDeProgreso").style.display = "block";
+                        }
+
+                        function onComplete() {
+                            document.getElementById("divBarraDeProgreso").style.display = "none";
+                        }
                     </script>
                     <!--
                     <h:form id="formDialogCuentas">

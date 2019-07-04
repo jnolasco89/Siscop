@@ -16,6 +16,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 /**
@@ -42,7 +43,10 @@ public class Cuenta implements Serializable {
         , @JoinColumn(name = "codigopadre", referencedColumnName = "codigo")})
     @ManyToOne(optional = false)
     private Cuenta cuentaPadre;
-
+    @Transient
+    private Proyecto objProyecto;
+    
+    
     public Cuenta() {
     }
 
@@ -92,6 +96,14 @@ public class Cuenta implements Serializable {
 
     public void setCuentaPadre(Cuenta cuentaPadre) {
         this.cuentaPadre = cuentaPadre;
+    }
+
+    public Proyecto getObjProyecto() {
+        return objProyecto;
+    }
+
+    public void setObjProyecto(Proyecto objProyecto) {
+        this.objProyecto = objProyecto;
     }
 
     @Override

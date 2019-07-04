@@ -128,9 +128,11 @@
                                     <p:menubar>
                                         <p:menuitem
                                             id="mnNuevoCatalogo"
-                                            value="Nuevo" action="#{mttoCuentasContables.limpiarPestaniaCatalogo()}"
+                                            value="Nuevo"
+                                            process="@this"
+                                            action="#{mttoCuentasContables.limpiarPestaniaCatalogo()}"
                                             icon="fa fa-user-plus"
-                                            update=":formTabs:tabs"
+                                            update=":formTabs:tabs:catalogo"
                                             />                                       
                                         <p:menuitem 
                                             id="mnGuardarCatalogo"
@@ -172,7 +174,10 @@
                                                       label="Buscar"
                                                       uploadLabel="Subir"
                                                       cancelLabel="Cancelar"
+                                                      onstart="onStart();"
+                                                      oncomplete="onComplete();"
                                                       />
+                                        <p:progressBar id="barraDeProgreso" style="height:6px;display: none;" mode="indeterminate" />
                                         <div class="ui-g-12 ui-md-12">
                                             <p:staticMessage 
                                                 severity="info" 
@@ -193,7 +198,7 @@
                                             rendered="#{mttoCuentasContables.verArbolCuentas()}"
                                             >
                                             <p:ajax event="select" 
-                                                    update=":formTabs:tabs:catalogo" 
+                                                    
                                                     listener="#{mttoCuentasContables.cargarCuentaSeleccionada()}"/>
                                             <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
                                                 <h:outputText value="#{nodo}" />
@@ -227,7 +232,7 @@
                                                 <p:outputLabel for="txtSubcuentaDe" value="Subcuenta de:"/>
                                                 <div class="ui-inputgroup input-cta-padre">
                                                     <p:inputText id="txtSubcuentaDe"
-                                                                 value="#{mttoCuentasContables.cuentaActual.idctapadre.nombre}"
+                                                                 value="#{mttoCuentasContables.cuentaActual.cuentaPadre.nombre}"
                                                                  disabled="true"
                                                                  >
                                                     </p:inputText>
@@ -240,7 +245,7 @@
                                             <div class="ui-g-4" >
                                                 <p:outputLabel for="txtCodigoCuenta" value="Codigo: "/>
                                                 <p:inputText id="txtCodigoCuenta" 
-                                                             value="#{mttoCuentasContables.cuentaActual.codigo}"
+                                                             value="#{mttoCuentasContables.cuentaActual.cuentaPK.codigo}"
                                                              >
                                                     <p:message for="txtCodigoCuenta"/>
                                                 </p:inputText>
@@ -387,6 +392,17 @@
                             </h:panelGrid>
                         </p:dialog>
                     </h:form>
+
+
+                    <script type="text/javascript">
+                            function onStart(){
+                                $('#barraDeProgreso').show();
+                            }
+                            
+                            function onComplete(){
+                                $('#barraDeProgreso').hide();
+                            }
+                    </script>
                     <!--
                     <h:form id="formDialogCuentas">
                         <p:dialog id="dialogCuentas" 

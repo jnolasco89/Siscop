@@ -19,14 +19,14 @@ import sv.org.siscop.caritas.entidades.Proyecto;
 @Local
 public interface ServiciosCuentaLocal {
     public void registraCatalogoDeCuentas(List<Cuenta> cuentas, Proyecto proyecto);
-    public void agregarCuenta(Cuenta c) throws Exception;
-    public void editarCuenta(String codigoOriginalCta, Cuenta c) throws Exception;
-    public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros);
-    int contarTodo();
+//    public void agregarCuenta(Cuenta c) throws Exception;
+//    public void editarCuenta(String codigoOriginalCta, Cuenta c) throws Exception;
+//    public List<Cuenta> paginacion(int inicio, int tamanio, Map<String, Object> filtros);
+//    int contarTodo();
     public List<Cuenta> leerArchivo(InputStream archivo);
-    void procesarArchivo(InputStream archivo);
-    Cuenta getCuenta(Long id);
+//    void procesarArchivo(InputStream archivo);
+//    Cuenta getCuenta(Long id);
     public List<Cuenta> buscarCuentas(Map filtro);
-    List<Cuenta> getCuentasPadres();
-    List<Cuenta> getTodasLasCuentas();
+//    List<Cuenta> getCuentasPadres();
+//    List<Cuenta> getTodasLasCuentas();
 }

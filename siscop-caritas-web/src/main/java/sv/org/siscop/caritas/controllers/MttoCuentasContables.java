@@ -14,6 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import org.primefaces.PrimeFaces;
@@ -190,7 +192,6 @@ public class MttoCuentasContables implements Serializable {
         this.proyectoBusquedaTabla = proyectoBusquedaTabla;
     }
 
-
     // =================== METODOS =========================
     // ----- Pestaña busqueda --
     public void buscarProyectoEnTabla() {
@@ -257,15 +258,24 @@ public class MttoCuentasContables implements Serializable {
         catalogoDeCuentas = servCuenta.buscarCuentas(filtros);
 
         arbolCuentas = new DefaultTreeNode("Raiz", null);
-        recorrerCuentas(catalogoDeCuentas, arbolCuentas);
+        recorrerCuentas(catalogoDeCuentas, arbolCuentas, true);
         tabActiva = 1;
         modoProyecto = 2;
     }
 
     // ----- Pestaña catalogo -----------
     public void guardarCatalogo() {
-        System.out.println("LLega aquio");
-        servCuenta.registraCatalogoDeCuentas(catalogoDeCuentas,proyectoActual);
+        servCuenta.registraCatalogoDeCuentas(catalogoDeCuentas, proyectoActual);
+        
+        FacesContext.getCurrentInstance()
+                .addMessage("msgGrowl",
+                        new FacesMessage(
+                                FacesMessage.SEVERITY_INFO,
+                                "Operacion exitosa",
+                                "Catalogo registrado"));
+
+        PrimeFaces.current().ajax().update(":formTabs:tabs:catalogo");
+
     }
 
     public void limpiarPestaniaCatalogo() {
@@ -287,7 +297,9 @@ public class MttoCuentasContables implements Serializable {
     }
 
     public void cargarCuentaSeleccionada() {
-        System.out.println("Cargar cuenta");
+        cuentaActual=(Cuenta) nodoActual.getData();
+        //update=":formTabs:tabs:detalle" 
+        PrimeFaces.current().ajax().update(":formTabs:tabs:detalle");
     }
 
     public void subirYprocesarArchivo(FileUploadEvent event) {
@@ -295,14 +307,13 @@ public class MttoCuentasContables implements Serializable {
 
             catalogoDeCuentas = servCuenta.leerArchivo(event.getFile().getInputstream());
             arbolCuentas = new DefaultTreeNode("Raiz", null);
-            recorrerCuentas(catalogoDeCuentas, arbolCuentas);
-            
+            recorrerCuentas(catalogoDeCuentas, arbolCuentas, true);
+
             PrimeFaces.current().ajax().update(":formTabs:tabs:catalogo");
         } catch (IOException ex) {
             Logger.getLogger(MttoCuentasContables.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 
     // ----- Render y enabled para componentes -----
     public boolean verArbolCuentas() {
@@ -328,7 +339,6 @@ public class MttoCuentasContables implements Serializable {
     public boolean deshabilitarInputProyecto() {
         return modoProyecto == 2;
     }
-
 
     // ---- Metodos modal buscar proyecto ----
     public void buscarProyectoEnModal() {
@@ -358,19 +368,25 @@ public class MttoCuentasContables implements Serializable {
     }
 
     // ---- Metodos utilitarios -------
-    public void recorrerCuentas(List<Cuenta> cuentas, TreeNode padre) {
+    public void recorrerCuentas(List<Cuenta> cuentas, TreeNode padre, boolean fullExpansion) {
         cuentas.forEach((cuenta) -> {
             TreeNode nodo = new DefaultTreeNode(cuenta, padre);
-            if (cuenta.getIdctapadre() == null) {
+
+            if (cuenta.getCuentaPadre() == null) {
                 nodo.setExpanded(true);
             }
+
+            if (cuenta.getCuentaPadre() != null && fullExpansion) {
+                nodo.setExpanded(true);
+            }
+
             if (cuenta.getCuentaList().size() > 0) {
                 //Ordenando las subcuentas por codigo
                 for (int i = 0; i < cuenta.getCuentaList().size() - 1; i++) {
 
                     for (int j = 0; j < cuenta.getCuentaList().size() - 1; j++) {
-                        int codigoPos1 = Integer.parseInt(cuenta.getCuentaList().get(j).getCodigo());
-                        int codigoPos2 = Integer.parseInt(cuenta.getCuentaList().get(j + 1).getCodigo());
+                        int codigoPos1 = Integer.parseInt(cuenta.getCuentaList().get(j).getCuentaPK().getCodigo());
+                        int codigoPos2 = Integer.parseInt(cuenta.getCuentaList().get(j + 1).getCuentaPK().getCodigo());
                         if (codigoPos1 > codigoPos2) {
 
                             Cuenta tmp = cuenta.getCuentaList().get(j + 1);
@@ -382,8 +398,34 @@ public class MttoCuentasContables implements Serializable {
                     }
                 }
 
-                recorrerCuentas(cuenta.getCuentaList(), nodo);
+                recorrerCuentas(cuenta.getCuentaList(), nodo, fullExpansion);
             }
         });
+//        cuentas.forEach((cuenta) -> {
+//            TreeNode nodo = new DefaultTreeNode(cuenta, padre);
+//            if (cuenta.getIdctapadre() == null) {
+//                nodo.setExpanded(true);
+//            }
+//            if (cuenta.getCuentaList().size() > 0) {
+//                //Ordenando las subcuentas por codigo
+//                for (int i = 0; i < cuenta.getCuentaList().size() - 1; i++) {
+//
+//                    for (int j = 0; j < cuenta.getCuentaList().size() - 1; j++) {
+//                        int codigoPos1 = Integer.parseInt(cuenta.getCuentaList().get(j).getCodigo());
+//                        int codigoPos2 = Integer.parseInt(cuenta.getCuentaList().get(j + 1).getCodigo());
+//                        if (codigoPos1 > codigoPos2) {
+//
+//                            Cuenta tmp = cuenta.getCuentaList().get(j + 1);
+//
+//                            cuenta.getCuentaList().set(j + 1, cuenta.getCuentaList().get(j));
+//
+//                            cuenta.getCuentaList().set(j, tmp);
+//                        }
+//                    }
+//                }
+//
+//                recorrerCuentas(cuenta.getCuentaList(), nodo);
+//            }
+//        });
     }
 }

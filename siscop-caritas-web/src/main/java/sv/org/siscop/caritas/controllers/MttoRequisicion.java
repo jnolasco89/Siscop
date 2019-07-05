@@ -43,14 +43,15 @@ import org.primefaces.event.ReorderEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
-import sv.org.siscop.caritas.ejb.ServicioCotizacionLocal;
 import sv.org.siscop.caritas.ejb.ServicioProveedorLocal;
 import sv.org.siscop.caritas.ejb.ServicioProyectoLocal;
+import sv.org.siscop.caritas.ejb.ServicioRequisicionLocal;
 import sv.org.siscop.caritas.entidades.Plancotizacion;
 import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
 import sv.org.siscop.caritas.entidades.Actividad;
 import sv.org.siscop.caritas.entidades.Cotizacion;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
+import sv.org.siscop.caritas.entidades.ItemRequisicion;
 import sv.org.siscop.caritas.entidades.Itemcotizacion;
 import sv.org.siscop.caritas.entidades.Planitem;
 import sv.org.siscop.caritas.entidades.Proveedor;
@@ -62,12 +63,12 @@ import sv.org.siscop.caritas.util.Catalogos;
  *
  * @author Henry
  */
-@Named(value = "mttoCotizacion")
+@Named(value = "mttoRequisicion")
 @SessionScoped
-public class MttoCotizacion implements Serializable {
+public class MttoRequisicion implements Serializable {
 
     @EJB
-    private ServicioCotizacionLocal servCotizacion;
+    private ServicioRequisicionLocal servRequisicion;
     @EJB
     private ServiciosCatalogoLocal servCat;
     @EJB
@@ -75,9 +76,9 @@ public class MttoCotizacion implements Serializable {
     @EJB
     private ServicioProveedorLocal servProveedor;
 
-    private final static Logger logger = Logger.getLogger(MttoCotizacion.class.getName());
+    private final static Logger logger = Logger.getLogger(MttoRequisicion.class.getName());
 
-    public MttoCotizacion() {
+    public MttoRequisicion() {
     }
 
     FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -87,21 +88,20 @@ public class MttoCotizacion implements Serializable {
     private Integer estadoActividadB;
 
     //Propiedades proyecto
-    private Plancotizacion planCotizacionActual = new Plancotizacion();
-    private Planitem planItemActual = new Planitem();
-    private Plancotizacion plancotizacionB = new Plancotizacion();
+    private Requisicion requisicionActual = new Requisicion();
+    private Requisicion requisicionB = new Requisicion();
+    private ItemRequisicion itemRequisicionActual = new ItemRequisicion();
     private Actividad actividadActual = new Actividad();
-    boolean esPlantillaNueva = false;
+    boolean esRequisicionNueva = false;
     private String descripcion;
     private Long idActividad;
-    private String analisis;
     private Date fecha = new Date();
 
     int tabindex = 0;
 
     //Listas
-    private List<Plancotizacion> planCotizacionList = new ArrayList<>();
-    private List<Planitem> itemPlanCotizacionList = new ArrayList<>();
+    private List<Requisicion> requisicionesList = new ArrayList<>();
+    private List<ItemRequisicion> itemRequisicionList = new ArrayList<>();
 
     //SelectItems
     private List<SelectItem> itemEstadoActividad = new ArrayList<>();
@@ -118,7 +118,7 @@ public class MttoCotizacion implements Serializable {
         this.tabindex = tabindex;
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Getter y Setter Busqueda de Plancotizacions">
+    //<editor-fold defaultstate="collapsed" desc="Getter y Setter Busqueda de Requisicion">
     public Long getIdProyectoB() {
         return idProyectoB;
     }
@@ -143,54 +143,54 @@ public class MttoCotizacion implements Serializable {
         this.estadoActividadB = estadoActividadB;
     }
 
-    public List<Plancotizacion> getPlanCotizacionList() {
-        return planCotizacionList;
+    public List<Requisicion> getRequisicionesList() {
+        return requisicionesList;
     }
 
-    public void setPlanCotizacionList(List<Plancotizacion> planCotizacionList) {
-        this.planCotizacionList = planCotizacionList;
+    public void setRequisicionesList(List<Requisicion> requisicionesList) {
+        this.requisicionesList = requisicionesList;
     }
 
-    public List<Planitem> getItemPlanCotizacionList() {
-        return itemPlanCotizacionList;
+    public List<ItemRequisicion> getItemRequisicionList() {
+        return itemRequisicionList;
     }
 
-    public void setItemPlanCotizacionList(List<Planitem> itemPlanCotizacionList) {
-        this.itemPlanCotizacionList = itemPlanCotizacionList;
+    public void setItemRequisicionList(List<ItemRequisicion> itemRequisicionList) {
+        this.itemRequisicionList = itemRequisicionList;
     }
 
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Getter y Setter Plancotizacion">
-    public boolean isEsPlantillaNueva() {
-        return esPlantillaNueva;
+    public boolean isEsRequisicionNueva() {
+        return esRequisicionNueva;
     }
 
-    public void setEsPlantillaNueva(boolean esPlantillaNueva) {
-        this.esPlantillaNueva = esPlantillaNueva;
+    public void setEsRequisicionNueva(boolean esRequisicionNueva) {
+        this.esRequisicionNueva = esRequisicionNueva;
     }
 
-    public Plancotizacion getPlancotizacionActual() {
-        return planCotizacionActual;
+    public Requisicion getRequisicionActual() {
+        return requisicionActual;
     }
 
-    public void setPlancotizacionActual(Plancotizacion proyectoActual) {
-        this.planCotizacionActual = proyectoActual;
+    public void setRequisicionActual(Requisicion requisicionActual) {
+        this.requisicionActual = requisicionActual;
     }
 
-    public Plancotizacion getPlancotizacionB() {
-        return plancotizacionB;
+    public Requisicion getRequisicionB() {
+        return requisicionB;
     }
 
-    public Planitem getPlanItemActual() {
-        return planItemActual;
+    public void setRequisicionB(Requisicion requisicionB) {
+        this.requisicionB = requisicionB;
     }
 
-    public void setPlanItemActual(Planitem planItemActual) {
-        this.planItemActual = planItemActual;
+    public ItemRequisicion getItemRequisicionActual() {
+        return itemRequisicionActual;
     }
 
-    public void setPlancotizacionB(Plancotizacion plancotizacionB) {
-        this.plancotizacionB = plancotizacionB;
+    public void setItemRequisicionActual(ItemRequisicion itemRequisicionActual) {
+        this.itemRequisicionActual = itemRequisicionActual;
     }
 
     public Actividad getActividadActual() {
@@ -207,14 +207,6 @@ public class MttoCotizacion implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public String getAnalisis() {
-        return analisis;
-    }
-
-    public void setAnalisis(String analisis) {
-        this.analisis = analisis;
     }
 
     public Date getFecha() {
@@ -239,7 +231,7 @@ public class MttoCotizacion implements Serializable {
     }
 
 //</editor-fold>
-    public void buscarPlancotizaciones() {
+    public void buscarRequisiciones() {
 
         try {
             Map filtro = new HashMap();
@@ -259,9 +251,9 @@ public class MttoCotizacion implements Serializable {
                 return;
             }
 
-            planCotizacionList = servCotizacion.buscarPlancotizaciones(filtro);
+            requisicionesList = servRequisicion.buscarRequisiciones(filtro);
 
-            if (planCotizacionList.isEmpty()) {
+            if (requisicionesList.isEmpty()) {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "No se encontró ningún resultado.", null);
             }
@@ -271,58 +263,52 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
-    public void limpiarBusquedaPlancotizaciones() {
-        planCotizacionList = new ArrayList<>();
+    public void limpiarBusquedaRequisicion() {
+        requisicionesList = new ArrayList<>();
         idProyectoB = null;
         descripcionB = "";
         idProyectoB = 0L;
         estadoActividadB = 0;
     }
 
-    public void limpiarPlancotizacion() {
+    public void limpiarRequisicion() {
 
-        planCotizacionActual = new Plancotizacion();
-        itemPlanCotizacionList = new ArrayList<>();
+        requisicionActual = new Requisicion();
+        itemRequisicionList = new ArrayList<>();
         actividadActual = new Actividad();
-        cotizacionSel = new Cotizacion();
         fecha = null;
         descripcion = "";
         proyectoActual = new Proyecto();
-        limpiarCotizaciones();
+        proveedorActual = new Proveedor();
 
     }
 
     public void onRowSelectPlan(SelectEvent event) throws IOException {
         try {
-            limpiarPlancotizacion();
+            limpiarRequisicion();
 
-            planCotizacionActual = new Plancotizacion();
-            planCotizacionActual = plancotizacionB;
+            requisicionActual = new Requisicion();
+            requisicionActual = requisicionB;
 
-            descripcion = planCotizacionActual.getDescripcion();
-            fecha = planCotizacionActual.getFecha();
-            actividadActual = planCotizacionActual.getActividad();
-            cotizacionSel =planCotizacionActual.getCotizacionSel();
-            itemPlanCotizacionList = planCotizacionActual.getPlanitemList();
-            listaCotizaciones = planCotizacionActual.getCotizacionList();
-
-            //proyectoActual =planCotizacionActual.getIdproyecto();
-            esPlantillaNueva = false;
+            descripcion = requisicionActual.getDescripcion();
+            fecha = requisicionActual.getFecha();
+            actividadActual = requisicionActual.getActividad();
+            itemRequisicionList = requisicionActual.getItemrequisicionList();
+            esRequisicionNueva = false;
             tabindex = 1;
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
 
-    public void nuevoPlancotizacion() {
+    public void nuevaRequisicion() {
         try {
 
-            limpiarPlancotizacion();
-            limpiarItemPlan();
-            limpiarCotizaciones();
-            esPlantillaNueva = true;
+            limpiarRequisicion();
+            limpiarItemRequisicion();
+            esRequisicionNueva = true;
 
-            this.showMessage(FacesMessage.SEVERITY_WARN,
+            this.showMessage(FacesMessage.SEVERITY_INFO,
                     "Ingrese datos de nueva cotización.", null);
 
         } catch (Exception ex) {
@@ -330,7 +316,7 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
-    public boolean validarPlancotizacion() {
+    public boolean validarRequisicion() {
         boolean hay = false;
         try {
             List<String> campos = new ArrayList<>();
@@ -361,32 +347,32 @@ public class MttoCotizacion implements Serializable {
         return hay;
     }
 
-    public void guardarPlancotizacion() {
+    public void guardarRequisicion() {
         try {
-            if (validarPlancotizacion()) {
+            if (validarRequisicion()) {
                 return;
             }
 
-            this.planCotizacionActual.setDescripcion(descripcion);
-            this.planCotizacionActual.setFecha(fecha);
-            this.planCotizacionActual.setAnalisis(analisis);
-            this.planCotizacionActual.setPlanitemList(itemPlanCotizacionList);
-            this.planCotizacionActual.setCotizacionList(listaCotizaciones);
-            if (proyectoActual != null) {
-                this.planCotizacionActual.setIdproyecto(proyectoActual.getId());
-            }           
-
-            this.planCotizacionActual.setCotizacionSel(cotizacionSel);
-            //this.planCotizacionActual.setRequisicion(new Requisicion());
-            if (esPlantillaNueva) {
-                this.servCotizacion.nuevoPlancotizacion(planCotizacionActual);
-            } else {
-                planCotizacionActual = this.servCotizacion.actualizarPlancotizacion(planCotizacionActual);
+            this.requisicionActual.setDescripcion(descripcion);
+            this.requisicionActual.setFecha(fecha);
+            this.requisicionActual.setItemrequisicionList(itemRequisicionList);
+            if (proveedorActual.getId() != null) {
+                this.requisicionActual.setProveedor(proveedorActual);
+            }
+            if (actividadActual.getId() != null) {
+                this.requisicionActual.setActividad(actividadActual);
             }
 
-            this.showMessage(FacesMessage.SEVERITY_INFO, "Plantilla guardada exitosamente.", null);
+            //this.planCotizacionActual.setRequisicion(new Requisicion());
+            if (esRequisicionNueva) {
+                this.servRequisicion.nuevaRequisicion(requisicionActual);
+            } else {
+                this.servRequisicion.actualizarRequisicion(requisicionActual);
+            }
 
-            esPlantillaNueva = false;
+            this.showMessage(FacesMessage.SEVERITY_INFO, "Requisicion guardada exitosamente.", null);
+
+            esRequisicionNueva = false;
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
@@ -469,9 +455,9 @@ public class MttoCotizacion implements Serializable {
         return itemMedida;
     }
 
-    public void limpiarItemPlan() {
+    public void limpiarItemRequisicion() {
         try {
-            planItemActual = new Planitem();
+            itemRequisicionActual = new ItemRequisicion();
             idItemMedida = 0;
             descproducto = "";
             producto = "";
@@ -481,7 +467,7 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
-    public boolean validarPlanItem() {
+    public boolean validarItemRequisicion() {
         boolean hay = false;
         try {
             List<String> campos = new ArrayList<>();
@@ -518,38 +504,38 @@ public class MttoCotizacion implements Serializable {
         return hay;
     }
 
-    public void agregarPlanItem() {
+    public void agregarItemRequisicion() {
         try {
-            if (esPlantillaNueva) {
+            if (esRequisicionNueva) {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "Error al guardar plantilla.", "Guarde la planitalla primero.");
                 return;
             }
 
-            if (validarPlanItem()) {
+            if (validarItemRequisicion()) {
                 return;
             }
 
-            Planitem item = new Planitem();
+            ItemRequisicion item = new ItemRequisicion();
 //            item.setId(Long.valueOf(cantidad));
-            item.setPlancotizacion(planCotizacionActual);
+            item.setRequisicion(requisicionActual);
             item.setProducto(producto);
             item.setDescripcion(descproducto);
             item.setCantidad(cantidad);
             item.setMedida(servCat.findItemCatalogoById(idItemMedida));
-            servCotizacion.nuevoPlanItem(item);
+            servRequisicion.nuevoItemRequisicion(item);
 
-            itemPlanCotizacionList.add(item);
-            limpiarItemPlan();
+            itemRequisicionList.add(item);
+            limpiarItemRequisicion();
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
 
-    public void onRowSelectPlanItem(SelectEvent event) throws IOException {
+    public void onRowSelectItemRequisicion(SelectEvent event) throws IOException {
         try {
-//            limpiarPlancotizacion();
+//            limpiarRequisicion();
 //
 //            planCotizacionActual = new Plancotizacion();
 //            planCotizacionActual = plancotizacionB;
@@ -564,26 +550,26 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
-    public void onRowCancelPlanItem(RowEditEvent event) {
+    public void onRowCancelItemRequisicion(RowEditEvent event) {
         FacesMessage msg = new FacesMessage("Edición Cancelada",
                 ((Planitem) event.getObject()).getCantidad().toString());
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
-    public void onCellEditPlanItem(CellEditEvent event) throws Exception {
+    public void onCellEditItemRequisicion(CellEditEvent event) throws Exception {
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
 
         FacesContext context = FacesContext.getCurrentInstance();
-        Planitem entity = context.getApplication().evaluateExpressionGet(context, "#{planitem}", Planitem.class);
+        ItemRequisicion entity = context.getApplication().evaluateExpressionGet(context, "#{itemreq}", ItemRequisicion.class);
 
-        this.servCotizacion.actualizarPlanItem(entity);
+        this.servRequisicion.actualizarItemRequisicion(entity);
     }
 
-    public void eliminarPlanItem(Planitem item) {
+    public void eliminarItemRequisicion(ItemRequisicion item) {
         try {
-            item.setPlancotizacion(null);
-            itemPlanCotizacionList.remove(item);
+            item.setRequisicion(null);
+            itemRequisicionList.remove(item);
             this.showMessage(FacesMessage.SEVERITY_INFO,
                     "Eliminado de la lista.", null);
         } catch (Exception ex) {
@@ -592,17 +578,17 @@ public class MttoCotizacion implements Serializable {
 
     }
 
-    public void onRowReorderPlanItem(ReorderEvent event) {
+    public void onRowReorderItemRequisicion(ReorderEvent event) {
         try {
 //            Planitem oldValue = (Planitem) event.getSource();
 
             FacesContext context = FacesContext.getCurrentInstance();
 
-            Planitem entity = (Planitem) ((DataTable) event.getComponent()).getRowData();
+            ItemRequisicion entity = (ItemRequisicion) ((DataTable) event.getComponent()).getRowData();
 //            Planitem entity = context.getApplication().evaluateExpressionGet(context, "#{planitem}", Planitem.class);
             entity.setOrden(event.getToIndex());
 
-            this.servCotizacion.actualizarPlanItem(entity);
+            this.servRequisicion.actualizarItemRequisicion(entity);
 
             FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Row Moved", "From: "
                     + event.getFromIndex() + ", To:" + event.getToIndex());
@@ -612,294 +598,23 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
-    public void onRowReorderPlanItem(int index) {
+    public void onRowReorderItemRequisicion(int index) {
         try {
 
             FacesContext context = FacesContext.getCurrentInstance();
 
-            Planitem entity = context.getApplication().evaluateExpressionGet(context, "#{planitem}", Planitem.class);
+            ItemRequisicion entity = context.getApplication().evaluateExpressionGet(context, "#{itemreq}", ItemRequisicion.class);
             entity.setOrden(index);
 
-            this.servCotizacion.actualizarPlanItem(entity);
-
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-    }
-    private List<Cotizacion> listaCotizaciones = new ArrayList<>();
-    private List<Itemcotizacion> listaItemCotizacion = new ArrayList<>();
-    private Cotizacion cotizacionActual = new Cotizacion();
-    private Itemcotizacion itemCotizacionActual = new Itemcotizacion();
-    private String comenCotizacion = new String();
-    private Date fechaCotizacion = null;
-    private boolean consultaOFAC = false;
-
-    public List<Cotizacion> getListaCotizaciones() {
-        return listaCotizaciones;
-    }
-
-    public void setListaCotizaciones(List<Cotizacion> listaCotizaciones) {
-        this.listaCotizaciones = listaCotizaciones;
-    }
-
-    public List<Itemcotizacion> getListaItemCotizacion() {
-        return listaItemCotizacion;
-    }
-
-    public void setListaItemCotizacion(List<Itemcotizacion> listaItemCotizacion) {
-        this.listaItemCotizacion = listaItemCotizacion;
-    }
-
-    public Cotizacion getCotizacionActual() {
-        return cotizacionActual;
-    }
-
-    public void setCotizacionActual(Cotizacion cotizacionActual) {
-        this.cotizacionActual = cotizacionActual;
-    }
-
-    public Itemcotizacion getItemCotizacionActual() {
-        return itemCotizacionActual;
-    }
-
-    public void setItemCotizacionActual(Itemcotizacion itemCotizacionActual) {
-        this.itemCotizacionActual = itemCotizacionActual;
-    }
-
-    public String getComenCotizacion() {
-        return comenCotizacion;
-    }
-
-    public void setComenCotizacion(String comenCotizacion) {
-        this.comenCotizacion = comenCotizacion;
-    }
-
-    public Date getFechaCotizacion() {
-        return fechaCotizacion;
-    }
-
-    public void setFechaCotizacion(Date fechaCotizacion) {
-        this.fechaCotizacion = fechaCotizacion;
-    }
-
-    public boolean isConsultaOFAC() {
-        return consultaOFAC;
-    }
-
-    public void setConsultaOFAC(boolean consultaOFAC) {
-        this.consultaOFAC = consultaOFAC;
-    }
-
-    public void onRowSelectCotizacion(SelectEvent event) throws IOException {
-        try {
-
-            listaItemCotizacion = cotizacionActual.getItemcotizacionList();
-
-//            limpiarPlancotizacion();
-//
-//            planCotizacionActual = new Plancotizacion();
-//            planCotizacionActual = plancotizacionB;
-//
-//            esPlantillaNueva = false;
-//            descripcion = planCotizacionActual.getDescripcion();
-//            fecha = planCotizacionActual.getFecha();
-//
-//            tabindex = 1;
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void onRowSelectItemCotizacion(SelectEvent event) throws IOException {
-        try {
-//            limpiarPlancotizacion();
-//
-//            planCotizacionActual = new Plancotizacion();
-//            planCotizacionActual = plancotizacionB;
-//
-//            esPlantillaNueva = false;
-//            descripcion = planCotizacionActual.getDescripcion();
-//            fecha = planCotizacionActual.getFecha();
-//
-//            tabindex = 1;
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void onRowCancelItemCotizacion(RowEditEvent event) {
-        FacesMessage msg = new FacesMessage("Edición Cancelada",
-                ((Planitem) event.getObject()).getCantidad().toString());
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
-
-    public void onCellEditItemCotizacion(CellEditEvent event) throws Exception {
-        Object oldValue = event.getOldValue();
-        Object newValue = event.getNewValue();
-
-        FacesContext context = FacesContext.getCurrentInstance();
-        Itemcotizacion entity = context.getApplication().evaluateExpressionGet(context, "#{item}", Itemcotizacion.class);
-
-//        if (entity.getLecturaini() > entity.getLecturafin()) {
-//            entity.setLecturafin(null);
-//            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
-//                    "Error en ingreso", "Lectura debe ser igual o mayor a inicial.");
-//            FacesContext.getCurrentInstance().addMessage(null, msg);
-//            return;
-//        }
-        //Set total
-        if (entity.getPreciounitario() != null && entity.getCantidad() != null) {
-            BigDecimal total = entity.getPreciounitario()
-                    .multiply(BigDecimal.valueOf(entity.getCantidad()));
-
-            entity.setTotal(total);
-        }
-        this.servCotizacion.actualizarItemCotizacion(entity);
-
-        if (newValue != null && !newValue.equals(oldValue)) {
-            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Correcto", "Anterior: 0"
-                    + (oldValue == null ? "" : oldValue)
-                    + ", Nueva:" + newValue);
-            FacesContext.getCurrentInstance().addMessage(null, msg);
-        }
-    }
-
-    public void limpiarCotizaciones() {
-        try {
-            itemCotizacionActual = new Itemcotizacion();
-            fechaCotizacion = null;
-            comenCotizacion = "";
-            consultaOFAC = false;
-            proveedorActual = new Proveedor();
-            listaItemCotizacion = new ArrayList<>();
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void consultarOFAC() {
-        String summary = consultaOFAC ? "Consultada" : "Sin consultar";
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(summary));
-    }
-
-    public boolean validarCotizacion() {
-        boolean hay = false;
-        try {
-            List<String> campos = new ArrayList<>();
-            List<String> mensajes = new ArrayList<>();
-
-            if (comenCotizacion == null || comenCotizacion.isEmpty()) {
-                campos.add("Nombre");
-            }
-            if (proveedorActual.getId() == null) {
-                campos.add("Seleccione proveedor");
-            }
-            if (fechaCotizacion == null) {
-                campos.add("Fecha de cotización");
-            }
-            if (!consultaOFAC) {
-                campos.add("Consulta OFAC");
-            }
-
-            String camposFaltan = campos.stream().collect(Collectors.joining(", "));
-            if (!camposFaltan.isEmpty()) {
-                mensajes.add("Verifique los siguientes campos: " + camposFaltan);
-            }
-
-            for (String msj : mensajes) {
-                hay = true;
-                this.showMessage(FacesMessage.SEVERITY_WARN, msj, null);
-            }
-
-        } catch (Exception ex) {
-            this.showMessage(FacesMessage.SEVERITY_WARN,
-                    "Error al validar Plantilla.", ex.getLocalizedMessage());
-            logger.log(Level.SEVERE, null, ex);
-        }
-        return hay;
-    }
-
-    public void agregarCotizacion() {
-        try {
-
-            if (validarCotizacion()) {
-                return;
-            }
-
-            Cotizacion coti = new Cotizacion();
-            coti.setComentarios(comenCotizacion);
-            coti.setFecha(fechaCotizacion);
-            coti.setProveedor(proveedorActual);
-            coti.setPlantilla(planCotizacionActual);
-            coti.setValidacionofac(consultaOFAC);
-
-            List<Itemcotizacion> listaItemCotiza = new ArrayList<>();
-
-            for (Planitem pi : itemPlanCotizacionList) {
-                Itemcotizacion itemcoti = new Itemcotizacion();
-                itemcoti.setDescripcion(pi.getDescripcion());
-                itemcoti.setProducto(pi.getProducto());
-                itemcoti.setMedida(pi.getMedida());
-                itemcoti.setCotizacion(coti);
-                itemcoti.setOrden(pi.getOrden());
-                itemcoti.setCantidad(pi.getCantidad());
-                itemcoti.setPlanItem(pi);
-
-                //servCotizacion.nuevoPlanItem(pi);
-                listaItemCotiza.add(itemcoti);
-            }
-
-            coti.setItemcotizacionList(listaItemCotiza);
-
-            Integer maxOrden = 0;
-            for (Cotizacion cotiza : listaCotizaciones) {
-                if (cotiza.getNumero() != null) {
-                    if (cotiza.getNumero() > maxOrden) {
-                        maxOrden = cotiza.getNumero();
-                    }
-                }
-            }
-            coti.setNumero(maxOrden + 1);
-
-            servCotizacion.nuevaCotizacion(coti);
-            listaCotizaciones.add(coti);
-
-            limpiarCotizaciones();
+            this.servRequisicion.actualizarItemRequisicion(entity);
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
 
-    public void crearRequisicion(Cotizacion coti) {
-        try {
-           
-            requisicion = new Requisicion();
-            requisicion.setNumero(44);
-            requisicion.setCotizacion(coti);
-            
-            
-            
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void eliminarCotizacion(Cotizacion coti) {
-        try {
-            listaCotizaciones.remove(coti);
-            this.showMessage(FacesMessage.SEVERITY_INFO,
-                    "Eliminado de la lista.", null);
-            listaItemCotizacion = new ArrayList<>();
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-    }
-
-    
     private Requisicion requisicion = new Requisicion();
-    private Date fechaRequisicion = null; 
+    private Date fechaRequisicion = null;
     private String destino = "";
 
     public Requisicion getRequisicion() {
@@ -925,11 +640,7 @@ public class MttoCotizacion implements Serializable {
     public void setDestino(String destino) {
         this.destino = destino;
     }
-    
-    
-    
-    
-    
+
     //Campos de búsqueda de proyecto
     private Long codigoB;
     private String nombreB;
@@ -1068,39 +779,11 @@ public class MttoCotizacion implements Serializable {
         PrimeFaces.current().ajax().update(":formbuscarProyecto");
         PrimeFaces.current().executeScript("PF('modalBusqProyecto').show();");
     }
-    
-    
-    private Cotizacion cotizacionSel = new Cotizacion();
-    
-    
-  public void abrirModalSelCotizacion() {
+
+    public void abrirModalSelCotizacion() {
         PrimeFaces.current().ajax().update(":formSelCotizacion");
         PrimeFaces.current().executeScript("PF('modalSelCotizacion').show();");
     }
-
-    public Cotizacion getCotizacionSel() {
-        return cotizacionSel;
-    }
-
-    public void setCotizacionSel(Cotizacion cotizacionSel) {
-        this.cotizacionSel = cotizacionSel;
-    }
-  
-  
-  
-  
-  public void onRowSelectCotizacionSeleccionada(SelectEvent event) throws IOException {
-        try {
-            
-            crearRequisicion(cotizacionSel);
-           
-            PrimeFaces.current().executeScript("PF('modalSelCotizacion').hide();");
-
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-    }
-
 
     private String duiProvB;
     private String nombre1ProvB;
@@ -1183,7 +866,7 @@ public class MttoCotizacion implements Serializable {
         PrimeFaces.current().ajax().update(":formbuscarProveedor");
         PrimeFaces.current().executeScript("PF('modalbusqProveedor').show();");
     }
-   
+
     public void buscarProveedores() {
 
         try {
@@ -1259,9 +942,9 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
-    public void imprimirCuadroComparativo() {
+    public void imprimirRequisicion() {
         Map parametros = new HashMap<>();
-        Long id = planCotizacionActual.getId();
+        Long id = requisicionActual.getId();
         parametros.put("id", id);
 
         String reporte = "ComparativoCotizacion.jasper";

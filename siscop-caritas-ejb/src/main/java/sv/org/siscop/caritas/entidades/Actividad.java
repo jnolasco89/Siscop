@@ -71,6 +71,8 @@ public class Actividad implements Serializable {
     private Proyecto idproyecto;
     @OneToMany(mappedBy = "actividad", orphanRemoval = true)
     private List<Plancotizacion> plancotizacionList;
+    @OneToMany(mappedBy = "actividad", orphanRemoval = true)
+    private List<Requisicion> requisicionList;
 
     public Actividad() {
     }
@@ -150,6 +152,14 @@ public class Actividad implements Serializable {
 
     public void setPlancotizacionList(List<Plancotizacion> plancotizacionList) {
         this.plancotizacionList = plancotizacionList;
+    }
+
+    public List<Requisicion> getRequisicionList() {
+        return requisicionList;
+    }
+
+    public void setRequisicionList(List<Requisicion> requisicionList) {
+        this.requisicionList = requisicionList;
     }
 
     @Override

@@ -34,14 +34,13 @@ public class ServicioCotizacion implements ServicioCotizacionLocal {
     ItemcotizacionFacade itemcotizacionDao;
 
     @Override
-    public void nuevoPlancotizacion(Plancotizacion c) {
-        planCotizacionDao.create(c);
+    public void nuevoPlancotizacion(Plancotizacion p) {
+        planCotizacionDao.create(p);
     }
 
-
     @Override
-    public Plancotizacion actualizarPlancotizacion(Plancotizacion c) {
-        return planCotizacionDao.edit(c);
+    public Plancotizacion actualizarPlancotizacion(Plancotizacion p) {
+        return planCotizacionDao.edit(p);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class ServicioCotizacion implements ServicioCotizacionLocal {
             throw ex;
         }
     }
-    
+
     @Override
     public void actualizarPlanItem(Planitem item) throws Exception {
         try {
@@ -63,6 +62,13 @@ public class ServicioCotizacion implements ServicioCotizacionLocal {
             throw ex;
         }
     }
+
+    @Override
+    public List<Plancotizacion> buscarPlancotizaciones(Map params) throws Exception {
+        return planCotizacionDao.buscarPlancotizaciones(params);
+    }
+
+    @Override
     public void nuevaCotizacion(Cotizacion c) {
         cotizacionDao.create(c);
     }
@@ -91,11 +97,4 @@ public class ServicioCotizacion implements ServicioCotizacionLocal {
             throw ex;
         }
     }
-
-    @Override
-    public List<Plancotizacion> buscarPlancotizaciones(Map params) throws Exception {
-        return planCotizacionDao.buscarPlancotizaciones(params);
-
-    }
-
 }

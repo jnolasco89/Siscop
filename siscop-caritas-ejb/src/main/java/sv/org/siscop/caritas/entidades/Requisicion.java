@@ -47,7 +47,7 @@ public class Requisicion implements Serializable {
 
     private Long id;
     @Column(name = "numero")
-    private Integer numero;
+    private Long numero;
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
@@ -68,6 +68,9 @@ public class Requisicion implements Serializable {
     @JoinColumn(name = "idproveedor", referencedColumnName = "id")
     @ManyToOne
     private Proveedor proveedor;
+    @JoinColumn(name = "idorden", referencedColumnName = "id")
+    @ManyToOne
+    private OrdenCompra ordenCompra;
 
     public Requisicion() {
     }
@@ -84,11 +87,11 @@ public class Requisicion implements Serializable {
         this.id = id;
     }
 
-    public Integer getNumero() {
+    public Long getNumero() {
         return numero;
     }
 
-    public void setNumero(Integer numero) {
+    public void setNumero(Long numero) {
         this.numero = numero;
     }
 
@@ -146,6 +149,14 @@ public class Requisicion implements Serializable {
 
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
+    }
+
+    public OrdenCompra getOrdenCompra() {
+        return ordenCompra;
+    }
+
+    public void setOrdenCompra(OrdenCompra ordenCompra) {
+        this.ordenCompra = ordenCompra;
     }
 
     @Override

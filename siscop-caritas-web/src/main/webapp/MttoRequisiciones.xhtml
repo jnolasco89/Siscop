@@ -20,7 +20,7 @@
                                     <p:menubar>
                                         <p:menuitem value="Buscar" actionListener="#{mttoRequisicion.buscarRequisiciones()}" 
                                                     icon="ui-icon-search" update="@form"  />
-                                        <p:menuitem value="Limpiar" action="#{mttoRequisicion.limpiarRequisicion()}"
+                                        <p:menuitem value="Limpiar" action="#{mttoRequisicion.limpiarBusquedaRequisicion()}"
                                                     update="tabs lista" icon="ui-icon-refresh" />
                                     </p:menubar>
                                     <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
@@ -51,7 +51,10 @@
                                             <p:column headerText="Id" width="10%">
                                                 <h:outputText value="#{req.id}" />
                                             </p:column>
-                                            <p:column headerText="Cotizacion">
+                                            <p:column headerText="Número" width="10%">
+                                                <h:outputText value="#{req.numero}" />
+                                            </p:column>
+                                            <p:column headerText="Requisición">
                                                 <h:outputText value="#{req.descripcion}" />
                                             </p:column>
                                         </p:dataTable>
@@ -69,6 +72,9 @@
                                         <p:menuitem value="Guardar"
                                                     action="#{mttoRequisicion.guardarRequisicion()}" icon="fa fa-save"                                                
                                                     update="lista :principal:growl otraInfo" />
+                                        <p:menuitem value="Crear Orden"
+                                                    action="#{mttoRequisicion.crearOrdenDeCompra()}" icon="fa fa-save"                                                
+                                                    update="lista :principal:growl otraInfo" />
                                         <p:menuitem value="Imprimir Requisición" 
                                                     action="#{mttoRequisicion.imprimirRequisicion()}" 
                                                     icon="fa fa-print"
@@ -83,16 +89,23 @@
                                             <p:calendar id="fecha" value="#{mttoRequisicion.fecha}"
                                                         pattern="dd-MM-yyyy" mask="true"/>
                                         </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Numero:" for="fecha" />
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="#{mttoRequisicion.requisicionActual.numero}"/>
+                                        </div>
+
                                         <div class="ui-g-1" >                                            
                                             <p:outputLabel value="Descripción:" for="txtDescripcion" />
                                         </div>
+
                                         <div class="ui-g-6" >
-                                            <p:inputTextarea rows="2" id="txtDescripcion"
+                                            <p:inputTextarea rows="1" id="txtDescripcion"
                                                              value="#{mttoRequisicion.descripcion}"
-                                                             autoResize="true"
-                                                             />
+                                                             autoResize="true" />
                                         </div>
-                                        <div class="ui-g-2" >
+                                        <div class="ui-g-1" >
                                             <p:outputLabel value="Actividad:" for="txtBusActividad" />
                                         </div>
                                         <div class="ui-g-5">
@@ -122,10 +135,19 @@
                                                                  actionListener="#{mttoRequisicion.abrirModalBuscarProveedores()}"/>  
                                             </div>
                                         </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Destino:" for="txtDestino" />
+                                        </div>
+                                        <div class="ui-g-5" >
+                                            <p:inputTextarea rows="2" id="txtDestino"
+                                                             value="#{mttoRequisicion.destino}"
+                                                             autoResize="true"
+                                                             />
+                                        </div>
 
                                     </div>
                                     <p:tabView id="otraInfo" style="border: 1px">
-                                        <p:tab id="plantilla" title="Detalle">
+                                        <p:tab id="plantilla" title="Detalle de productos">
                                             <div class="card ui-g" style="margin-top: 0px">
                                                 <div class="ui-g-3" >
                                                     <p:outputLabel value="Producto" for="txtProducto"/>
@@ -224,23 +246,31 @@
                                         </p:tab>
 
                                         <p:tab id="requisiciones" title="Orden de compra"
-                                               rendered="#{not empty mttoRequisicion.requisicion
-                                                           and not empty mttoRequisicion.requisicion.id}">
+                                               rendered="#{not empty mttoRequisicion.ordenCompra
+                                                           and not empty mttoRequisicion.ordenCompra.id}">
                                             <div class="card ui-g" style="margin-top:0">
                                                 <div class="ui-g-1" >
                                                     <p:outputLabel value="Numero:"/>
                                                 </div> 
                                                 <div class="ui-g-1" >
-                                                    <p:outputLabel value="#{mttoRequisicion.requisicion.numero}"/>
-                                                </div>
-                                                <div class="ui-g-3" >
-                                                    <p:outputLabel value="#{mttoRequisicion.requisicion.descripcion}"/>
+                                                    <p:outputLabel value="#{mttoRequisicion.ordenCompra.numero}"/>
                                                 </div>
                                                 <div class="ui-g-1" >
-                                                    <p:outputLabel value="Fecha:" for="fechaReq" />
+                                                    <p:outputLabel value="Fecha:" for="fechaEnt" />
                                                 </div>
                                                 <div class="ui-g-2" >
-                                                    <p:calendar id="fechaReq" value="#{mttoRequisicion.fechaRequisicion}"
+                                                    <p:calendar id="fechaEnt" value="#{mttoRequisicion.ordenCompra.fecha}"
+                                                                disabled="true"
+                                                                pattern="dd-MM-yyyy" mask="true"/>
+                                                </div>
+                                                <div class="ui-g-3" >
+                                                    <p:outputLabel value="#{mttoRequisicion.ordenCompra.lugarentrega}"/>
+                                                </div>
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel value="Fecha de entrega:" for="fechaReq" />
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:calendar id="fechaReq" value="#{mttoRequisicion.ordenCompra.fechaentrega}"
                                                                 pattern="dd-MM-yyyy" mask="true"/>
                                                 </div>
                                                 <div class="ui-g-2" >

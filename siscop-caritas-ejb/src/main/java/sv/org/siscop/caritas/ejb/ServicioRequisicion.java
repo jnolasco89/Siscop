@@ -29,11 +29,17 @@ public class ServicioRequisicion implements ServicioRequisicionLocal {
     @Override
     public void nuevaRequisicion(Requisicion r) {
         requisicionDao.create(r);
-    }
+    }   
 
     @Override
     public void actualizarRequisicion(Requisicion r) {
         requisicionDao.edit(r);
+    }
+    
+    @Override
+    public Long buscarMaxRequisicionNumero(Long idProyecto) throws Exception {
+
+       return requisicionDao.buscarMaxRequisicionNumero(idProyecto);
     }
 
     @Override

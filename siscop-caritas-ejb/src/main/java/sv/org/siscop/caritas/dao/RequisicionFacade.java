@@ -36,14 +36,14 @@ public class RequisicionFacade extends AbstractFacade<Requisicion> {
     public List<Requisicion> buscarRequisiciones(Map filtro) throws Exception {
         List<Requisicion> lista = new ArrayList();
         try {
-            StringBuilder sql = new StringBuilder("SELECT object(c) FROM  Requisicion d ");
+            StringBuilder sql = new StringBuilder("SELECT object(r) FROM  Requisicion r ");
             sql.append("WHERE 1=1 ");
 
             if (filtro.containsKey("id")) {
-                sql.append("AND d.id = :id ");
+                sql.append("AND r.id = :id ");
             }
 
-            sql.append(" ORDER BY c.id");
+            sql.append(" ORDER BY r.id");
 
             Query q = em.createQuery(sql.toString());
 
@@ -63,12 +63,16 @@ public class RequisicionFacade extends AbstractFacade<Requisicion> {
 
         try {
             StringBuilder sql = new StringBuilder("SELECT max(r.numero) FROM  Requisicion r ");
-            sql.append("WHERE r.plancotizacion.idproyecto = :idproyecto");
+            sql.append("WHERE r.actividad.idproyecto.id = :idproyecto");
 
             Query q = em.createQuery(sql.toString());
             q.setParameter("idproyecto", idProyecto);
 
-            return (Long) q.getSingleResult();
+            Long numero = (Long) q.getSingleResult();
+            if(numero==null){
+                return 1L;
+            }
+            return numero;
         } catch (NoResultException ex) {
             return 0L;
         } catch (Exception ex) {

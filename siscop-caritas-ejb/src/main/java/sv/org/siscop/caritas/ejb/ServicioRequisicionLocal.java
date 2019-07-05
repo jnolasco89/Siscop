@@ -27,4 +27,6 @@ public interface ServicioRequisicionLocal {
     public void nuevoItemRequisicion(ItemRequisicion i);
 
     public void actualizarItemRequisicion(ItemRequisicion i );
+
+    public Long buscarMaxRequisicionNumero(Long idProyecto) throws Exception;
 }

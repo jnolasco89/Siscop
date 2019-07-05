@@ -302,7 +302,7 @@ public class MttoCotizacion implements Serializable {
             descripcion = planCotizacionActual.getDescripcion();
             fecha = planCotizacionActual.getFecha();
             actividadActual = planCotizacionActual.getActividad();
-            cotizacionSel =planCotizacionActual.getCotizacionSel();
+            cotizacionSel = planCotizacionActual.getCotizacionSel();
             itemPlanCotizacionList = planCotizacionActual.getPlanitemList();
             listaCotizaciones = planCotizacionActual.getCotizacionList();
 
@@ -374,9 +374,11 @@ public class MttoCotizacion implements Serializable {
             this.planCotizacionActual.setCotizacionList(listaCotizaciones);
             if (proyectoActual != null) {
                 this.planCotizacionActual.setIdproyecto(proyectoActual.getId());
-            }           
+            }
 
-            this.planCotizacionActual.setCotizacionSel(cotizacionSel);
+            if (cotizacionSel != null && cotizacionSel.getId() != null) {
+                this.planCotizacionActual.setCotizacionSel(cotizacionSel);
+            }
             //this.planCotizacionActual.setRequisicion(new Requisicion());
             if (esPlantillaNueva) {
                 this.servCotizacion.nuevoPlancotizacion(planCotizacionActual);
@@ -872,20 +874,18 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
-    public void crearRequisicion(Cotizacion coti) {
+    public void crearOrdenDeCompra(Requisicion req) {
         try {
-           
+
             requisicion = new Requisicion();
-            requisicion.setNumero(44);
-            requisicion.setCotizacion(coti);
-            
-            
-            
+//            requisicion.setNumero(44);
+//            requisicion.setCotizacion(coti);
+
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void eliminarCotizacion(Cotizacion coti) {
         try {
             listaCotizaciones.remove(coti);
@@ -897,9 +897,8 @@ public class MttoCotizacion implements Serializable {
         }
     }
 
-    
     private Requisicion requisicion = new Requisicion();
-    private Date fechaRequisicion = null; 
+    private Date fechaRequisicion = null;
     private String destino = "";
 
     public Requisicion getRequisicion() {
@@ -925,11 +924,7 @@ public class MttoCotizacion implements Serializable {
     public void setDestino(String destino) {
         this.destino = destino;
     }
-    
-    
-    
-    
-    
+
     //Campos de búsqueda de proyecto
     private Long codigoB;
     private String nombreB;
@@ -1068,12 +1063,10 @@ public class MttoCotizacion implements Serializable {
         PrimeFaces.current().ajax().update(":formbuscarProyecto");
         PrimeFaces.current().executeScript("PF('modalBusqProyecto').show();");
     }
-    
-    
+
     private Cotizacion cotizacionSel = new Cotizacion();
-    
-    
-  public void abrirModalSelCotizacion() {
+
+    public void abrirModalSelCotizacion() {
         PrimeFaces.current().ajax().update(":formSelCotizacion");
         PrimeFaces.current().executeScript("PF('modalSelCotizacion').show();");
     }
@@ -1085,22 +1078,17 @@ public class MttoCotizacion implements Serializable {
     public void setCotizacionSel(Cotizacion cotizacionSel) {
         this.cotizacionSel = cotizacionSel;
     }
-  
-  
-  
-  
-  public void onRowSelectCotizacionSeleccionada(SelectEvent event) throws IOException {
+
+    public void onRowSelectCotizacionSeleccionada(SelectEvent event) throws IOException {
         try {
-            
-            crearRequisicion(cotizacionSel);
-           
+
+//            crearRequisicion(cotizacionSel);
             PrimeFaces.current().executeScript("PF('modalSelCotizacion').hide();");
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
-
 
     private String duiProvB;
     private String nombre1ProvB;
@@ -1183,7 +1171,7 @@ public class MttoCotizacion implements Serializable {
         PrimeFaces.current().ajax().update(":formbuscarProveedor");
         PrimeFaces.current().executeScript("PF('modalbusqProveedor').show();");
     }
-   
+
     public void buscarProveedores() {
 
         try {

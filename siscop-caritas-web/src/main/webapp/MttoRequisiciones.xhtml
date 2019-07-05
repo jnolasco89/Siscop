@@ -83,7 +83,16 @@
                                             <p:calendar id="fecha" value="#{mttoRequisicion.fecha}"
                                                         pattern="dd-MM-yyyy" mask="true"/>
                                         </div>
-                                        <div class="ui-g-1" >
+                                        <div class="ui-g-1" >                                            
+                                            <p:outputLabel value="Descripción:" for="txtDescripcion" />
+                                        </div>
+                                        <div class="ui-g-6" >
+                                            <p:inputTextarea rows="2" id="txtDescripcion"
+                                                             value="#{mttoRequisicion.descripcion}"
+                                                             autoResize="true"
+                                                             />
+                                        </div>
+                                        <div class="ui-g-2" >
                                             <p:outputLabel value="Actividad:" for="txtBusActividad" />
                                         </div>
                                         <div class="ui-g-5">
@@ -96,36 +105,6 @@
                                                 <p:commandButton icon="ui-icon-search"  
                                                                  styleClass="white-button"
                                                                  actionListener="#{mttoRequisicion.abrirModalBuscarProveedores()}"/>  
-                                            </div>
-                                        </div>
-                                        <div class="ui-g-6" >
-                                            <p:outputLabel value="Descripción:" for="txtDescripcion" />
-                                            <p:inputTextarea rows="2" id="txtDescripcion"
-                                                             value="#{mttoRequisicion.descripcion}"
-                                                             autoResize="true"/>
-                                        </div>
-                                        <div class="ui-g-2" >
-                                            <p:outputLabel value=" "/>
-                                            <p:commandButton value="Asignar proyecto" id="btnAsignarProy" 
-                                                             actionListener="#{mttoRequisicion.abrirModalBuscarProyecto()}"
-                                                             update="formbuscarProyecto" style="margin-right:20px;" icon="fa fa-search" />
-                                        </div>
-                                        <div class="ui-g-2" >
-                                            <p:outputLabel value="#{mttoRequisicion.proyectoActual.nombreCorto}" for="fecha" />
-                                        </div>
-                                        <div class="ui-g-1" >
-                                            <h:outputText value="Ganador:" />
-                                        </div>
-                                        <div class="ui-g-5">
-                                            <div class="ui-inputgroup">
-                                                <p:inputText id="txtCotizacionSel"
-                                                             value=""
-                                                             readonly="true"
-                                                             >
-                                                </p:inputText>
-                                                <p:commandButton icon="ui-icon-search"  
-                                                                 styleClass="white-button"
-                                                                 actionListener="#{mttoRequisicion.abrirModalSelCotizacion()}"/>  
                                             </div>
                                         </div>
                                         <div class="ui-g-1" >

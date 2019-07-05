@@ -13,7 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,7 +35,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @EntityListeners(AuditListener.class)
 public class Proyecto implements Auditable, Serializable {
 
-   
     @OneToMany(mappedBy = "idproyecto")
     private List<Actividad> actividadList;
 
@@ -67,6 +65,10 @@ public class Proyecto implements Auditable, Serializable {
     @JoinColumn(name = "idestado", referencedColumnName = "id")
     @ManyToOne
     private ItemCatalogo estado;
+    @OneToMany(mappedBy = "proyecto")
+    private List<Cheque> chequeList;
+    @OneToMany(mappedBy = "proyecto")
+    private List<Partida> partidaList;
     @Embedded
     private Audit audit;
 
@@ -188,6 +190,22 @@ public class Proyecto implements Auditable, Serializable {
 
     public void setActividadList(List<Actividad> actividadList) {
         this.actividadList = actividadList;
+    }
+
+    public List<Cheque> getChequeList() {
+        return chequeList;
+    }
+
+    public void setChequeList(List<Cheque> chequeList) {
+        this.chequeList = chequeList;
+    }
+
+    public List<Partida> getPartidaList() {
+        return partidaList;
+    }
+
+    public void setPartidaList(List<Partida> partidaList) {
+        this.partidaList = partidaList;
     }
 
 }

@@ -56,7 +56,7 @@ public class Detallecheque implements Serializable {
     @ManyToOne
     private Cheque cheque;
     @JoinColumns({
-        @JoinColumn(name = "idcheque", referencedColumnName = "idproyecto")
+        @JoinColumn(name = "idproyecto", referencedColumnName = "idproyecto")
         , @JoinColumn(name = "codigocuenta", referencedColumnName = "codigo")})
     @ManyToOne
     private Cuenta cuenta;

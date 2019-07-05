@@ -6,8 +6,12 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -30,8 +35,6 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "requisicion")
-@NamedQueries({
-    @NamedQuery(name = "Requisicion.findAll", query = "SELECT r FROM Requisicion r")})
 public class Requisicion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -41,18 +44,30 @@ public class Requisicion implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "id")
+
     private Long id;
     @Column(name = "numero")
-    private Long numero;
+    private Integer numero;
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
     @Size(max = 1000)
     @Column(name = "destino")
     private String destino;
+    @Size(max = 200)
+    @Column(name = "descripcion")
+    private String descripcion;
+    @OneToMany(mappedBy = "requisicion")
+    private List<ItemRequisicion> itemrequisicionList;
+    @JoinColumn(name = "idactividad", referencedColumnName = "id")
+    @ManyToOne
+    private Actividad actividad;
     @JoinColumn(name = "idcotizacion", referencedColumnName = "id")
     @ManyToOne
     private Cotizacion cotizacion;
+    @JoinColumn(name = "idproveedor", referencedColumnName = "id")
+    @ManyToOne
+    private Proveedor proveedor;
 
     public Requisicion() {
     }
@@ -69,11 +84,11 @@ public class Requisicion implements Serializable {
         this.id = id;
     }
 
-    public Long getNumero() {
+    public Integer getNumero() {
         return numero;
     }
 
-    public void setNumero(Long numero) {
+    public void setNumero(Integer numero) {
         this.numero = numero;
     }
 
@@ -93,12 +108,44 @@ public class Requisicion implements Serializable {
         this.destino = destino;
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public List<ItemRequisicion> getItemrequisicionList() {
+        return itemrequisicionList;
+    }
+
+    public void setItemrequisicionList(List<ItemRequisicion> itemrequisicionList) {
+        this.itemrequisicionList = itemrequisicionList;
+    }
+
+    public Actividad getActividad() {
+        return actividad;
+    }
+
+    public void setActividad(Actividad actividad) {
+        this.actividad = actividad;
+    }
+
     public Cotizacion getCotizacion() {
         return cotizacion;
     }
 
     public void setCotizacion(Cotizacion cotizacion) {
         this.cotizacion = cotizacion;
+    }
+
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
     }
 
     @Override
@@ -123,7 +170,7 @@ public class Requisicion implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.org.siscop.caritas.entidades.Requisicion[ id=" + id + " ]";
+        return "prueba.Requisicion[ id=" + id + " ]";
     }
 
 }

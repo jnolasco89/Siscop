@@ -59,7 +59,8 @@ public class MttoCuentasContables implements Serializable {
     private Proyecto proyectoBusquedaTabla;
     private Proyecto proyectoBusquedaModal;
     private List<Cuenta> catalogoDeCuentas;
-    private TreeNode arbolCuentas;
+    private TreeNode arbolCuentasCatalogo;
+    private TreeNode arbolCuentasModal;
     private Cuenta cuentaActual;
 
     /**
@@ -94,7 +95,8 @@ public class MttoCuentasContables implements Serializable {
         proyectoBusquedaModal.setEstado(new ItemCatalogo(0));
 
         catalogoDeCuentas = null;
-        arbolCuentas = null;
+        arbolCuentasCatalogo = null;
+        arbolCuentasModal = null;
         cuentaActual = new Cuenta();
         cuentaActual.setObjProyecto(new Proyecto());
     }
@@ -148,12 +150,12 @@ public class MttoCuentasContables implements Serializable {
         this.msjPestaniaCatalogo = msjPestaniaCatalogo;
     }
 
-    public TreeNode getArbolCuentas() {
-        return arbolCuentas;
+    public TreeNode getArbolCuentasCatalogo() {
+        return arbolCuentasCatalogo;
     }
 
-    public void setArbolCuentas(TreeNode arbolCuentas) {
-        this.arbolCuentas = arbolCuentas;
+    public void setArbolCuentasCatalogo(TreeNode arbolCuentasCatalogo) {
+        this.arbolCuentasCatalogo = arbolCuentasCatalogo;
     }
 
     public TreeNode getNodoActual() {
@@ -202,6 +204,14 @@ public class MttoCuentasContables implements Serializable {
 
     public void setProyectoActualDetalle(Proyecto proyectoActualDetalle) {
         this.proyectoActualDetalle = proyectoActualDetalle;
+    }
+
+    public TreeNode getArbolCuentasModal() {
+        return arbolCuentasModal;
+    }
+
+    public void setArbolCuentasModal(TreeNode arbolCuentasModal) {
+        this.arbolCuentasModal = arbolCuentasModal;
     }
 
     // =================== METODOS =========================
@@ -270,8 +280,8 @@ public class MttoCuentasContables implements Serializable {
         filtros.put("proyecto", proyectoActualCatalogo);
         catalogoDeCuentas = servCuenta.buscarCuentas(filtros);
 
-        arbolCuentas = new DefaultTreeNode("Raiz", null);
-        recorrerCuentas(catalogoDeCuentas, arbolCuentas, true);
+        arbolCuentasCatalogo = new DefaultTreeNode("Raiz", null);
+        recorrerCuentas(catalogoDeCuentas, arbolCuentasCatalogo, true);
         tabActiva = 1;
         modoProyecto = 2;
     }
@@ -295,7 +305,7 @@ public class MttoCuentasContables implements Serializable {
         proyectoActualCatalogo = new Proyecto();
         proyectoActualCatalogo.setId(null);
         catalogoDeCuentas = null;
-        arbolCuentas = null;
+        arbolCuentasCatalogo = null;
         msjPestaniaCatalogo = msjs.get("seleccionar").toString();
         modoProyecto = 1;
     }
@@ -309,7 +319,7 @@ public class MttoCuentasContables implements Serializable {
         System.out.println("Limpiar from cuenta");
     }
 
-    public void cargarCuentaSeleccionada() {
+    public void cargarCuentaSeleccionadaTabla() {
         cuentaActual = (Cuenta) nodoActual.getData();
         cuentaActual.setObjProyecto(proyectoActualCatalogo);
         //update=":formTabs:tabs:detalle" 
@@ -321,8 +331,8 @@ public class MttoCuentasContables implements Serializable {
         try {
 
             catalogoDeCuentas = servCuenta.leerArchivo(event.getFile().getInputstream());
-            arbolCuentas = new DefaultTreeNode("Raiz", null);
-            recorrerCuentas(catalogoDeCuentas, arbolCuentas, true);
+            arbolCuentasCatalogo = new DefaultTreeNode("Raiz", null);
+            recorrerCuentas(catalogoDeCuentas, arbolCuentasCatalogo, true);
 
             PrimeFaces.current().ajax().update(":formTabs:tabs:contenedorArbolCuentas");
         } catch (IOException ex) {
@@ -398,6 +408,22 @@ public class MttoCuentasContables implements Serializable {
         PrimeFaces.current().executeScript("PF('dialogProyectos').hide()");
     }
 
+    // ---- Metodos modal buscar cuenta ----
+    public void mostrarModalBuscarCuenta(){
+        Proyecto p=cuentaActual.getObjProyecto();
+        
+        Map filtros=new HashMap();
+        filtros.put("cuentasPrincipales", true);
+        filtros.put("proyecto",p);
+        servCuenta.buscarCuentas(msjs);
+        
+        
+    }
+    
+    public void cargarCuentaSeleccionadaModal(){
+        System.out.println("");
+    }
+    
     // ---- Metodos utilitarios -------
     public void recorrerCuentas(List<Cuenta> cuentas, TreeNode padre, boolean fullExpansion) {
         cuentas.forEach((cuenta) -> {

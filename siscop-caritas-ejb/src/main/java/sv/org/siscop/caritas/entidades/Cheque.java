@@ -63,6 +63,9 @@ public class Cheque implements Serializable {
     @Size(max = 500)
     @Column(name = "comentarios")
     private String comentarios;
+    @JoinColumn(name = "estado", referencedColumnName = "id")
+    @ManyToOne
+    private ItemCatalogo estado;
     @JoinColumn(name = "idactividad", referencedColumnName = "id")
     @OneToOne(optional = false)
     private Actividad actividad;
@@ -86,7 +89,6 @@ public class Cheque implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public Date getFecha() {
         return fecha;
@@ -134,6 +136,14 @@ public class Cheque implements Serializable {
 
     public void setComentarios(String comentarios) {
         this.comentarios = comentarios;
+    }
+
+    public ItemCatalogo getEstado() {
+        return estado;
+    }
+
+    public void setEstado(ItemCatalogo estado) {
+        this.estado = estado;
     }
 
     public Actividad getActividad() {
@@ -184,5 +194,5 @@ public class Cheque implements Serializable {
     public String toString() {
         return "sv.org.siscop.caritas.entidades.Cheque[ id=" + id + " ]";
     }
-    
+
 }

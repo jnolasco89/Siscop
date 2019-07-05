@@ -34,7 +34,7 @@ import javax.validation.constraints.NotNull;
 public class Detallecheque implements Serializable {
 
     private static final long serialVersionUID = 1L;
-   @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chequedetalle_generator")
     @SequenceGenerator(name = "chequedetalle_generator", sequenceName = "seq_chequedetalle", allocationSize = 1)
     @Basic(optional = false)
@@ -44,7 +44,7 @@ public class Detallecheque implements Serializable {
 //    @Column(name = "idproyecto")
 //    private BigInteger idproyecto;
     @Column(name = "aplicacion")
-    private Short aplicacion;
+    private Integer aplicacion;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "monto")
     private BigDecimal monto;
@@ -86,12 +86,11 @@ public class Detallecheque implements Serializable {
 //    public void setIdproyecto(BigInteger idproyecto) {
 //        this.idproyecto = idproyecto;
 //    }
-
-    public Short getAplicacion() {
+    public Integer getAplicacion() {
         return aplicacion;
     }
 
-    public void setAplicacion(Short aplicacion) {
+    public void setAplicacion(Integer aplicacion) {
         this.aplicacion = aplicacion;
     }
 
@@ -167,5 +166,5 @@ public class Detallecheque implements Serializable {
     public String toString() {
         return "sv.org.siscop.caritas.entidades.Detallecheque[ id=" + id + " ]";
     }
-    
+
 }

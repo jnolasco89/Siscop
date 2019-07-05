@@ -63,7 +63,7 @@ public class Cheque implements Serializable {
     @Size(max = 500)
     @Column(name = "comentarios")
     private String comentarios;
-    @JoinColumn(name = "estado", referencedColumnName = "id")
+    @JoinColumn(name = "idestado", referencedColumnName = "id")
     @ManyToOne
     private ItemCatalogo estado;
     @JoinColumn(name = "idactividad", referencedColumnName = "id")

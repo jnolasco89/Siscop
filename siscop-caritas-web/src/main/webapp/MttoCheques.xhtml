@@ -129,7 +129,7 @@
                                             <p:outputLabel value="A favor de:" for="afavor" />
                                         </div>
                                         <div class="ui-g-4" >
-                                            <p:inputText id="txtBusActividad"
+                                            <p:inputText id="afavor"
                                                          value="#{mttoCheque.afavorDe}" />
                                         </div>
 
@@ -173,7 +173,7 @@
                                                         <p:commandButton icon="ui-icon-search"
                                                                          styleClass="white-button"
                                                                          process="@this"
-                                                                         actionListener="#{mttoCheque.abrirModalBuscarProyecto()}"/> 
+                                                                         actionListener="#{mttoCheque.abrirModalCuentas()}"/> 
                                                     </div>
                                                 </div>
                                                 <div class="ui-g-1" >
@@ -195,112 +195,35 @@
                                                                      update="principal" style="vertical-align: central;"
                                                                      icon="fa fa-plus" />
                                                 </div>
-                                                <p:dataTable id="listaItemPlan" var = "itemreq"
+                                                <p:dataTable id="listaDetalle" var = "deta"
                                                              value="#{mttoCheque.chequeDetaList}"
-                                                             widgetVar="cellItemsPlan"
-                                                             editable="true" 
-                                                             editMode="cell"
-                                                             draggableRows="true"
+                                                             widgetVar="tblDetalleCheque"
                                                              rowIndexVar="rowId"
                                                              >
-                                                    <p:ajax event="rowReorder" listener="#{mttoCheque.onRowReorderItemRequisicion}"
-                                                            update="listaItemPlan"/>
-                                                    <p:ajax event="cellEdit" listener="#{mttoCheque.onCellEditItemRequisicion}"/>
-                                                    <p:ajax event="rowEditCancel" listener="#{mttoCheque.onRowCancelItemRequisicion}"/>
-                                                    <p:column headerText="Orden" width="10%">
-                                                        <h:outputText value="#{rowId}" />
+                                                    <p:column headerText="Cuenta" width="20%">
+                                                        <h:outputText value="#{deta.cuenta.cuentaPK.codigo}" />
                                                     </p:column>
                                                     <p:column headerText="Id" width="10%">
-                                                        <h:outputText value="#{itemreq.id}" />
+                                                        <h:outputText value="#{deta.aplicacion==0?'Cargo':'Abono'}" />
                                                     </p:column>
-                                                    <p:column headerText="Producto">
-                                                        <p:cellEditor>
-                                                            <f:facet name="output">
-                                                                <h:outputText value="#{itemreq.producto}" /></f:facet>
-                                                            <f:facet name="input">
-                                                                <p:inputText value="#{itemreq.producto}" 
-                                                                             style="width:96%"
-                                                                             label="Producto"/>
-                                                            </f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column>
-                                                    <p:column headerText="Descripción">
-                                                        <p:cellEditor>
-                                                            <f:facet name="output">
-                                                                <h:outputText value="#{itemreq.descripcion}" /></f:facet>
-                                                            <f:facet name="input">
-                                                                <p:inputText value="#{itemreq.descripcion}" 
-                                                                             style="width:96%"
-                                                                             label="Descripción"/>
-                                                            </f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column>
-                                                    <p:column headerText="Unidad" width="10%">
-                                                        <h:outputText value="#{itemreq.medida.descripcion}" />
-                                                    </p:column>
-                                                    <p:column headerText="Cantidad" width="10%" >
-                                                        <f:facet name="header">
-                                                            <i class="fa fa-edit" />
-                                                            <h:outputText value="Cantidad"/>
-                                                        </f:facet>
-                                                        <p:cellEditor>
-                                                            <f:facet name="output">
-                                                                <h:outputText value="#{itemreq.cantidad}" />
-                                                            </f:facet>
-                                                            <f:facet name="input">
-                                                                <p:inputText  value="#{itemreq.cantidad}"
-                                                                              style="width:94%; "
-                                                                              label="Cantidad"/>
-                                                            </f:facet>
-                                                        </p:cellEditor>
+                                                    <p:column headerText="Valor" width="10%" >
+                                                        <h:outputText value="#{deta.monto}" />
                                                     </p:column>
                                                     <p:column width="5%">
                                                         <p:commandButton icon="ui-icon-trash"
                                                                          title="Eliminar"
-                                                                         actionListener="#{mttoCheque.eliminarItemRequisicion(itemreq)}"
-                                                                         update="listaItemPlan :principal:growl"/>
+                                                                         actionListener="#{mttoCheque.eliminarDetalleCheque(deta)}"
+                                                                         update="tblDetalleCheque :principal:growl"/>
+                                                    </p:column>
+                                                    <p:column width="5%">
+                                                        <p:commandButton icon="fa fa-pencil"
+                                                                         title="Editar"
+                                                                         actionListener="#{mttoCheque.editarDetalleCheque(deta)}"
+                                                                         update="tblDetalleCheque :principal:growl"/>
                                                     </p:column>
                                                 </p:dataTable>
                                             </div>
-                                        </p:tab>
-
-                                        <p:tab id="requisiciones" title="Orden de compra"
-                                               rendered="#{not empty mttoCheque.ordenCompra
-                                                           and not empty mttoCheque.ordenCompra.id}">
-                                            <div class="card ui-g" style="margin-top:0">
-                                                <div class="ui-g-1" >
-                                                    <p:outputLabel value="Numero:"/>
-                                                </div> 
-                                                <div class="ui-g-1" >
-                                                    <p:outputLabel value="#{mttoCheque.ordenCompra.numero}"/>
-                                                </div>
-                                                <div class="ui-g-1" >
-                                                    <p:outputLabel value="Fecha:" for="fechaEnt" />
-                                                </div>
-                                                <div class="ui-g-2" >
-                                                    <p:calendar id="fechaEnt" value="#{mttoCheque.ordenCompra.fecha}"
-                                                                disabled="true"
-                                                                pattern="dd-MM-yyyy" mask="true"/>
-                                                </div>
-                                                <div class="ui-g-3" >
-                                                    <p:outputLabel value="#{mttoCheque.ordenCompra.lugarentrega}"/>
-                                                </div>
-                                                <div class="ui-g-1" >
-                                                    <p:outputLabel value="Fecha de entrega:" for="fechaReq" />
-                                                </div>
-                                                <div class="ui-g-2" >
-                                                    <p:calendar id="fechaReq" value="#{mttoCheque.ordenCompra.fechaentrega}"
-                                                                pattern="dd-MM-yyyy" mask="true"/>
-                                                </div>
-                                                <div class="ui-g-2" >
-                                                    <p:outputLabel value="Descripcion:" for="txtDestino"/>            
-                                                </div>
-                                                <div class="ui-g-5" >                                                                                  
-                                                    <p:inputText id="txtDestino" value="#{mttoCheque.destino}"/>
-                                                </div>
-                                            </div>
-
-                                        </p:tab>
+                                        </p:tab>                                       
                                     </p:tabView>
                                 </p:tab>
                             </div>
@@ -310,60 +233,34 @@
             </div>
         </div>
 
-        <p:dialog id="busqProveedorModal"
-                  header="Seleccionar Proveedor"
-                  widgetVar="modalbusqProveedor"
+
+        <p:dialog id="busqProyModal"
+                  header="Seleccionar Cuenta"
+                  widgetVar="modalSelCuentas"
                   modal="true" showEffect="fade" hideEffect="fade"
                   resizable="true" responsive="true"
                   height="500"
-                  width="800">
-            <h:form id="formbuscarProveedor">
+                  width="400">
+            <h:form id="formCuentas">
                 <div class="card">
-                    <p:menubar>
-                        <p:menuitem value="Buscar" actionListener="#{mttoCheque.buscarProveedores()}" 
-                                    icon="fa fa-search" update="@form"  />
-                        <p:menuitem value="Limpiar" action="#{mttoCheque.limpiarBusquedaProveedores()}"
-                                    update="@form" icon="fa fa-eraser" />
-                    </p:menubar>
-                    <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
-                                 styleClass="ui-panelgrid-blank">
-                        <p:outputLabel for="txtNombre1" value="Primer Nombre" />
-                        <p:inputText id="txtNombre1" value="#{mttoCheque.nombre1ProvB}"                                                     
-                                     onkeyup="this.value = this.value.toUpperCase();"/>
-                        <p:outputLabel for="txtNombre2" value="Segundo Nombre" />
-                        <p:inputText id="txtNombre2" value="#{mttoCheque.nombre2ProvB}"
-                                     onkeyup="this.value = this.value.toUpperCase();"/>
-                        <p:outputLabel for="txtApellido1" value="Primer Apellido" />
-                        <p:inputText id="txtApellido1" value="#{mttoCheque.apellido1ProvB}"
-                                     onkeyup="this.value = this.value.toUpperCase();"/>
-                        <p:outputLabel for="txtApellido1" value="Segundo Apellido" />
-                        <p:inputText id="txtApellido2" value="#{mttoCheque.apellido2ProvB}"
-                                     onkeyup="this.value = this.value.toUpperCase();"/>
-                        <p:outputLabel for="txtDui" value="DUI" />
-                        <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoCheque.duiProvB}"/>
-                    </p:panelGrid>
-                    <p:dataTable id="lista" var = "prov" value="#{mttoCheque.lstProveedores}"
+                    <p:dataTable id="lista" var = "cuenta" value="#{mttoCheque.cuentasList}"
                                  selectionMode="single"
-                                 selection="#{mttoCheque.proveedorSelB}"
-                                 rowKey="#{prov.id}"
+                                 selection="#{mttoCheque.cuentaActual}"
+                                 rowKey="#{cuenta.cuentaPK}"
                                  paginator="true"
                                  rows ="10"
                                  paginatorPosition="bottom"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="10,20,50">
-                        <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectProveedor(event)}"
+                        <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectProyecto(event)}"
                                 update="principal" />
-                        <p:column headerText="Id" width="10%">
-                            <h:outputText value="#{prov.id}" />
-                        </p:column>
-                        <p:column headerText="Proveedor">
-                            <h:outputText value="#{prov.persona.nomcom}" />
+                        <p:column headerText="Cuenta">
+                            <h:outputText value="#{cuenta.cuentaPK.codigo}" />
                         </p:column>
                     </p:dataTable>
                 </div>
             </h:form>
         </p:dialog>
-
 
         <p:dialog id="busqProyModal"
                   header="Seleccionar Proyecto"

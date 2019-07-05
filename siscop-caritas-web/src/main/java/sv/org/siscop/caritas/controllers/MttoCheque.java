@@ -36,27 +36,16 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import org.primefaces.PrimeFaces;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.tabview.TabView;
-import org.primefaces.event.CellEditEvent;
-import org.primefaces.event.ReorderEvent;
-import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 import sv.org.siscop.caritas.ejb.ServicioChequeLocal;
-import sv.org.siscop.caritas.ejb.ServicioOrdenCompraLocal;
 import sv.org.siscop.caritas.ejb.ServicioProveedorLocal;
 import sv.org.siscop.caritas.ejb.ServicioProyectoLocal;
-import sv.org.siscop.caritas.ejb.ServicioRequisicionLocal;
 import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
-import sv.org.siscop.caritas.ejb.ServiciosCuenta;
 import sv.org.siscop.caritas.ejb.ServiciosCuentaLocal;
-import sv.org.siscop.caritas.entidades.Actividad;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.Detallecheque;
-import sv.org.siscop.caritas.entidades.OrdenCompra;
-import sv.org.siscop.caritas.entidades.Planitem;
-import sv.org.siscop.caritas.entidades.Proveedor;
 import sv.org.siscop.caritas.entidades.Proyecto;
 import sv.org.siscop.caritas.entidades.Cheque;
 import sv.org.siscop.caritas.entidades.Cuenta;
@@ -428,9 +417,9 @@ public class MttoCheque implements Serializable {
             if (afavorDe == null || afavorDe.isEmpty()) {
                 campos.add("A Favor de");
             }
-            if (idEstadoChequeB == 0) {
-                campos.add("Estado");
-            }
+//            if (idEstadoChequeB == 0) {
+//                campos.add("Estado");
+//            }
 
             String camposFaltan = campos.stream().collect(Collectors.joining(", "));
             if (!camposFaltan.isEmpty()) {
@@ -457,6 +446,7 @@ public class MttoCheque implements Serializable {
             }
 
             this.ChequeActual.setFecha(fecha);
+            this.ChequeActual.setAfavorde(afavorDe);
             this.ChequeActual.setConcepto(conceptoCheque);
             this.ChequeActual.setCantidadletras(cantidadLetras);
             this.ChequeActual.setDetallechequeList(chequeDetaList);
@@ -545,6 +535,7 @@ public class MttoCheque implements Serializable {
             detaChequeActual.setSaldoanterior(valor);
             detaChequeActual.setSaldoposterior(valor);
             detaChequeActual.setSublibro(sublibroActual);
+            detaChequeActual.setCheque(ChequeActual);
             if (esDetalleNuevo) {
                 servCheque.nuevoDetalleCheque(detaChequeActual);
                 chequeDetaList.add(detaChequeActual);
@@ -559,15 +550,28 @@ public class MttoCheque implements Serializable {
         }
     }
 
-    public void onRowSelectDetalleCheque(SelectEvent event) throws IOException {
+    public void editarDetalleCheque(Detallecheque detalle) throws IOException {
         try {
-            detaChequeActual = (Detallecheque) event.getObject();
             esDetalleNuevo = false;
+            detaChequeActual = detalle;
+            valor = detaChequeActual.getMonto();
+            cuentaActual = detaChequeActual.getCuenta();
+            apliccont = detaChequeActual.getAplicacion();
+            sublibroActual = detaChequeActual.getSublibro();
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
+//    public void onRowSelectDetalleCheque(SelectEvent event) throws IOException {
+//        try {
+//            detaChequeActual = (Detallecheque) event.getObject();
+//            esDetalleNuevo = false;
+//
+//        } catch (Exception ex) {
+//            logger.log(Level.SEVERE, null, ex);
+//        }
+//    }
 
     public void eliminarDetalleCheque(Detallecheque deta) {
         try {
@@ -737,6 +741,14 @@ public class MttoCheque implements Serializable {
 
     //Listas
     private List<Cuenta> cuentasList = new ArrayList<>();
+
+    public List<Cuenta> getCuentasList() {
+        return cuentasList;
+    }
+
+    public void setCuentasList(List<Cuenta> cuentasList) {
+        this.cuentasList = cuentasList;
+    }
 
     public void buscarCuentas() {
 

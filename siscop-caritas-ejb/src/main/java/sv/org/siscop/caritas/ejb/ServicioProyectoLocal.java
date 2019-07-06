@@ -19,6 +19,8 @@ public interface ServicioProyectoLocal {
 
     public void nuevoProyecto(Proyecto c);
 
+    public void getProyecto(Long id);
+    
     public Proyecto actualizarProyecto(Proyecto c);
 
     public List<Proyecto> buscarProyectos(Map params) throws Exception;

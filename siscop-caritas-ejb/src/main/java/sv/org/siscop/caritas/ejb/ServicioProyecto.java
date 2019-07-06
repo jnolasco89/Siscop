@@ -28,6 +28,11 @@ public class ServicioProyecto implements ServicioProyectoLocal {
     }
 
     @Override
+    public void getProyecto(Long id) {
+        proyectoDao.find(id);
+    }
+
+    @Override
     public Proyecto actualizarProyecto(Proyecto c) {
         return proyectoDao.edit(c);
     }
@@ -37,6 +42,7 @@ public class ServicioProyecto implements ServicioProyectoLocal {
         return proyectoDao.buscarProyectos(params);
 
     }
+<<<<<<< HEAD
     
     
     @Override
@@ -44,13 +50,21 @@ public class ServicioProyecto implements ServicioProyectoLocal {
         return proyectoDao.buscarProyetosCriterial(params);
     }
     
+=======
+
     @Override
-    public List<Proyecto> getAllProyectos(){
+    public List<Proyecto> buscarProyetosCriterial(Map params) {
+        return proyectoDao.buscarProyetosCriterial(params);
+    }
+
+>>>>>>> origin/master
+    @Override
+    public List<Proyecto> getAllProyectos() {
         return proyectoDao.findAll();
     }
-    
+
     @Override
-    public List<Proyecto> getAllActividadesPorEstado(int estado){
+    public List<Proyecto> getAllActividadesPorEstado(int estado) {
         return proyectoDao.getAllProyectosPorEstado(estado);
     }
 }

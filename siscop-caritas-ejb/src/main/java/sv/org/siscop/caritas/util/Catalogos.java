@@ -14,6 +14,7 @@ public enum Catalogos {
     TIPO_TEL(5),
     ESTADO_ACTIVIDAD(10),
     UNIDAD_MEDIDA(30),
+    ESTADO_CHEQUE(20),
     ESTADO_PROYECTO(20);
 
     /**

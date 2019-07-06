@@ -6,6 +6,7 @@
 package sv.org.siscop.caritas.entidades;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -25,15 +26,16 @@ import javax.validation.constraints.Size;
  * @author Henry
  */
 @Entity
-@Table(name = "planitem")
-public class Planitem implements Serializable {
+@Table(name = "itemrequisicion")
+public class ItemRequisicion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "planitem_generator")
-    @SequenceGenerator(name = "planitem_generator", sequenceName = "seq_planitem", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "itemrequisicion_generator")
+    @SequenceGenerator(name = "itemrequisicion_generator", sequenceName = "seq_itemrequisicion", allocationSize = 1)
     @Basic(optional = false)
     @NotNull
+    @Column(name = "id")
     private Long id;
     @Column(name = "orden")
     private Integer orden;
@@ -43,19 +45,24 @@ public class Planitem implements Serializable {
     @Size(max = 200)
     @Column(name = "descripcion")
     private String descripcion;
-    @Column(name = "cantidad")
-    private Integer cantidad;
     @JoinColumn(name = "idmedida", referencedColumnName = "id")
     @ManyToOne
     private ItemCatalogo medida;
-    @JoinColumn(name = "idplancotizacion", referencedColumnName = "id")
+    @Column(name = "cantidad")
+    private Integer cantidad;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "preciounitario")
+    private BigDecimal preciounitario;
+    @Column(name = "total")
+    private BigDecimal total;
+    @JoinColumn(name = "idrequisicion", referencedColumnName = "id")
     @ManyToOne
-    private Plancotizacion plancotizacion;
+    private Requisicion requisicion;
 
-    public Planitem() {
+    public ItemRequisicion() {
     }
 
-    public Planitem(Long id) {
+    public ItemRequisicion(Long id) {
         this.id = id;
     }
 
@@ -91,14 +98,6 @@ public class Planitem implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
     public ItemCatalogo getMedida() {
         return medida;
     }
@@ -107,18 +106,42 @@ public class Planitem implements Serializable {
         this.medida = medida;
     }
 
-    public Plancotizacion getPlancotizacion() {
-        return plancotizacion;
+    public Integer getCantidad() {
+        return cantidad;
     }
 
-    public void setPlancotizacion(Plancotizacion plancotizacion) {
-        this.plancotizacion = plancotizacion;
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public BigDecimal getPreciounitario() {
+        return preciounitario;
+    }
+
+    public void setPreciounitario(BigDecimal preciounitario) {
+        this.preciounitario = preciounitario;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public Requisicion getRequisicion() {
+        return requisicion;
+    }
+
+    public void setRequisicion(Requisicion requisicion) {
+        this.requisicion = requisicion;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.id);
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -133,7 +156,7 @@ public class Planitem implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Planitem other = (Planitem) obj;
+        final ItemRequisicion other = (ItemRequisicion) obj;
         if (!Objects.equals(this.id, other.id)) {
             return false;
         }
@@ -142,7 +165,7 @@ public class Planitem implements Serializable {
 
     @Override
     public String toString() {
-        return "sv.org.siscop.caritas.entidades.Planitem[ id=" + id + " ]";
+        return "sv.org.siscop.caritas.entidades.Itemcotizacion[ id=" + id + " ]";
     }
 
 }

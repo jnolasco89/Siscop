@@ -1,0 +1,406 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-lg-12">
+                <div class="card">
+                    <h1 style="margin-top:0">Requisiciones</h1>
+                    <h:form id="principal">                       
+
+                        <p:growl id="growl" showSummary="true" globalOnly="true"
+                                 sticky="true" showDetail="true" for="msgGrowl"/>
+                        <p:tabView id="tabs" activeIndex="#{mttoRequisicion.tabindex}">
+                            <div class="card">
+                                <p:tab id="busqueda" title="Búsqueda">
+                                    <p:menubar>
+                                        <p:menuitem value="Buscar" actionListener="#{mttoRequisicion.buscarRequisiciones()}" 
+                                                    icon="ui-icon-search" update="@form"  />
+                                        <p:menuitem value="Limpiar" action="#{mttoRequisicion.limpiarBusquedaRequisicion()}"
+                                                    update="tabs lista" icon="ui-icon-refresh" />
+                                    </p:menubar>
+                                    <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                                 styleClass="ui-panelgrid-blank">
+                                        <p:outputLabel for="txtDescripcionB" value="Descripción:" />
+                                        <p:inputText id="txtDescripcionB" value="#{mttoRequisicion.descripcionB}"                                                     
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>                                        
+                                        <p:outputLabel for="txtIdProyecto" value="Id Proyecto:" />
+                                        <p:inputText id="txtIdProyecto" value="#{mttoRequisicion.idProyectoB}"/>
+                                        <p:outputLabel for="selectOneEstado" value="Estado:" />
+                                        <p:selectOneMenu id="selectOneEstado" value="#{mttoRequisicion.estadoActividadB}">
+                                            <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                            <f:selectItems value="#{mttoRequisicion.itemEstadoActividad}"/>
+                                        </p:selectOneMenu>
+                                    </p:panelGrid>
+                                    <div class="card">
+                                        <p:dataTable id="lista" var = "req" value="#{mttoRequisicion.requisicionesList}"
+                                                     selectionMode="single"
+                                                     selection="#{mttoRequisicion.requisicionB}"
+                                                     rowKey="#{req.id}"
+                                                     paginator="true"
+                                                     rows ="10"
+                                                     paginatorPosition="bottom"
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     rowsPerPageTemplate="10,20,50">
+                                            <p:ajax event="rowSelect" listener="#{mttoRequisicion.onRowSelectPlan(event)}"
+                                                    update="principal principal:tabs:otraInfo" />
+                                            <p:column headerText="Id" width="10%">
+                                                <h:outputText value="#{req.id}" />
+                                            </p:column>
+                                            <p:column headerText="Número" width="10%">
+                                                <h:outputText value="#{req.numero}" />
+                                            </p:column>
+                                            <p:column headerText="Requisición">
+                                                <h:outputText value="#{req.descripcion}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:tab>
+                            </div>
+                            <div class="card">
+                                <p:tab id="detalle" title="Detalle">
+                                    <p:menubar>
+                                        <p:menuitem value="Nuevo" action="#{mttoRequisicion.nuevaRequisicion()}"
+                                                    icon="ui-icon-search"
+                                                    update="@form
+                                                    :principal:growl"
+                                                    />
+                                        <p:menuitem value="Guardar"
+                                                    action="#{mttoRequisicion.guardarRequisicion()}" icon="fa fa-save"                                                
+                                                    update="lista :principal:growl otraInfo" />
+                                        <p:menuitem value="Crear Orden"
+                                                    action="#{mttoRequisicion.crearOrdenDeCompra()}" icon="fa fa-save"                                                
+                                                    update="lista :principal:growl otraInfo" />
+                                        <p:menuitem value="Imprimir Requisición" 
+                                                    action="#{mttoRequisicion.imprimirRequisicion()}" 
+                                                    icon="fa fa-print"
+                                                    ajax="false" 
+                                                    update="lista :principal:growl otraInfo" />
+                                    </p:menubar>
+                                    <div class="ui-g ui-panelgrid-blank">                                       
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Fecha:" for="fecha" />
+                                        </div>
+                                        <div class="ui-g-2" >
+                                            <p:calendar id="fecha" value="#{mttoRequisicion.fecha}"
+                                                        pattern="dd-MM-yyyy" mask="true"/>
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Numero:" for="fecha" />
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="#{mttoRequisicion.requisicionActual.numero}"/>
+                                        </div>
+
+                                        <div class="ui-g-1" >                                            
+                                            <p:outputLabel value="Descripción:" for="txtDescripcion" />
+                                        </div>
+
+                                        <div class="ui-g-6" >
+                                            <p:inputTextarea rows="1" id="txtDescripcion"
+                                                             value="#{mttoRequisicion.descripcion}"
+                                                             autoResize="true" />
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Actividad:" for="txtBusActividad" />
+                                        </div>
+                                        <div class="ui-g-5">
+                                            <div class="ui-inputgroup">
+                                                <p:inputText id="txtBusActividad"
+                                                             value="#{mttoRequisicion.actividadActual.nombre}"
+                                                             readonly="true"
+                                                             >
+                                                </p:inputText>
+                                                <p:commandButton icon="ui-icon-search"  
+                                                                 styleClass="white-button"
+                                                                 actionListener="#{mttoRequisicion.abrirModalBuscarProveedores()}"/>  
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <h:outputText value="Proveedor:" />
+                                        </div>
+                                        <div class="ui-g-5">
+                                            <div class="ui-inputgroup">
+                                                <p:inputText id="txtBusProyecto"
+                                                             value="#{mttoRequisicion.proveedorActual.persona.razsocial}"
+                                                             readonly="true"
+                                                             >
+                                                </p:inputText>
+                                                <p:commandButton icon="ui-icon-search"  
+                                                                 styleClass="white-button"
+                                                                 actionListener="#{mttoRequisicion.abrirModalBuscarProveedores()}"/>  
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Destino:" for="txtDestino" />
+                                        </div>
+                                        <div class="ui-g-5" >
+                                            <p:inputTextarea rows="2" id="txtDestino"
+                                                             value="#{mttoRequisicion.destino}"
+                                                             autoResize="true"
+                                                             />
+                                        </div>
+
+                                    </div>
+                                    <p:tabView id="otraInfo" style="border: 1px">
+                                        <p:tab id="plantilla" title="Detalle de productos">
+                                            <div class="card ui-g" style="margin-top: 0px">
+                                                <div class="ui-g-3" >
+                                                    <p:outputLabel value="Producto" for="txtProducto"/>
+                                                    <p:inputText id="txtProducto" value="#{mttoRequisicion.producto}"
+                                                                 onkeyup="this.value = this.value.toUpperCase();"/>
+                                                </div> 
+                                                <div class="ui-g-3" >
+                                                    <p:outputLabel value="Descripcion:" for="txtDescProducto"/>                                           
+                                                    <p:inputText id="txtDescProducto" value="#{mttoRequisicion.descproducto}"
+                                                                 onkeyup="this.value = this.value.toUpperCase();"/>
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:outputLabel for="selectOneMedida" value="Unidad" />
+                                                    <p:selectOneMenu id="selectOneMedida" value="#{mttoRequisicion.idItemMedida}">
+                                                        <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                                        <f:selectItems value="#{mttoRequisicion.itemMedida}"/>
+                                                    </p:selectOneMenu>
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:outputLabel value="Cantidad:" for="txtCantidadProd"/>
+                                                    <p:inputNumber id="txtCantidadProd" value="#{mttoRequisicion.cantidad}"/>
+                                                </div>
+                                                <div class="ui-g-2" style="vertical-align: central;" >
+                                                    <p:commandButton value="Agregar" id="btnAgregarProducto" 
+                                                                     action="#{mttoRequisicion.agregarItemRequisicion()}" 
+                                                                     update="principal" style="vertical-align: central;"
+                                                                     icon="fa fa-plus" />
+                                                </div>
+                                                <p:dataTable id="listaItemPlan" var = "itemreq"
+                                                             value="#{mttoRequisicion.itemRequisicionList}"
+                                                             widgetVar="cellItemsPlan"
+                                                             editable="true" 
+                                                             editMode="cell"
+                                                             draggableRows="true"
+                                                             rowIndexVar="rowId"
+                                                             >
+                                                    <p:ajax event="rowReorder" listener="#{mttoRequisicion.onRowReorderItemRequisicion}"
+                                                            update="listaItemPlan"/>
+                                                    <p:ajax event="cellEdit" listener="#{mttoRequisicion.onCellEditItemRequisicion}"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{mttoRequisicion.onRowCancelItemRequisicion}"/>
+                                                    <p:column headerText="Orden" width="10%">
+                                                        <h:outputText value="#{rowId}" />
+                                                    </p:column>
+                                                    <p:column headerText="Id" width="10%">
+                                                        <h:outputText value="#{itemreq.id}" />
+                                                    </p:column>
+                                                    <p:column headerText="Producto">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{itemreq.producto}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{itemreq.producto}" 
+                                                                             style="width:96%"
+                                                                             label="Producto"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column headerText="Descripción">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{itemreq.descripcion}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText value="#{itemreq.descripcion}" 
+                                                                             style="width:96%"
+                                                                             label="Descripción"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column headerText="Unidad" width="10%">
+                                                        <h:outputText value="#{itemreq.medida.descripcion}" />
+                                                    </p:column>
+                                                    <p:column headerText="Cantidad" width="10%" >
+                                                        <f:facet name="header">
+                                                            <i class="fa fa-edit" />
+                                                            <h:outputText value="Cantidad"/>
+                                                        </f:facet>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output">
+                                                                <h:outputText value="#{itemreq.cantidad}" />
+                                                            </f:facet>
+                                                            <f:facet name="input">
+                                                                <p:inputText  value="#{itemreq.cantidad}"
+                                                                              style="width:94%; "
+                                                                              label="Cantidad"/>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column width="5%">
+                                                        <p:commandButton icon="ui-icon-trash"
+                                                                         title="Eliminar"
+                                                                         actionListener="#{mttoRequisicion.eliminarItemRequisicion(itemreq)}"
+                                                                         update="listaItemPlan :principal:growl"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </div>
+                                        </p:tab>
+
+                                        <p:tab id="requisiciones" title="Orden de compra"
+                                               rendered="#{not empty mttoRequisicion.ordenCompra
+                                                           and not empty mttoRequisicion.ordenCompra.id}">
+                                            <div class="card ui-g" style="margin-top:0">
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel value="Numero:"/>
+                                                </div> 
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel value="#{mttoRequisicion.ordenCompra.numero}"/>
+                                                </div>
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel value="Fecha:" for="fechaEnt" />
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:calendar id="fechaEnt" value="#{mttoRequisicion.ordenCompra.fecha}"
+                                                                disabled="true"
+                                                                pattern="dd-MM-yyyy" mask="true"/>
+                                                </div>
+                                                <div class="ui-g-3" >
+                                                    <p:outputLabel value="#{mttoRequisicion.ordenCompra.lugarentrega}"/>
+                                                </div>
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel value="Fecha de entrega:" for="fechaReq" />
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:calendar id="fechaReq" value="#{mttoRequisicion.ordenCompra.fechaentrega}"
+                                                                pattern="dd-MM-yyyy" mask="true"/>
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:outputLabel value="Descripcion:" for="txtDestino"/>            
+                                                </div>
+                                                <div class="ui-g-5" >                                                                                  
+                                                    <p:inputText id="txtDestino" value="#{mttoRequisicion.destino}"/>
+                                                </div>
+                                            </div>
+
+                                        </p:tab>
+                                    </p:tabView>
+                                </p:tab>
+                            </div>
+                        </p:tabView>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+        <p:dialog id="busqProveedorModal"
+                  header="Seleccionar Proveedor"
+                  widgetVar="modalbusqProveedor"
+                  modal="true" showEffect="fade" hideEffect="fade"
+                  resizable="true" responsive="true"
+                  height="500"
+                  width="800">
+            <h:form id="formbuscarProveedor">
+                <div class="card">
+                    <p:menubar>
+                        <p:menuitem value="Buscar" actionListener="#{mttoRequisicion.buscarProveedores()}" 
+                                    icon="fa fa-search" update="@form"  />
+                        <p:menuitem value="Limpiar" action="#{mttoRequisicion.limpiarBusquedaProveedores()}"
+                                    update="@form" icon="fa fa-eraser" />
+                    </p:menubar>
+                    <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                 styleClass="ui-panelgrid-blank">
+                        <p:outputLabel for="txtNombre1" value="Primer Nombre" />
+                        <p:inputText id="txtNombre1" value="#{mttoRequisicion.nombre1ProvB}"                                                     
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtNombre2" value="Segundo Nombre" />
+                        <p:inputText id="txtNombre2" value="#{mttoRequisicion.nombre2ProvB}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtApellido1" value="Primer Apellido" />
+                        <p:inputText id="txtApellido1" value="#{mttoRequisicion.apellido1ProvB}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtApellido1" value="Segundo Apellido" />
+                        <p:inputText id="txtApellido2" value="#{mttoRequisicion.apellido2ProvB}"
+                                     onkeyup="this.value = this.value.toUpperCase();"/>
+                        <p:outputLabel for="txtDui" value="DUI" />
+                        <p:inputMask id="txtDui" mask="99999999-9" value="#{mttoRequisicion.duiProvB}"/>
+                    </p:panelGrid>
+                    <p:dataTable id="lista" var = "prov" value="#{mttoRequisicion.lstProveedores}"
+                                 selectionMode="single"
+                                 selection="#{mttoRequisicion.proveedorSelB}"
+                                 rowKey="#{prov.id}"
+                                 paginator="true"
+                                 rows ="10"
+                                 paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,20,50">
+                        <p:ajax event="rowSelect" listener="#{mttoRequisicion.onRowSelectProveedor(event)}"
+                                update="principal" />
+                        <p:column headerText="Id" width="10%">
+                            <h:outputText value="#{prov.id}" />
+                        </p:column>
+                        <p:column headerText="Proveedor">
+                            <h:outputText value="#{prov.persona.nomcom}" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </h:form>
+        </p:dialog>
+
+
+        <p:dialog id="busqProyModal"
+                  header="Seleccionar Proyecto"
+                  widgetVar="modalBusqProyecto"
+                  modal="true" showEffect="fade" hideEffect="fade"
+                  resizable="true" responsive="true"
+                  height="500"
+                  width="800">
+            <h:form id="formbuscarProyecto">
+                <div class="card">
+                    <p:tab id="busqueda" title="Búsqueda">
+                        <p:menubar>
+                            <p:menuitem value="Buscar" actionListener="#{mttoRequisicion.buscarProyectos()}" 
+                                        icon="ui-icon-search" update="@form"  />
+                            <p:menuitem value="Limpiar" action="#{mttoRequisicion.limpiarBusquedaProyectos()}"
+                                        update="@form" icon="ui-icon-refresh" />
+                        </p:menubar>
+                        <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                     styleClass="ui-panelgrid-blank">
+                            <p:outputLabel for="txtNombreB" value="Nombre:" />
+                            <p:inputText id="txtNombreB" value="#{mttoRequisicion.nombreB}"                                                     
+                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                            <p:outputLabel for="txtNombreCortoB" value="Nombre Corto:" />
+                            <p:inputText id="txtNombreCortoB" value="#{mttoRequisicion.nombreCortoB}"
+                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                            <p:outputLabel for="txtCodigo" value="Código:" />
+                            <p:inputText id="txtCodigo" value="#{mttoRequisicion.codigoB}"/>
+                            <p:outputLabel for="selectOneEstado" value="Estado" />
+                            <p:selectOneMenu id="selectOneEstado" value="#{mttoRequisicion.idEstadoB}">
+                                <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                <f:selectItems value="#{mttoRequisicion.itemEstado}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <div class="card">
+                            <p:dataTable id="lista" var = "proy" value="#{mttoRequisicion.proyectosList}"
+                                         selectionMode="single"
+                                         selection="#{mttoRequisicion.proyectoB}"
+                                         rowKey="#{proy.id}"
+                                         paginator="true"
+                                         rows ="10"
+                                         paginatorPosition="bottom"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,20,50">
+                                <p:ajax event="rowSelect" listener="#{mttoRequisicion.onRowSelectProyecto(event)}"
+                                        update="principal" />
+                                <p:column headerText="Id" width="10%">
+                                    <h:outputText value="#{proy.id}" />
+                                </p:column>
+                                <p:column headerText="Proyecto">
+                                    <h:outputText value="#{proy.nombreCorto}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                </div>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

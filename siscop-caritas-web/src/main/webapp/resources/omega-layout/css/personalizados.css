@@ -11,6 +11,10 @@ and open the template in the editor.
     width: 200px!important;
 }
 
+.ui-tabs .ui-tabs-panel {
+    border-width: 1px !important;
+}
+
 .input-cta-padre .ui-inputfield{
     opacity: 1!important;
 }

@@ -13,7 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,6 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @EntityListeners(AuditListener.class)
 public class Proyecto implements Auditable, Serializable {
 
+<<<<<<< HEAD
     @Column(name = "fechacrea")
     @Temporal(TemporalType.TIME)
     private Date fechacrea;
@@ -52,6 +52,8 @@ public class Proyecto implements Auditable, Serializable {
     private List<Cuenta> cuentaList;
 
    
+=======
+>>>>>>> origin/master
     @OneToMany(mappedBy = "idproyecto")
     private List<Actividad> actividadList;
 
@@ -82,6 +84,10 @@ public class Proyecto implements Auditable, Serializable {
     @JoinColumn(name = "idestado", referencedColumnName = "id")
     @ManyToOne
     private ItemCatalogo estado;
+    @OneToMany(mappedBy = "proyecto")
+    private List<Cheque> chequeList;
+    @OneToMany(mappedBy = "proyecto")
+    private List<Partida> partidaList;
     @Embedded
     private Audit audit;
 
@@ -205,6 +211,7 @@ public class Proyecto implements Auditable, Serializable {
         this.actividadList = actividadList;
     }
 
+<<<<<<< HEAD
     public Date getFechacrea() {
         return fechacrea;
     }
@@ -244,6 +251,22 @@ public class Proyecto implements Auditable, Serializable {
 
     public void setCuentaList(List<Cuenta> cuentaList) {
         this.cuentaList = cuentaList;
+=======
+    public List<Cheque> getChequeList() {
+        return chequeList;
+    }
+
+    public void setChequeList(List<Cheque> chequeList) {
+        this.chequeList = chequeList;
+    }
+
+    public List<Partida> getPartidaList() {
+        return partidaList;
+    }
+
+    public void setPartidaList(List<Partida> partidaList) {
+        this.partidaList = partidaList;
+>>>>>>> origin/master
     }
 
 }

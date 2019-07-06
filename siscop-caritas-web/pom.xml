@@ -48,6 +48,19 @@
             <artifactId>font-awesome</artifactId>
             <version>4.7.0</version>
         </dependency>
+        <!-- Jasper Reports -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>6.4.0</version>
+            <type>jar</type>
+        </dependency>
+        <!-- Jasper Reports Fonts -->
+        <dependency>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports-fonts</artifactId>
+            <version>6.0.0</version>
+        </dependency>
         
         <!-- Omnifaces, develop JSF never easier without Omnifaces -->
         <dependency>

@@ -49,16 +49,20 @@ public class Plancotizacion implements Serializable {
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    @Size(max = 200)
+    @Size(max = 2000)
     @Column(name = "analisis")
     private String analisis;
     @JoinColumn(name = "idactividad", referencedColumnName = "id")
     @ManyToOne
     private Actividad actividad;
-    @OneToMany(mappedBy = "plancotizacion")
+    @OneToMany(mappedBy = "plancotizacion", orphanRemoval = true)
     private List<Planitem> planitemList;
-    @OneToMany(mappedBy = "idplantilla")
+    @OneToMany(mappedBy = "plantilla", orphanRemoval = true)
     private List<Cotizacion> cotizacionList;
+
+    @JoinColumn(name = "idcotizacionsel", referencedColumnName = "id")
+    @ManyToOne
+    private Cotizacion cotizacionSel;
 
     public Plancotizacion() {
     }
@@ -121,6 +125,14 @@ public class Plancotizacion implements Serializable {
 
     public void setActividad(Actividad actividad) {
         this.actividad = actividad;
+    }
+
+    public Cotizacion getCotizacionSel() {
+        return cotizacionSel;
+    }
+
+    public void setCotizacionSel(Cotizacion cotizacionSel) {
+        this.cotizacionSel = cotizacionSel;
     }
 
     public List<Cotizacion> getCotizacionList() {

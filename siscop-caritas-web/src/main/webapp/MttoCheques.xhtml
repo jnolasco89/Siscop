@@ -1,0 +1,322 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:jsf="http://xmlns.jcp.org/jsf">
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 ui-lg-12">
+                <div class="card">
+                    <h1 style="margin-top:0">Requisiciones</h1>
+                    <h:form id="principal">                       
+
+                        <p:growl id="growl" showSummary="true" globalOnly="true"
+                                 sticky="true" showDetail="true" for="msgGrowl"/>
+                        <p:tabView id="tabs" activeIndex="#{mttoCheque.tabindex}">
+                            <div class="card">
+                                <p:tab id="busqueda" title="Búsqueda">
+                                    <p:menubar>
+                                        <p:menuitem value="Buscar" actionListener="#{mttoCheque.buscarCheques()}" 
+                                                    icon="ui-icon-search" update="@form"  />
+                                        <p:menuitem value="Limpiar" action="#{mttoCheque.limpiarBusquedaCheques()}"
+                                                    update="tabs lista" icon="ui-icon-refresh" />
+                                    </p:menubar>
+                                    <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                                 styleClass="ui-panelgrid-blank">
+                                        <p:outputLabel for="txtDescripcionB" value="A favor de" />
+                                        <p:inputText id="txtDescripcionB" value="#{mttoCheque.afavorDe}"                                                     
+                                                     onkeyup="this.value = this.value.toUpperCase();"/>                                        
+                                        <p:outputLabel for="txtIdProyecto" value="Id Proyecto:" />
+                                        <p:inputText id="txtIdProyecto" value="#{mttoCheque.idProyectoB}"/>
+                                        <p:outputLabel for="BusfechaInicio" value="Fecha desde:" />
+                                        <p:calendar id="BusfechaInicio" 
+                                                    value="#{mttoCheque.fechaIniB}"
+                                                    pattern="dd-MM-yyyy" 
+                                                    mask="true"
+                                                    locale="es"
+                                                    navigator="true"
+                                                    >
+                                        </p:calendar> 
+                                        <p:outputLabel for="BusfechaFin" value="Fecha hasta:" />
+                                        <p:calendar id="BusfechaFin" 
+                                                    value="#{mttoCheque.fechaFinB}"
+                                                    pattern="dd-MM-yyyy" 
+                                                    mask="true"
+                                                    locale="es"
+                                                    navigator="true"
+                                                    >
+                                        </p:calendar>    
+                                        <p:outputLabel for="selectOneEstadoCheque" value="Estado:" />
+                                        <p:selectOneMenu id="selectOneEstadoCheque" value="#{mttoCheque.idEstadoChequeB}">
+                                            <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                            <f:selectItems value="#{mttoCheque.itemEstadoChequeB}"/>
+                                        </p:selectOneMenu>
+                                    </p:panelGrid>
+                                    <div class="card">
+                                        <p:dataTable id="lista" var = "cheque" value="#{mttoCheque.chequesList}"
+                                                     selectionMode="single"
+                                                     selection="#{mttoCheque.chequeB}"
+                                                     rowKey="#{cheque.id}"
+                                                     paginator="true"
+                                                     rows ="10"
+                                                     paginatorPosition="bottom"
+                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     rowsPerPageTemplate="10,20,50">
+                                            <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectCheque(event)}"
+                                                    update="principal principal:tabs:otraInfo" />
+                                            <p:column headerText="Id" width="10%">
+                                                <h:outputText value="#{cheque.id}" />
+                                            </p:column>
+                                            <p:column headerText="Fecha">
+                                                <h:outputText value="#{cheque.fecha}" >
+                                                    <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="A Favor de" width="10%">
+                                                <h:outputText value="#{cheque.afavorde}" />
+                                            </p:column>
+                                            <p:column headerText="Monto">
+                                                <h:outputText value="#{cheque.monto}" />
+                                            </p:column>
+                                            <p:column headerText="Estado">
+                                                <h:outputText value="#{cheque.estado.descripcion}" />
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </p:tab>
+                            </div>
+                            <div class="card">
+                                <p:tab id="detalle" title="Detalle">
+                                    <p:menubar>
+                                        <p:menuitem value="Nuevo" action="#{mttoCheque.nuevoCheque()}"
+                                                    icon="ui-icon-search"
+                                                    update="@form
+                                                    :principal:growl"
+                                                    />
+                                        <p:menuitem value="Guardar"
+                                                    action="#{mttoCheque.guardarCheque()}" icon="fa fa-save"                                                
+                                                    update="lista :principal:growl otraInfo" />
+                                        <p:menuitem value="Imprimir Requisición" 
+                                                    action="#{mttoCheque.imprimirCheque()}" 
+                                                    icon="fa fa-print"
+                                                    ajax="false" 
+                                                    update="lista :principal:growl otraInfo" />
+                                    </p:menubar>
+                                    <div class="ui-g ui-panelgrid-blank">                                       
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Fecha:" for="fecha" />
+                                        </div>
+                                        <div class="ui-g-2" >
+                                            <p:calendar id="fecha" value="#{mttoCheque.fecha}"
+                                                        pattern="dd-MM-yyyy" mask="true"/>
+                                        </div>
+                                        <div class="ui-g-5">
+                                            <div class="ui-inputgroup">
+                                                <p:inputText id="txtBusProyecto"
+                                                             value="#{mttoCheque.proyectoActual.nombreCorto}"
+                                                             readonly="true"
+                                                             >
+                                                </p:inputText>
+                                                <p:commandButton icon="ui-icon-search"  
+                                                                 styleClass="white-button"
+                                                                 process="@this"
+                                                                 actionListener="#{mttoCheque.abrirModalBuscarProyecto()}"/> 
+                                            </div>
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="A favor de:" for="afavor" />
+                                        </div>
+                                        <div class="ui-g-4" >
+                                            <p:inputText id="afavor"
+                                                         value="#{mttoCheque.afavorDe}" />
+                                        </div>
+
+                                        <div class="ui-g-1" >                                            
+                                            <p:outputLabel value="Concepto:" for="txtConcepto" />
+                                        </div>
+
+                                        <div class="ui-g-6" >
+                                            <p:inputTextarea rows="1" id="txtConcepto"
+                                                             value="#{mttoCheque.conceptoCheque}"
+                                                             autoResize="true" />
+                                        </div>
+                                        <div class="ui-g-1" >                                            
+                                            <p:outputLabel value="Comentarios" for="txtComentarios" />
+                                        </div>
+
+                                        <div class="ui-g-6" >
+                                            <p:inputTextarea rows="1" id="txtComentarios"
+                                                             value="#{mttoCheque.comentarioCheque}"
+                                                             autoResize="true" />
+                                        </div>
+                                        <div class="ui-g-1" >                                            
+                                            <p:outputLabel value="Monto" for="txtMonto" />
+                                        </div>
+                                        <div class="ui-g-2" >
+                                            <p:inputNumber id="txtMonto" value="#{mttoCheque.monto}"/>
+                                        </div>
+
+                                    </div>
+                                    <p:tabView id="otraInfo" style="border: 1px">
+                                        <p:tab id="plantilla" title="Detalle de cheque">
+                                            <div class="card ui-g" style="margin-top: 0px">
+
+                                                <div class="ui-g-4">
+                                                    <div class="ui-inputgroup">
+                                                        <p:inputText id="txtCuenta"
+                                                                     value="#{mttoCheque.cuentaActual.cuentaPK.codigo}"
+                                                                     readonly="true"
+                                                                     >
+                                                        </p:inputText>
+                                                        <p:commandButton icon="ui-icon-search"
+                                                                         styleClass="white-button"
+                                                                         process="@this"
+                                                                         actionListener="#{mttoCheque.abrirModalCuentas()}"/> 
+                                                    </div>
+                                                </div>
+                                                <div class="ui-g-1" >
+                                                    <p:outputLabel for="selectOneApliConta" value="Aplicación:" />
+                                                </div>
+                                                <div class="ui-g-1" >
+                                                    <p:selectOneMenu id="selectOneApliConta" value="#{mttoCheque.apliccont}">
+                                                        <f:selectItem itemValue="0" itemLabel="Cargo"/>
+                                                        <f:selectItem itemValue="1" itemLabel="Abono"/>
+                                                    </p:selectOneMenu>
+                                                </div>
+                                                <div class="ui-g-2" >
+                                                    <p:outputLabel value="Valor:" for="txtValor"/>
+                                                    <p:inputNumber id="txtValor" value="#{mttoCheque.valor}"/>
+                                                </div>
+                                                <div class="ui-g-2" style="vertical-align: central;" >
+                                                    <p:commandButton value="Agregar" id="btnAgregarProducto" 
+                                                                     action="#{mttoCheque.agregarDetalleCheque()}" 
+                                                                     update="principal" style="vertical-align: central;"
+                                                                     icon="fa fa-plus" />
+                                                </div>
+                                                <p:dataTable id="listaDetalle" var = "deta"
+                                                             value="#{mttoCheque.chequeDetaList}"
+                                                             widgetVar="tblDetalleCheque"
+                                                             rowIndexVar="rowId"
+                                                             >
+                                                    <p:column headerText="Cuenta" width="20%">
+                                                        <h:outputText value="#{deta.cuenta.cuentaPK.codigo}" />
+                                                    </p:column>
+                                                    <p:column headerText="Id" width="10%">
+                                                        <h:outputText value="#{deta.aplicacion==0?'Cargo':'Abono'}" />
+                                                    </p:column>
+                                                    <p:column headerText="Valor" width="10%" >
+                                                        <h:outputText value="#{deta.monto}" />
+                                                    </p:column>
+                                                    <p:column width="5%">
+                                                        <p:commandButton icon="ui-icon-trash"
+                                                                         title="Eliminar"
+                                                                         actionListener="#{mttoCheque.eliminarDetalleCheque(deta)}"
+                                                                         update="tblDetalleCheque :principal:growl"/>
+                                                    </p:column>
+                                                    <p:column width="5%">
+                                                        <p:commandButton icon="fa fa-pencil"
+                                                                         title="Editar"
+                                                                         actionListener="#{mttoCheque.editarDetalleCheque(deta)}"
+                                                                         update="tblDetalleCheque :principal:growl"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </div>
+                                        </p:tab>                                       
+                                    </p:tabView>
+                                </p:tab>
+                            </div>
+                        </p:tabView>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+
+        <p:dialog id="busqProyModal"
+                  header="Seleccionar Cuenta"
+                  widgetVar="modalSelCuentas"
+                  modal="true" showEffect="fade" hideEffect="fade"
+                  resizable="true" responsive="true"
+                  height="500"
+                  width="400">
+            <h:form id="formCuentas">
+                <div class="card">
+                    <p:dataTable id="lista" var = "cuenta" value="#{mttoCheque.cuentasList}"
+                                 selectionMode="single"
+                                 selection="#{mttoCheque.cuentaActual}"
+                                 rowKey="#{cuenta.cuentaPK}"
+                                 paginator="true"
+                                 rows ="10"
+                                 paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="10,20,50">
+                        <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectProyecto(event)}"
+                                update="principal" />
+                        <p:column headerText="Cuenta">
+                            <h:outputText value="#{cuenta.cuentaPK.codigo}" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog id="busqProyModal"
+                  header="Seleccionar Proyecto"
+                  widgetVar="modalBusqProyecto"
+                  modal="true" showEffect="fade" hideEffect="fade"
+                  resizable="true" responsive="true"
+                  height="500"
+                  width="800">
+            <h:form id="formbuscarProyecto">
+                <div class="card">
+                    <p:tab id="busqueda" title="Búsqueda">
+                        <p:menubar>
+                            <p:menuitem value="Buscar" actionListener="#{mttoCheque.buscarProyectos()}" 
+                                        icon="ui-icon-search" update="@form"  />
+                            <p:menuitem value="Limpiar" action="#{mttoCheque.limpiarBusquedaProyectos()}"
+                                        update="@form" icon="ui-icon-refresh" />
+                        </p:menubar>
+                        <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
+                                     styleClass="ui-panelgrid-blank">
+                            <p:outputLabel for="txtNombreB" value="Nombre:" />
+                            <p:inputText id="txtNombreB" value="#{mttoCheque.nombreB}"                                                     
+                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                            <p:outputLabel for="txtNombreCortoB" value="Nombre Corto:" />
+                            <p:inputText id="txtNombreCortoB" value="#{mttoCheque.nombreCortoB}"
+                                         onkeyup="this.value = this.value.toUpperCase();"/>
+                            <p:outputLabel for="txtCodigo" value="Código:" />
+                            <p:inputText id="txtCodigo" value="#{mttoCheque.codigoB}"/>
+                            <p:outputLabel for="selectOneEstado" value="Estado" />
+                            <p:selectOneMenu id="selectOneEstado" value="#{mttoCheque.idEstadoB}">
+                                <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
+                                <f:selectItems value="#{mttoCheque.itemEstado}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <div class="card">
+                            <p:dataTable id="lista" var = "proy" value="#{mttoCheque.proyectosList}"
+                                         selectionMode="single"
+                                         selection="#{mttoCheque.proyectoB}"
+                                         rowKey="#{proy.id}"
+                                         paginator="true"
+                                         rows ="10"
+                                         paginatorPosition="bottom"
+                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="10,20,50">
+                                <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectProyecto(event)}"
+                                        update="principal" />
+                                <p:column headerText="Id" width="10%">
+                                    <h:outputText value="#{proy.id}" />
+                                </p:column>
+                                <p:column headerText="Proyecto">
+                                    <h:outputText value="#{proy.nombreCorto}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </p:tab>
+                </div>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

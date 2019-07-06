@@ -9,30 +9,27 @@
         <div class="ui-g ui-fluid">
             <div class="ui-g-12 ui-lg-12">
                 <div class="card">
-                    <h1 style="margin-top:0">Cheques</h1>
+                    <h1 style="margin-top:0">Partidas Contables</h1>
                     <h:form id="principal">                       
 
                         <p:growl id="growl" showSummary="true" globalOnly="true"
                                  sticky="true" showDetail="true" for="msgGrowl"/>
-                        <p:tabView id="tabs" activeIndex="#{mttoCheque.tabindex}">
+                        <p:tabView id="tabs" activeIndex="#{mttoPartida.tabindex}">
                             <div class="card">
                                 <p:tab id="busqueda" title="Búsqueda">
                                     <p:menubar>
-                                        <p:menuitem value="Buscar" actionListener="#{mttoCheque.buscarCheques()}" 
+                                        <p:menuitem value="Buscar" actionListener="#{mttoPartida.buscarCheques()}" 
                                                     icon="ui-icon-search" update="@form"  />
-                                        <p:menuitem value="Limpiar" action="#{mttoCheque.limpiarBusquedaCheques()}"
+                                        <p:menuitem value="Limpiar" action="#{mttoPartida.limpiarBusquedaCheques()}"
                                                     update="tabs lista" icon="ui-icon-refresh" />
                                     </p:menubar>
                                     <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
-                                                 styleClass="ui-panelgrid-blank">
-                                        <p:outputLabel for="txtDescripcionB" value="A favor de" />
-                                        <p:inputText id="txtDescripcionB" value="#{mttoCheque.afavorDe}"                                                     
-                                                     onkeyup="this.value = this.value.toUpperCase();"/>                                        
+                                                 styleClass="ui-panelgrid-blank">                               
                                         <p:outputLabel for="txtIdProyecto" value="Id Proyecto:" />
-                                        <p:inputText id="txtIdProyecto" value="#{mttoCheque.idProyectoB}"/>
+                                        <p:inputText id="txtIdProyecto" value="#{mttoPartida.idProyectoB}"/>
                                         <p:outputLabel for="BusfechaInicio" value="Fecha desde:" />
                                         <p:calendar id="BusfechaInicio" 
-                                                    value="#{mttoCheque.fechaIniB}"
+                                                    value="#{mttoPartida.fechaIniB}"
                                                     pattern="dd-MM-yyyy" 
                                                     mask="true"
                                                     locale="es"
@@ -41,7 +38,7 @@
                                         </p:calendar> 
                                         <p:outputLabel for="BusfechaFin" value="Fecha hasta:" />
                                         <p:calendar id="BusfechaFin" 
-                                                    value="#{mttoCheque.fechaFinB}"
+                                                    value="#{mttoPartida.fechaFinB}"
                                                     pattern="dd-MM-yyyy" 
                                                     mask="true"
                                                     locale="es"
@@ -49,22 +46,22 @@
                                                     >
                                         </p:calendar>    
                                         <p:outputLabel for="selectOneEstadoCheque" value="Estado:" />
-                                        <p:selectOneMenu id="selectOneEstadoCheque" value="#{mttoCheque.idEstadoChequeB}">
+                                        <p:selectOneMenu id="selectOneEstadoCheque" value="#{mttoPartida.idEstadoPartidaB}">
                                             <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
-                                            <f:selectItems value="#{mttoCheque.itemEstadoChequeB}"/>
+                                            <f:selectItems value="#{mttoPartida.itemEstadoPartidaB}"/>
                                         </p:selectOneMenu>
                                     </p:panelGrid>
                                     <div class="card">
-                                        <p:dataTable id="lista" var = "cheque" value="#{mttoCheque.chequesList}"
+                                        <p:dataTable id="lista" var = "cheque" value="#{mttoPartida.partidaList}"
                                                      selectionMode="single"
-                                                     selection="#{mttoCheque.chequeB}"
+                                                     selection="#{mttoPartida.partidaB}"
                                                      rowKey="#{cheque.id}"
                                                      paginator="true"
                                                      rows ="10"
                                                      paginatorPosition="bottom"
                                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                      rowsPerPageTemplate="10,20,50">
-                                            <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectCheque(event)}"
+                                            <p:ajax event="rowSelect" listener="#{mttoPartida.onRowSelectPartida(event)}"
                                                     update="principal principal:tabs:otraInfo" />
                                             <p:column headerText="Id" width="10%">
                                                 <h:outputText value="#{cheque.id}" />
@@ -73,12 +70,6 @@
                                                 <h:outputText value="#{cheque.fecha}" >
                                                     <f:convertDateTime pattern="dd-MM-yyyy"/>
                                                 </h:outputText>
-                                            </p:column>
-                                            <p:column headerText="A Favor de" width="10%">
-                                                <h:outputText value="#{cheque.afavorde}" />
-                                            </p:column>
-                                            <p:column headerText="Monto">
-                                                <h:outputText value="#{cheque.monto}" />
                                             </p:column>
                                             <p:column headerText="Estado">
                                                 <h:outputText value="#{cheque.estado.descripcion}" />
@@ -90,16 +81,16 @@
                             <div class="card">
                                 <p:tab id="detalle" title="Detalle">
                                     <p:menubar>
-                                        <p:menuitem value="Nuevo" action="#{mttoCheque.nuevoCheque()}"
+                                        <p:menuitem value="Nuevo" action="#{mttoPartida.nuevaPartida()}"
                                                     icon="ui-icon-search"
                                                     update="@form
                                                     :principal:growl"
                                                     />
                                         <p:menuitem value="Guardar"
-                                                    action="#{mttoCheque.guardarCheque()}" icon="fa fa-save"                                                
+                                                    action="#{mttoPartida.guardarPartida()}" icon="fa fa-save"                                                
                                                     update="lista :principal:growl otraInfo" />
                                         <p:menuitem value="Imprimir Cheque" 
-                                                    action="#{mttoCheque.imprimirCheque()}" 
+                                                    action="#{mttoPartida.imprimirPartida()}" 
                                                     icon="fa fa-print"
                                                     ajax="false" 
                                                     update="lista :principal:growl otraInfo" />
@@ -109,57 +100,39 @@
                                             <p:outputLabel value="Fecha:" for="fecha" />
                                         </div>
                                         <div class="ui-g-2" >
-                                            <p:calendar id="fecha" value="#{mttoCheque.fecha}"
+                                            <p:calendar id="fecha" value="#{mttoPartida.fecha}"
                                                         pattern="dd-MM-yyyy" mask="true"/>
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Proyecto:"  />
                                         </div>
                                         <div class="ui-g-1" >                                            
                                             <p:outputLabel value="Monto:" for="txtMonto" />
                                         </div>
                                         <div class="ui-g-2" >
-                                            <p:inputNumber id="txtMonto" value="#{mttoCheque.monto}"/>
-                                        </div>
-                                        <div class="ui-g-1" >
-                                            <p:outputLabel value="Proyecto:"  />
+                                            <p:inputNumber id="txtMonto" value=""/>
                                         </div>
                                         <div class="ui-g-5">
                                             <div class="ui-inputgroup">
                                                 <p:inputText id="txtBusProyecto"
-                                                             value="#{mttoCheque.proyectoActual.nombreCorto}"
+                                                             value="#{mttoPartida.proyectoActual.nombreCorto}"
                                                              readonly="true"
                                                              >
                                                 </p:inputText>
                                                 <p:commandButton icon="ui-icon-search"  
                                                                  styleClass="white-button"
                                                                  process="@this"
-                                                                 actionListener="#{mttoCheque.abrirModalBuscarProyecto()}"/> 
+                                                                 actionListener="#{mttoPartida.abrirModalBuscarProyecto()}"/> 
                                             </div>
                                         </div>
-                                        <div class="ui-g-2" >
-                                            <p:outputLabel value="A favor de:" for="afavor" />
-                                        </div>
-                                        <div class="ui-g-6" >
-                                            <p:inputText id="afavor"
-                                                         value="#{mttoCheque.afavorDe}" />
-                                        </div>                                        
-                                        <div class="ui-g-4" />
-
-                                        <div class="ui-g-2" >                                            
-                                            <p:outputLabel value="Concepto:" for="txtConcepto" />
-                                        </div>
-
-                                        <div class="ui-g-6" >
-                                            <p:inputTextarea rows="1" id="txtConcepto"
-                                                             value="#{mttoCheque.conceptoCheque}"
-                                                             autoResize="true" />
-                                        </div>
-                                        <div class="ui-g-4" />
+                                        
                                         <div class="ui-g-2" >                                            
                                             <p:outputLabel value="Comentarios:" for="txtComentarios" />
                                         </div>
 
                                         <div class="ui-g-6" >
                                             <p:inputTextarea rows="1" id="txtComentarios"
-                                                             value="#{mttoCheque.comentarioCheque}"
+                                                             value="#{mttoPartida.descripcionPartida}"
                                                              autoResize="true" />
                                         </div>
 
@@ -174,21 +147,21 @@
                                             <div class="ui-g-3">
                                                 <div class="ui-inputgroup">
                                                     <p:inputText id="txtCuenta"
-                                                                 value="#{mttoCheque.cuentaActual.cuentaPK.codigo}"
+                                                                 value="#{mttoPartida.cuentaActual.cuentaPK.codigo}"
                                                                  readonly="true"
                                                                  >
                                                     </p:inputText>
                                                     <p:commandButton icon="ui-icon-search"
                                                                      styleClass="white-button"
                                                                      process="@this"
-                                                                     actionListener="#{mttoCheque.abrirModalCuentas()}"/> 
+                                                                     actionListener="#{mttoPartida.abrirModalCuentas()}"/> 
                                                 </div>
                                             </div>
                                             <div class="ui-g-1" >
                                                 <p:outputLabel for="selectOneApliConta" value="Aplicación:" />
                                             </div>
                                             <div class="ui-g-2" >
-                                                <p:selectOneMenu id="selectOneApliConta" value="#{mttoCheque.apliccont}">
+                                                <p:selectOneMenu id="selectOneApliConta" value="#{mttoPartida.apliccont}">
                                                     <f:selectItem itemValue="0" itemLabel="Cargo"/>
                                                     <f:selectItem itemValue="1" itemLabel="Abono"/>
                                                 </p:selectOneMenu>
@@ -197,16 +170,16 @@
                                                 <p:outputLabel value="Valor:" for="txtValor"/>
                                             </div>
                                             <div class="ui-g-2" >
-                                                <p:inputNumber id="txtValor" value="#{mttoCheque.valor}"/>
+                                                <p:inputNumber id="txtValor" value="#{mttoPartida.valor}"/>
                                             </div>
                                             <div class="ui-g-2" style="vertical-align: central;" >
                                                 <p:commandButton value="Agregar" id="btnAgregarProducto" 
-                                                                 action="#{mttoCheque.agregarDetalleCheque()}" 
+                                                                 action="#{mttoPartida.agregarDetallePartida()}" 
                                                                  update="principal otraInfo" style="vertical-align: central;"
                                                                  icon="fa fa-plus" />
                                             </div>
                                             <p:dataTable id="listaDetalle" var = "deta"
-                                                         value="#{mttoCheque.chequeDetaList}"
+                                                         value="#{mttoPartida.partidaDetaList}"
                                                          widgetVar="tblDetalleCheque"
                                                          rowIndexVar="rowId"
                                                          >
@@ -216,14 +189,8 @@
                                                 <p:column headerText="Cuenta" width="20%">
                                                     <h:outputText value="#{deta.cuenta.nombre}" />
                                                 </p:column>
-                                                <p:column headerText="Saldo Actual Presupuesto" width="20%">
-                                                    <h:outputText value="#{deta.saldoanterior}" />
-                                                </p:column>
                                                 <p:column headerText="Aplicación" width="10%">
                                                     <h:outputText value="#{deta.aplicacion==0?'Cargo':'Abono'}" />
-                                                </p:column>
-                                                <p:column headerText="Presup. Disponible" width="20%">
-                                                    <h:outputText value="#{deta.saldoposterior}" />
                                                 </p:column>
                                                 <p:column headerText="Valor" width="10%" >
                                                     <h:outputText value="#{deta.monto}" />
@@ -231,13 +198,13 @@
                                                 <p:column width="5%">
                                                     <p:commandButton icon="ui-icon-trash"
                                                                      title="Eliminar"
-                                                                     actionListener="#{mttoCheque.eliminarDetalleCheque(deta)}"
+                                                                     actionListener="#{mttoPartida.eliminarDetallePartida(deta)}"
                                                                      update="listaDetalle :principal:growl"/>
                                                 </p:column>
                                                 <p:column width="5%">
                                                     <p:commandButton icon="fa fa-pencil"
                                                                      title="Editar"
-                                                                     actionListener="#{mttoCheque.editarDetalleCheque(deta)}"
+                                                                     actionListener="#{mttoPartida.editarDetallePartida(deta)}"
                                                                      update="listaDetalle :principal:growl"/>
                                                 </p:column>
                                             </p:dataTable>
@@ -260,16 +227,16 @@
                   height="450"
                   width="600">
             <h:form id="formCuentas">
-                    <p:dataTable id="lista" var = "cuenta" value="#{mttoCheque.cuentasList}"
+                    <p:dataTable id="lista" var = "cuenta" value="#{mttoPartida.cuentasList}"
                                  selectionMode="single"
-                                 selection="#{mttoCheque.cuentaActual}"
+                                 selection="#{mttoPartida.cuentaActual}"
                                  rowKey="#{cuenta.cuentaPK}"
                                  paginator="true"
                                  rows ="10"
                                  paginatorPosition="bottom"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="10,20,50">
-                        <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectCuenta(event)}"
+                        <p:ajax event="rowSelect" listener="#{mttoPartida.onRowSelectCuenta(event)}"
                                 update="principal" />
                         <p:column headerText="Cuenta" width="30%">
                             <h:outputText value="#{cuenta.cuentaPK.codigo}" />
@@ -292,31 +259,31 @@
                 <div class="card"  style="margin-top: 0px">
                     <p:tab id="busqueda" title="Búsqueda">
                         <p:menubar>
-                            <p:menuitem value="Buscar" actionListener="#{mttoCheque.buscarProyectos()}" 
+                            <p:menuitem value="Buscar" actionListener="#{mttoPartida.buscarProyectos()}" 
                                         icon="ui-icon-search" update="@form"  />
-                            <p:menuitem value="Limpiar" action="#{mttoCheque.limpiarBusquedaProyectos()}"
+                            <p:menuitem value="Limpiar" action="#{mttoPartida.limpiarBusquedaProyectos()}"
                                         update="@form" icon="ui-icon-refresh" />
                         </p:menubar>
                         <p:panelGrid columns="4" layout="grid" style="border:0px !important; background:none;"
                                      styleClass="ui-panelgrid-blank">
                             <p:outputLabel for="txtNombreB" value="Nombre:" />
-                            <p:inputText id="txtNombreB" value="#{mttoCheque.nombreB}"                                                     
+                            <p:inputText id="txtNombreB" value="#{mttoPartida.nombreB}"                                                     
                                          onkeyup="this.value = this.value.toUpperCase();"/>
                             <p:outputLabel for="txtNombreCortoB" value="Nombre Corto:" />
-                            <p:inputText id="txtNombreCortoB" value="#{mttoCheque.nombreCortoB}"
+                            <p:inputText id="txtNombreCortoB" value="#{mttoPartida.nombreCortoB}"
                                          onkeyup="this.value = this.value.toUpperCase();"/>
                             <p:outputLabel for="txtCodigo" value="Código:" />
-                            <p:inputText id="txtCodigo" value="#{mttoCheque.codigoB}"/>
+                            <p:inputText id="txtCodigo" value="#{mttoPartida.codigoB}"/>
                             <p:outputLabel for="selectOneEstado" value="Estado" />
-                            <p:selectOneMenu id="selectOneEstado" value="#{mttoCheque.idEstadoB}">
+                            <p:selectOneMenu id="selectOneEstado" value="#{mttoPartida.idEstadoB}">
                                 <f:selectItem itemValue="0" itemLabel="Seleccione.."/>
-                                <f:selectItems value="#{mttoCheque.itemEstado}"/>
+                                <f:selectItems value="#{mttoPartida.itemEstado}"/>
                             </p:selectOneMenu>
                         </p:panelGrid>
                         <div class="card">
-                            <p:dataTable id="lista" var = "proy" value="#{mttoCheque.proyectosList}"
+                            <p:dataTable id="lista" var = "proy" value="#{mttoPartida.proyectosList}"
                                          selectionMode="single"
-                                         selection="#{mttoCheque.proyectoB}"
+                                         selection="#{mttoPartida.proyectoB}"
                                          rowKey="#{proy.id}"
                                          paginator="true"
                                          paginatorAlwaysVisible="false"
@@ -324,7 +291,7 @@
                                          paginatorPosition="bottom"
                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                          rowsPerPageTemplate="10,20,50">
-                                <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectProyecto(event)}"
+                                <p:ajax event="rowSelect" listener="#{mttoPartida.onRowSelectProyecto(event)}"
                                         update="principal" />
                                 <p:column headerText="Id" width="10%">
                                     <h:outputText value="#{proy.id}" />

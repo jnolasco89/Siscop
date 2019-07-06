@@ -74,7 +74,10 @@
                                                     icon="fa fa-print"
                                                     ajax="false" 
                                                     update="lista :principal:growl otraInfo" />
-
+                                        <p:menuitem value="Imprimir comparativo" 
+                                                    action="#{mttoCotizacion.imprimirCartas()}" 
+                                                    icon="fa fa-print"
+                                                    ajax="false"/>
                                         <p:menuitem value="Consulta OFAC" 
                                                     icon="fa fa-exclamation-circle"
                                                     target="_blank" 
@@ -120,8 +123,14 @@
                                         </div>
                                         <div class="ui-g-6" >
                                             <p:outputLabel value="Análisis" for="txtAnalisis" />
-                                            <p:inputTextarea rows="3" id="txtAnalisis"
+                                            <p:inputTextarea rows="2" id="txtAnalisis"
                                                              value="#{mttoCotizacion.analisis}"
+                                                             autoResize="true"/>
+                                        </div>
+                                        <div class="ui-g-6" >
+                                            <p:outputLabel value="Nota" for="txtNota" />
+                                            <p:inputTextarea rows="2" id="txtNota"
+                                                             value="#{mttoCotizacion.nota}"
                                                              autoResize="true"/>
                                         </div>
                                         <div class="ui-g-1" >
@@ -277,7 +286,6 @@
                                                     <p:inputSwitch value="#{mttoCotizacion.consultaOFAC}" 
                                                                    offLabel="No"
                                                                    onLabel="Sí">
-                                                        <p:ajax listener="#{mttoCotizacion.consultarOFAC}" update=":principal:growl" />
                                                     </p:inputSwitch>
                                                 </div>
                                                 <div class="ui-g-2" >

@@ -95,6 +95,7 @@ public class MttoCotizacion implements Serializable {
     private String descripcion;
     private Long idActividad;
     private String analisis;
+    private String nota;
     private Date fecha = new Date();
 
     int tabindex = 0;
@@ -217,6 +218,14 @@ public class MttoCotizacion implements Serializable {
         this.analisis = analisis;
     }
 
+    public String getNota() {
+        return nota;
+    }
+
+    public void setNota(String nota) {
+        this.nota = nota;
+    }
+
     public Date getFecha() {
         return fecha;
     }
@@ -287,6 +296,8 @@ public class MttoCotizacion implements Serializable {
         cotizacionSel = new Cotizacion();
         fecha = null;
         descripcion = "";
+        analisis = "";
+        nota = "";
         proyectoActual = new Proyecto();
         limpiarCotizaciones();
 
@@ -370,6 +381,7 @@ public class MttoCotizacion implements Serializable {
             this.planCotizacionActual.setDescripcion(descripcion);
             this.planCotizacionActual.setFecha(fecha);
             this.planCotizacionActual.setAnalisis(analisis);
+            this.planCotizacionActual.setNota(nota);
             this.planCotizacionActual.setPlanitemList(itemPlanCotizacionList);
             this.planCotizacionActual.setCotizacionList(listaCotizaciones);
             if (proyectoActual != null) {
@@ -1254,6 +1266,16 @@ public class MttoCotizacion implements Serializable {
 
         String reporte = "ComparativoCotizacion.jasper";
         String nombreArchivo = "Comparativo_" + id + ".pdf";
+        this.generarReporte(reporte, nombreArchivo, parametros);
+
+    }
+    public void imprimirCartas() {
+        Map parametros = new HashMap<>();
+        Long id = planCotizacionActual.getId();
+        parametros.put("id", id);
+
+        String reporte = "Cartas.jasper";
+        String nombreArchivo = "Cartas" + id + ".pdf";
         this.generarReporte(reporte, nombreArchivo, parametros);
 
     }

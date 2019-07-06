@@ -39,12 +39,12 @@ public class Detallepartida implements Serializable {
     @Column(name = "id")
     private Long id;
     @Column(name = "aplicacion")
-    private Short aplicacion;
+    private Integer aplicacion;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "monto")
     private BigDecimal monto;
     @JoinColumns({
-        @JoinColumn(name = "codcuenta", referencedColumnName = "codigo")
+        @JoinColumn(name = "codigocuenta", referencedColumnName = "codigo")
         , @JoinColumn(name = "idproyecto", referencedColumnName = "idproyecto")})
     @ManyToOne
     private Cuenta cuenta;
@@ -70,11 +70,11 @@ public class Detallepartida implements Serializable {
         this.id = id;
     }
 
-    public Short getAplicacion() {
+    public Integer getAplicacion() {
         return aplicacion;
     }
 
-    public void setAplicacion(Short aplicacion) {
+    public void setAplicacion(Integer aplicacion) {
         this.aplicacion = aplicacion;
     }
 

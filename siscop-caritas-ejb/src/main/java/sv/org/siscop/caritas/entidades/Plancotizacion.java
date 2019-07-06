@@ -52,6 +52,9 @@ public class Plancotizacion implements Serializable {
     @Size(max = 2000)
     @Column(name = "analisis")
     private String analisis;
+    @Size(max = 300)
+    @Column(name = "nota")
+    private String nota;
     @JoinColumn(name = "idactividad", referencedColumnName = "id")
     @ManyToOne
     private Actividad actividad;
@@ -109,6 +112,14 @@ public class Plancotizacion implements Serializable {
 
     public void setAnalisis(String analisis) {
         this.analisis = analisis;
+    }
+
+    public String getNota() {
+        return nota;
+    }
+
+    public void setNota(String nota) {
+        this.nota = nota;
     }
 
     public List<Planitem> getPlanitemList() {

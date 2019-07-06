@@ -40,6 +40,7 @@ import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 import sv.org.siscop.caritas.ejb.ServicioChequeLocal;
+import sv.org.siscop.caritas.ejb.ServicioPartidaLocal;
 import sv.org.siscop.caritas.ejb.ServicioProveedorLocal;
 import sv.org.siscop.caritas.ejb.ServicioProyectoLocal;
 import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
@@ -47,8 +48,9 @@ import sv.org.siscop.caritas.ejb.ServiciosCuentaLocal;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.Detallecheque;
 import sv.org.siscop.caritas.entidades.Proyecto;
-import sv.org.siscop.caritas.entidades.Cheque;
+import sv.org.siscop.caritas.entidades.Partida;
 import sv.org.siscop.caritas.entidades.Cuenta;
+import sv.org.siscop.caritas.entidades.Detallepartida;
 import sv.org.siscop.caritas.entidades.Persona;
 import sv.org.siscop.caritas.util.Catalogos;
 
@@ -56,12 +58,12 @@ import sv.org.siscop.caritas.util.Catalogos;
  *
  * @author Henry
  */
-@Named(value = "mttoCheque")
+@Named(value = "mttoPartida")
 @SessionScoped
-public class MttoCheque implements Serializable {
+public class MttoPartida implements Serializable {
 
     @EJB
-    private ServicioChequeLocal servCheque;
+    private ServicioPartidaLocal servPartida;
     @EJB
     private ServiciosCatalogoLocal servCat;
     @EJB
@@ -71,44 +73,41 @@ public class MttoCheque implements Serializable {
     @EJB
     private ServicioProveedorLocal servProveedor;
 
-    private final static Logger logger = Logger.getLogger(MttoCheque.class.getName());
+    private final static Logger logger = Logger.getLogger(MttoPartida.class.getName());
 
-    public MttoCheque() {
+    public MttoPartida() {
     }
 
     FacesContext facesContext = FacesContext.getCurrentInstance();
     int tabindex = 0;
     //Campos de búsqueda
     private Long idProyectoB;
-    private Integer idEstadoChequeB;
-    private String aFavordeB;
+    private Integer idEstadoPartidaB;
     private Date fechaIniB = null;
     private Date fechaFinB = null;
     //SelectItems
     private List<SelectItem> itemEstado = new ArrayList<>();
-    private List<SelectItem> itemEstadoChequeB = new ArrayList<>();
+    private List<SelectItem> itemEstadoPartidaB = new ArrayList<>();
 
-    //Propiedades Cheque
-    private Cheque ChequeActual = new Cheque();
-    private Cheque ChequeB = new Cheque();
-    boolean esChequeNuevo = false;
+    //Propiedades Partida
+    private Partida PartidaActual = new Partida();
+    private Partida PartidaB = new Partida();
+    boolean esPartidaNueva = false;
     boolean esDetalleNuevo = true;
     private Date fecha = new Date();
-    private String conceptoCheque;
-    private String afavorDe;
-    private String cantidadLetras;
-    private String comentarioCheque;
-    private BigDecimal monto;
+    private String descripcionPartida;
+    private String comentarioDetalle;
+
     //Detalle
-    private Detallecheque detaChequeActual = new Detallecheque();
+    private Detallepartida detaPartidaActual = new Detallepartida();
     private Cuenta cuentaActual = new Cuenta();
     private Persona sublibroActual = new Persona();
     private Integer apliccont;
     private BigDecimal valor;
 
     //Listas
-    private List<Cheque> chequesList = new ArrayList<>();
-    private List<Detallecheque> chequeDetaList = new ArrayList<>();
+    private List<Partida> partidaList = new ArrayList<>();
+    private List<Detallepartida> partidaDetaList = new ArrayList<>();
 
     public void onTabChange(TabChangeEvent event) {
         this.tabindex = ((TabView) event.getSource()).getIndex();
@@ -122,7 +121,7 @@ public class MttoCheque implements Serializable {
         this.tabindex = tabindex;
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Getter y Setter Busqueda de Cheque">
+    //<editor-fold defaultstate="collapsed" desc="Getter y Setter Busqueda de Partida">
     public Long getIdProyectoB() {
         return idProyectoB;
     }
@@ -131,20 +130,12 @@ public class MttoCheque implements Serializable {
         this.idProyectoB = idProyectoB;
     }
 
-    public Integer getIdEstadoChequeB() {
-        return idEstadoChequeB;
+    public Integer getIdEstadoPartidaB() {
+        return idEstadoPartidaB;
     }
 
-    public void setIdEstadoChequeB(Integer idEstadoChequeB) {
-        this.idEstadoChequeB = idEstadoChequeB;
-    }
-
-    public String getaFavordeB() {
-        return aFavordeB;
-    }
-
-    public void setaFavordeB(String aFavordeB) {
-        this.aFavordeB = aFavordeB;
+    public void setIdEstadoPartidaB(Integer idEstadoPartidaB) {
+        this.idEstadoPartidaB = idEstadoPartidaB;
     }
 
     public Date getFechaIniB() {
@@ -155,22 +146,22 @@ public class MttoCheque implements Serializable {
         this.fechaIniB = fechaIniB;
     }
 
-    public List<SelectItem> getItemEstadoChequeB() {
+    public List<SelectItem> getItemEstadoPartidaB() {
         try {
-            itemEstadoChequeB.clear();
+            itemEstadoPartidaB.clear();
             for (ItemCatalogo item : this.servCat
                     .findCatalogoById(Catalogos.ESTADO_CHEQUE.getCodigo()).getItemCatalogoList()) {
-                itemEstadoChequeB.add(new SelectItem(item.getId(), item.getDescripcion()));
+                itemEstadoPartidaB.add(new SelectItem(item.getId(), item.getDescripcion()));
             }
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
-        return itemEstadoChequeB;
+        return itemEstadoPartidaB;
 
     }
 
-    public void setItemEstadoChequeB(List<SelectItem> itemEstadoChequeB) {
-        this.itemEstadoChequeB = itemEstadoChequeB;
+    public void setItemEstadoPartidaB(List<SelectItem> itemEstadoPartidaB) {
+        this.itemEstadoPartidaB = itemEstadoPartidaB;
     }
 
     public Date getFechaFinB() {
@@ -181,78 +172,62 @@ public class MttoCheque implements Serializable {
         this.fechaFinB = fechaFinB;
     }
 
-    public List<Cheque> getChequesList() {
-        return chequesList;
+    public List<Partida> getPartidaList() {
+        return partidaList;
     }
 
-    public void setChequesList(List<Cheque> chequesList) {
-        this.chequesList = chequesList;
+    public void setPartidaList(List<Partida> partidaList) {
+        this.partidaList = partidaList;
     }
 
-    public List<Detallecheque> getChequeDetaList() {
-        return chequeDetaList;
+    public List<Detallepartida> getPartidaDetaList() {
+        return partidaDetaList;
     }
 
-    public void setChequeDetaList(List<Detallecheque> chequeDetaList) {
-        this.chequeDetaList = chequeDetaList;
+    public void setPartidaDetaList(List<Detallepartida> partidaDetaList) {
+        this.partidaDetaList = partidaDetaList;
     }
 
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Getter y Setter Plancotizacion">
-    public boolean isEsChequeNuevo() {
-        return esChequeNuevo;
+    public boolean isEsPartidaNueva() {
+        return esPartidaNueva;
     }
 
-    public void setEsChequeNuevo(boolean esChequeNuevo) {
-        this.esChequeNuevo = esChequeNuevo;
+    public void setEsPartidaNueva(boolean esPartidaNueva) {
+        this.esPartidaNueva = esPartidaNueva;
     }
 
-    public Cheque getChequeActual() {
-        return ChequeActual;
+    public Partida getPartidaActual() {
+        return PartidaActual;
     }
 
-    public void setChequeActual(Cheque ChequeActual) {
-        this.ChequeActual = ChequeActual;
+    public void setPartidaActual(Partida PartidaActual) {
+        this.PartidaActual = PartidaActual;
     }
 
-    public Cheque getChequeB() {
-        return ChequeB;
+    public Partida getPartidaB() {
+        return PartidaB;
     }
 
-    public void setChequeB(Cheque ChequeB) {
-        this.ChequeB = ChequeB;
+    public void setPartidaB(Partida PartidaB) {
+        this.PartidaB = PartidaB;
     }
 
-    public String getConceptoCheque() {
-        return conceptoCheque;
+    public String getDescripcionPartida() {
+        return descripcionPartida;
     }
 
-    public void setConceptoCheque(String conceptoCheque) {
-        this.conceptoCheque = conceptoCheque;
+    public void setDescripcionPartida(String descripcionPartida) {
+        this.descripcionPartida = descripcionPartida;
     }
 
-    public String getAfavorDe() {
-        return afavorDe;
+    public String getComentarioDetalle() {
+        return comentarioDetalle;
     }
 
-    public void setAfavorDe(String afavorDe) {
-        this.afavorDe = afavorDe;
-    }
-
-    public String getCantidadLetras() {
-        return cantidadLetras;
-    }
-
-    public void setCantidadLetras(String cantidadLetras) {
-        this.cantidadLetras = cantidadLetras;
-    }
-
-    public String getComentarioCheque() {
-        return comentarioCheque;
-    }
-
-    public void setComentarioCheque(String comentarioCheque) {
-        this.comentarioCheque = comentarioCheque;
+    public void setComentarioDetalle(String comentarioDetalle) {
+        this.comentarioDetalle = comentarioDetalle;
     }
 
     public Date getFecha() {
@@ -263,20 +238,12 @@ public class MttoCheque implements Serializable {
         this.fecha = fecha;
     }
 
-    public Detallecheque getDetaChequeActual() {
-        return detaChequeActual;
+    public Detallepartida getDetaPartidaActual() {
+        return detaPartidaActual;
     }
 
-    public void setDetaChequeActual(Detallecheque detaChequeActual) {
-        this.detaChequeActual = detaChequeActual;
-    }
-
-    public BigDecimal getMonto() {
-        return monto;
-    }
-
-    public void setMonto(BigDecimal monto) {
-        this.monto = monto;
+    public void setDetaPartidaActual(Detallepartida detaPartidaActual) {
+        this.detaPartidaActual = detaPartidaActual;
     }
 
     public BigDecimal getValor() {
@@ -304,7 +271,7 @@ public class MttoCheque implements Serializable {
     }
 
 //</editor-fold>
-    public void buscarCheques() {
+    public void buscarPartidas() {
 
         try {
             Map filtro = new HashMap();
@@ -315,22 +282,18 @@ public class MttoCheque implements Serializable {
             if (idProyectoB != null && idProyectoB != 0) {
                 filtro.put("idproyecto", idProyectoB);
             }
-            if (idEstadoChequeB != 0) {
-                filtro.put("idestado", idEstadoChequeB);
+            if (idEstadoPartidaB != 0) {
+                filtro.put("idestado", idEstadoPartidaB);
             }
-            if (aFavordeB != null && !aFavordeB.isEmpty()) {
-                filtro.put("afavorde", aFavordeB);
-            }
-
             if (filtro.isEmpty()) {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "Agregue un parámetro de búsqueda", null);
                 return;
             }
 
-            chequesList = servCheque.buscarCheques(filtro);
+            partidaList = servPartida.buscarPartidas(filtro);
 
-            if (chequesList.isEmpty()) {
+            if (partidaList.isEmpty()) {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
                         "No se encontró ningún resultado.", null);
             }
@@ -340,57 +303,51 @@ public class MttoCheque implements Serializable {
         }
     }
 
-    public void limpiarBusquedaCheques() {
-        chequesList = new ArrayList<>();
+    public void limpiarBusquedaPartidas() {
+        partidaList = new ArrayList<>();
         idProyectoB = null;
         fechaIniB = null;
         fechaFinB = null;
-        idEstadoChequeB = 0;
+        idEstadoPartidaB = 0;
     }
 
-    public void limpiarCheque() {
+    public void limpiarPartida() {
 
-        esChequeNuevo = true;
-        ChequeActual = new Cheque();
-        chequeDetaList = new ArrayList<>();
+        esPartidaNueva = true;
+        PartidaActual = new Partida();
+        partidaDetaList = new ArrayList<>();
         fecha = new Date();
-        comentarioCheque = "";
-        conceptoCheque = "";
-        afavorDe = "";
-        cantidadLetras = "";
+        comentarioDetalle = "";
+        descripcionPartida = "";
         proyectoActual = new Proyecto();
 
-        limpiarDetalleCheque();
+        limpiarDetallePartida();
 
     }
 
-    public void onRowSelectCheque(SelectEvent event) throws IOException {
+    public void onRowSelectPartida(SelectEvent event) throws IOException {
         try {
-            limpiarCheque();
+            limpiarPartida();
 
-            ChequeActual = new Cheque();
-            ChequeActual = ChequeB;
+            PartidaActual = new Partida();
+            PartidaActual = PartidaB;
 
-            fecha = ChequeActual.getFecha();
-            conceptoCheque = ChequeActual.getConcepto();
-            comentarioCheque = ChequeActual.getComentarios();
-            afavorDe = ChequeActual.getAfavorde();
-            monto = ChequeActual.getMonto();
-            cantidadLetras = ChequeActual.getCantidadletras();
-            chequeDetaList = ChequeActual.getDetallechequeList();
-            esChequeNuevo = false;
+            fecha = PartidaActual.getFecha();
+            descripcionPartida = PartidaActual.getDescripcion();
+            partidaDetaList = PartidaActual.getDetallepartidaList();
+            esPartidaNueva = false;
             tabindex = 1;
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
 
-    public void nuevoCheque() {
+    public void nuevaPartida() {
         try {
 
-            limpiarCheque();
-            limpiarDetalleCheque();
-            esChequeNuevo = true;
+            limpiarPartida();
+            limpiarDetallePartida();
+            esPartidaNueva = true;
 
             this.showMessage(FacesMessage.SEVERITY_INFO,
                     "Ingrese datos de nueva cotización.", null);
@@ -400,14 +357,14 @@ public class MttoCheque implements Serializable {
         }
     }
 
-    public boolean validarCheque() {
+    public boolean validarPartida() {
         boolean hay = false;
         try {
             List<String> campos = new ArrayList<>();
             List<String> mensajes = new ArrayList<>();
 
-            if (conceptoCheque == null || conceptoCheque.isEmpty()) {
-                campos.add("Concepto");
+            if (descripcionPartida == null || descripcionPartida.isEmpty()) {
+                campos.add("Descripción");
             }
             if (fecha == null) {
                 campos.add("Fecha");
@@ -415,10 +372,7 @@ public class MttoCheque implements Serializable {
             if (proyectoActual == null || proyectoActual.getId() == null) {
                 campos.add("Proyecto");
             }
-            if (afavorDe == null || afavorDe.isEmpty()) {
-                campos.add("A Favor de");
-            }
-//            if (idEstadoChequeB == 0) {
+//            if (idEstadoPartidaB == 0) {
 //                campos.add("Estado");
 //            }
 
@@ -440,43 +394,39 @@ public class MttoCheque implements Serializable {
         return hay;
     }
 
-    public void guardarCheque() {
+    public void guardarPartida() {
         try {
-            if (validarCheque()) {
+            if (validarPartida()) {
                 return;
             }
 
-            this.ChequeActual.setFecha(fecha);
-            this.ChequeActual.setAfavorde(afavorDe);
-            this.ChequeActual.setConcepto(conceptoCheque);
-            this.ChequeActual.setCantidadletras(cantidadLetras);
-            this.ChequeActual.setDetallechequeList(chequeDetaList);
-            this.ChequeActual.setComentarios(comentarioCheque);
-            this.ChequeActual.setMonto(monto);
-            this.ChequeActual.setProyecto(proyectoActual);
-            this.ChequeActual.setEstado(servCat.findItemCatalogoById(idEstadoChequeB));
+            this.PartidaActual.setFecha(fecha);
+            this.PartidaActual.setDescripcion(descripcionPartida);
+            this.PartidaActual.setDetallepartidaList(partidaDetaList);
+            this.PartidaActual.setProyecto(proyectoActual);
+            this.PartidaActual.setEstado(servCat.findItemCatalogoById(idEstadoPartidaB));
 
-            //this.planCotizacionActual.setRequisicion(new Cheque());
-            if (esChequeNuevo) {
-                this.servCheque.nuevoCheque(ChequeActual);
+            //this.planCotizacionActual.setRequisicion(new Partida());
+            if (esPartidaNueva) {
+                this.servPartida.nuevoPartida(PartidaActual);
             } else {
-                this.servCheque.actualizarCheque(ChequeActual);
+                this.servPartida.actualizarPartida(PartidaActual);
             }
 
-            this.showMessage(FacesMessage.SEVERITY_INFO, "Cheque guardado exitosamente.", null);
+            this.showMessage(FacesMessage.SEVERITY_INFO, "Partida guardado exitosamente.", null);
 
-            esChequeNuevo = false;
+            esPartidaNueva = false;
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
-            showMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar cheque.", ex.getLocalizedMessage());
+            showMessage(FacesMessage.SEVERITY_ERROR, "Error al guardar partida.", ex.getLocalizedMessage());
         }
     }
 
-    public void limpiarDetalleCheque() {
+    public void limpiarDetallePartida() {
         try {
             esDetalleNuevo = true;
-            detaChequeActual = new Detallecheque();
+            detaPartidaActual = new Detallepartida();
 
             cuentaActual = new Cuenta();
             valor = null;
@@ -488,7 +438,7 @@ public class MttoCheque implements Serializable {
         }
     }
 
-    public boolean validarDetalleCheque() {
+    public boolean validarDetallePartida() {
         boolean hay = false;
         try {
             List<String> campos = new ArrayList<>();
@@ -518,47 +468,45 @@ public class MttoCheque implements Serializable {
         return hay;
     }
 
-    public void agregarDetalleCheque() {
+    public void agregarDetallePartida() {
         try {
-            if (esChequeNuevo) {
+            if (esPartidaNueva) {
                 this.showMessage(FacesMessage.SEVERITY_WARN,
-                        "Error al guardar Cheque.", "Guarde el Cheque para continuar");
+                        "Error al guardar Partida.", "Guarde el Partida para continuar");
                 return;
             }
 
-            if (validarDetalleCheque()) {
+            if (validarDetallePartida()) {
                 return;
             }
 
-            detaChequeActual.setMonto(valor);
-            detaChequeActual.setCuenta(cuentaActual);
-            detaChequeActual.setAplicacion(apliccont);
-            detaChequeActual.setSaldoanterior(valor);
-            detaChequeActual.setSaldoposterior(valor);
-//            detaChequeActual.setSublibro(sublibroActual);
-            detaChequeActual.setCheque(ChequeActual);
+            detaPartidaActual.setMonto(valor);
+            detaPartidaActual.setCuenta(cuentaActual);
+            detaPartidaActual.setAplicacion(apliccont);
+//            detaPartidaActual.setSublibro(sublibroActual);
+            detaPartidaActual.setPartida(PartidaActual);
             if (esDetalleNuevo) {
-                servCheque.nuevoDetalleCheque(detaChequeActual);
-                chequeDetaList.add(detaChequeActual);
+                servPartida.nuevoDetallePartida(detaPartidaActual);
+                partidaDetaList.add(detaPartidaActual);
             } else {
-                servCheque.actualizarDetalleCheque(detaChequeActual);
-                chequeDetaList.add(chequeDetaList.indexOf(detaChequeActual), detaChequeActual);
+                servPartida.actualizarDetallePartida(detaPartidaActual);
+                partidaDetaList.add(partidaDetaList.indexOf(detaPartidaActual), detaPartidaActual);
             }
-            limpiarDetalleCheque();
+            limpiarDetallePartida();
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
     }
 
-    public void editarDetalleCheque(Detallecheque detalle) throws IOException {
+    public void editarDetallePartida(Detallepartida detalle) throws IOException {
         try {
             esDetalleNuevo = false;
-            detaChequeActual = detalle;
-            valor = detaChequeActual.getMonto();
-            cuentaActual = detaChequeActual.getCuenta();
-            apliccont = detaChequeActual.getAplicacion();
-            sublibroActual = detaChequeActual.getSublibro();
+            detaPartidaActual = detalle;
+            valor = detaPartidaActual.getMonto();
+            cuentaActual = detaPartidaActual.getCuenta();
+            apliccont = detaPartidaActual.getAplicacion();
+            sublibroActual = detaPartidaActual.getSublibro();
 
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
@@ -566,7 +514,7 @@ public class MttoCheque implements Serializable {
     }
 //    public void onRowSelectDetalleCheque(SelectEvent event) throws IOException {
 //        try {
-//            detaChequeActual = (Detallecheque) event.getObject();
+//            detaPartidaActual = (Detallecheque) event.getObject();
 //            esDetalleNuevo = false;
 //
 //        } catch (Exception ex) {
@@ -574,10 +522,10 @@ public class MttoCheque implements Serializable {
 //        }
 //    }
 
-    public void eliminarDetalleCheque(Detallecheque deta) {
+    public void eliminarDetallePartida(Detallecheque deta) {
         try {
             deta.setCheque(null);
-            chequeDetaList.remove(deta);
+            partidaDetaList.remove(deta);
             this.showMessage(FacesMessage.SEVERITY_INFO,
                     "Eliminado de la lista.", null);
         } catch (Exception ex) {
@@ -779,12 +727,12 @@ public class MttoCheque implements Serializable {
         }
     }
 
-    public void imprimirCheque() {
+    public void imprimirPartida() {
         Map parametros = new HashMap<>();
-        Long id = ChequeActual.getId();
+        Long id = PartidaActual.getId();
         parametros.put("id", id);
 
-        String reporte = "Cheque.jasper";
+        String reporte = "Partida.jasper";
         String nombreArchivo = "Comparativo_" + id + ".pdf";
         this.generarReporte(reporte, nombreArchivo, parametros);
 

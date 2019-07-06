@@ -9,7 +9,7 @@
         <div class="ui-g ui-fluid">
             <div class="ui-g-12 ui-lg-12">
                 <div class="card">
-                    <h1 style="margin-top:0">Requisiciones</h1>
+                    <h1 style="margin-top:0">Requisición y Orden de Compra</h1>
                     <h:form id="principal">                       
 
                         <p:growl id="growl" showSummary="true" globalOnly="true"
@@ -82,7 +82,7 @@
                                                     update="lista :principal:growl otraInfo" />
                                     </p:menubar>
                                     <div class="ui-g ui-panelgrid-blank">                                       
-                                        <div class="ui-g-1" >
+                                        <div class="ui-g-2" >
                                             <p:outputLabel value="Fecha:" for="fecha" />
                                         </div>
                                         <div class="ui-g-2" >
@@ -95,8 +95,9 @@
                                         <div class="ui-g-1" >
                                             <p:outputLabel value="#{mttoRequisicion.requisicionActual.numero}"/>
                                         </div>
+                                        <div class="ui-g-6" />
 
-                                        <div class="ui-g-1" >                                            
+                                        <div class="ui-g-2" >                                            
                                             <p:outputLabel value="Descripción:" for="txtDescripcion" />
                                         </div>
 
@@ -105,10 +106,11 @@
                                                              value="#{mttoRequisicion.descripcion}"
                                                              autoResize="true" />
                                         </div>
-                                        <div class="ui-g-1" >
+                                        <div class="ui-g-4" />
+                                        <div class="ui-g-2" >
                                             <p:outputLabel value="Actividad:" for="txtBusActividad" />
                                         </div>
-                                        <div class="ui-g-5">
+                                        <div class="ui-g-6">
                                             <div class="ui-inputgroup">
                                                 <p:inputText id="txtBusActividad"
                                                              value="#{mttoRequisicion.actividadActual.nombre}"
@@ -120,10 +122,11 @@
                                                                  actionListener="#{mttoRequisicion.abrirModalBuscarProveedores()}"/>  
                                             </div>
                                         </div>
-                                        <div class="ui-g-1" >
+                                        <div class="ui-g-4" />
+                                        <div class="ui-g-2" >
                                             <h:outputText value="Proveedor:" />
                                         </div>
-                                        <div class="ui-g-5">
+                                        <div class="ui-g-6">
                                             <div class="ui-inputgroup">
                                                 <p:inputText id="txtBusProyecto"
                                                              value="#{mttoRequisicion.proveedorActual.persona.razsocial}"
@@ -135,10 +138,11 @@
                                                                  actionListener="#{mttoRequisicion.abrirModalBuscarProveedores()}"/>  
                                             </div>
                                         </div>
-                                        <div class="ui-g-1" >
+                                        <div class="ui-g-4" />
+                                        <div class="ui-g-2" >
                                             <p:outputLabel value="Destino:" for="txtDestino" />
                                         </div>
-                                        <div class="ui-g-5" >
+                                        <div class="ui-g-6" >
                                             <p:inputTextarea rows="2" id="txtDestino"
                                                              value="#{mttoRequisicion.destino}"
                                                              autoResize="true"
@@ -170,8 +174,12 @@
                                                     <p:outputLabel value="Cantidad:" for="txtCantidadProd"/>
                                                     <p:inputNumber id="txtCantidadProd" value="#{mttoRequisicion.cantidad}"/>
                                                 </div>
+                                                <div class="ui-g-2" >
+                                                    <p:outputLabel value="Precio Unitario" for="txtPrecioU"/>
+                                                    <p:inputNumber id="txtPrecioU" value="#{mttoRequisicion.precioUnitario}"/>
+                                                </div>
                                                 <div class="ui-g-2" style="vertical-align: central;" >
-                                                    <p:commandButton value="Agregar" id="btnAgregarProducto" 
+                                                    <p:commandButton  id="btnAgregarProducto" 
                                                                      action="#{mttoRequisicion.agregarItemRequisicion()}" 
                                                                      update="principal" style="vertical-align: central;"
                                                                      icon="fa fa-plus" />

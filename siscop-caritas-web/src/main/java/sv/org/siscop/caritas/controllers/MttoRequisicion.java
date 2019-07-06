@@ -10,6 +10,7 @@ import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -391,6 +392,7 @@ public class MttoRequisicion implements Serializable {
     private Integer orden;
     private String producto;
     private String descproducto;
+    private BigDecimal precioUnitario;
     private Integer idItemMedida;
     private Integer cantidad;
 
@@ -441,6 +443,14 @@ public class MttoRequisicion implements Serializable {
         this.cantidad = cantidad;
     }
 
+    public BigDecimal getPrecioUnitario() {
+        return precioUnitario;
+    }
+
+    public void setPrecioUnitario(BigDecimal precioUnitario) {
+        this.precioUnitario = precioUnitario;
+    }
+
     public List<Planitem> getPlanItemList() {
         return planItemList;
     }
@@ -489,6 +499,9 @@ public class MttoRequisicion implements Serializable {
             if (idItemMedida == 0) {
                 campos.add("Unidad de Medida");
             }
+            if (precioUnitario == null) {
+                campos.add("Precio Unitario");
+            }
             if (cantidad == null) {
                 mensajes.add("Cantidad");
             }
@@ -530,6 +543,11 @@ public class MttoRequisicion implements Serializable {
             item.setDescripcion(descproducto);
             item.setCantidad(cantidad);
             item.setMedida(servCat.findItemCatalogoById(idItemMedida));
+
+            BigDecimal total = precioUnitario
+                    .multiply(BigDecimal.valueOf(cantidad));
+            item.setTotal(total);
+
             servRequisicion.nuevoItemRequisicion(item);
 
             itemRequisicionList.add(item);
@@ -981,8 +999,8 @@ public class MttoRequisicion implements Serializable {
         Long id = requisicionActual.getId();
         parametros.put("id", id);
 
-        String reporte = "ComparativoCotizacion.jasper";
-        String nombreArchivo = "Comparativo_" + id + ".pdf";
+        String reporte = "requisicion.jasper";
+        String nombreArchivo = "Requision" + requisicionActual.getNumero() + ".pdf";
         this.generarReporte(reporte, nombreArchivo, parametros);
 
     }

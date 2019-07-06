@@ -9,7 +9,7 @@
         <div class="ui-g ui-fluid">
             <div class="ui-g-12 ui-lg-12">
                 <div class="card">
-                    <h1 style="margin-top:0">Requisiciones</h1>
+                    <h1 style="margin-top:0">Cheques</h1>
                     <h:form id="principal">                       
 
                         <p:growl id="growl" showSummary="true" globalOnly="true"
@@ -98,7 +98,7 @@
                                         <p:menuitem value="Guardar"
                                                     action="#{mttoCheque.guardarCheque()}" icon="fa fa-save"                                                
                                                     update="lista :principal:growl otraInfo" />
-                                        <p:menuitem value="Imprimir Requisición" 
+                                        <p:menuitem value="Imprimir Cheque" 
                                                     action="#{mttoCheque.imprimirCheque()}" 
                                                     icon="fa fa-print"
                                                     ajax="false" 
@@ -111,6 +111,15 @@
                                         <div class="ui-g-2" >
                                             <p:calendar id="fecha" value="#{mttoCheque.fecha}"
                                                         pattern="dd-MM-yyyy" mask="true"/>
+                                        </div>
+                                        <div class="ui-g-1" >                                            
+                                            <p:outputLabel value="Monto:" for="txtMonto" />
+                                        </div>
+                                        <div class="ui-g-2" >
+                                            <p:inputNumber id="txtMonto" value="#{mttoCheque.monto}"/>
+                                        </div>
+                                        <div class="ui-g-1" >
+                                            <p:outputLabel value="Proyecto:"  />
                                         </div>
                                         <div class="ui-g-5">
                                             <div class="ui-inputgroup">
@@ -125,15 +134,16 @@
                                                                  actionListener="#{mttoCheque.abrirModalBuscarProyecto()}"/> 
                                             </div>
                                         </div>
-                                        <div class="ui-g-1" >
+                                        <div class="ui-g-2" >
                                             <p:outputLabel value="A favor de:" for="afavor" />
                                         </div>
-                                        <div class="ui-g-4" >
+                                        <div class="ui-g-6" >
                                             <p:inputText id="afavor"
                                                          value="#{mttoCheque.afavorDe}" />
-                                        </div>
+                                        </div>                                        
+                                        <div class="ui-g-4" />
 
-                                        <div class="ui-g-1" >                                            
+                                        <div class="ui-g-2" >                                            
                                             <p:outputLabel value="Concepto:" for="txtConcepto" />
                                         </div>
 
@@ -142,8 +152,9 @@
                                                              value="#{mttoCheque.conceptoCheque}"
                                                              autoResize="true" />
                                         </div>
-                                        <div class="ui-g-1" >                                            
-                                            <p:outputLabel value="Comentarios" for="txtComentarios" />
+                                        <div class="ui-g-4" />
+                                        <div class="ui-g-2" >                                            
+                                            <p:outputLabel value="Comentarios:" for="txtComentarios" />
                                         </div>
 
                                         <div class="ui-g-6" >
@@ -151,80 +162,87 @@
                                                              value="#{mttoCheque.comentarioCheque}"
                                                              autoResize="true" />
                                         </div>
-                                        <div class="ui-g-1" >                                            
-                                            <p:outputLabel value="Monto" for="txtMonto" />
-                                        </div>
-                                        <div class="ui-g-2" >
-                                            <p:inputNumber id="txtMonto" value="#{mttoCheque.monto}"/>
-                                        </div>
+
 
                                     </div>
-                                    <p:tabView id="otraInfo" style="border: 1px">
-                                        <p:tab id="plantilla" title="Detalle de cheque">
-                                            <div class="card ui-g" style="margin-top: 0px">
 
-                                                <div class="ui-g-4">
-                                                    <div class="ui-inputgroup">
-                                                        <p:inputText id="txtCuenta"
-                                                                     value="#{mttoCheque.cuentaActual.cuentaPK.codigo}"
-                                                                     readonly="true"
-                                                                     >
-                                                        </p:inputText>
-                                                        <p:commandButton icon="ui-icon-search"
-                                                                         styleClass="white-button"
-                                                                         process="@this"
-                                                                         actionListener="#{mttoCheque.abrirModalCuentas()}"/> 
-                                                    </div>
-                                                </div>
-                                                <div class="ui-g-1" >
-                                                    <p:outputLabel for="selectOneApliConta" value="Aplicación:" />
-                                                </div>
-                                                <div class="ui-g-1" >
-                                                    <p:selectOneMenu id="selectOneApliConta" value="#{mttoCheque.apliccont}">
-                                                        <f:selectItem itemValue="0" itemLabel="Cargo"/>
-                                                        <f:selectItem itemValue="1" itemLabel="Abono"/>
-                                                    </p:selectOneMenu>
-                                                </div>
-                                                <div class="ui-g-2" >
-                                                    <p:outputLabel value="Valor:" for="txtValor"/>
-                                                    <p:inputNumber id="txtValor" value="#{mttoCheque.valor}"/>
-                                                </div>
-                                                <div class="ui-g-2" style="vertical-align: central;" >
-                                                    <p:commandButton value="Agregar" id="btnAgregarProducto" 
-                                                                     action="#{mttoCheque.agregarDetalleCheque()}" 
-                                                                     update="principal" style="vertical-align: central;"
-                                                                     icon="fa fa-plus" />
-                                                </div>
-                                                <p:dataTable id="listaDetalle" var = "deta"
-                                                             value="#{mttoCheque.chequeDetaList}"
-                                                             widgetVar="tblDetalleCheque"
-                                                             rowIndexVar="rowId"
-                                                             >
-                                                    <p:column headerText="Cuenta" width="20%">
-                                                        <h:outputText value="#{deta.cuenta.cuentaPK.codigo}" />
-                                                    </p:column>
-                                                    <p:column headerText="Id" width="10%">
-                                                        <h:outputText value="#{deta.aplicacion==0?'Cargo':'Abono'}" />
-                                                    </p:column>
-                                                    <p:column headerText="Valor" width="10%" >
-                                                        <h:outputText value="#{deta.monto}" />
-                                                    </p:column>
-                                                    <p:column width="5%">
-                                                        <p:commandButton icon="ui-icon-trash"
-                                                                         title="Eliminar"
-                                                                         actionListener="#{mttoCheque.eliminarDetalleCheque(deta)}"
-                                                                         update="tblDetalleCheque :principal:growl"/>
-                                                    </p:column>
-                                                    <p:column width="5%">
-                                                        <p:commandButton icon="fa fa-pencil"
-                                                                         title="Editar"
-                                                                         actionListener="#{mttoCheque.editarDetalleCheque(deta)}"
-                                                                         update="tblDetalleCheque :principal:growl"/>
-                                                    </p:column>
-                                                </p:dataTable>
+                                    <p:panel id="otraInfo" header="Control Contable y Presupuestario" style="margin-bottom:20px">
+                                        <div class="card ui-g" style="margin-top: 0px">
+                                            <div class="ui-g-1" >
+                                                <p:outputLabel for="selectOneApliConta" value="Cuenta:" />
                                             </div>
-                                        </p:tab>                                       
-                                    </p:tabView>
+                                            <div class="ui-g-3">
+                                                <div class="ui-inputgroup">
+                                                    <p:inputText id="txtCuenta"
+                                                                 value="#{mttoCheque.cuentaActual.cuentaPK.codigo}"
+                                                                 readonly="true"
+                                                                 >
+                                                    </p:inputText>
+                                                    <p:commandButton icon="ui-icon-search"
+                                                                     styleClass="white-button"
+                                                                     process="@this"
+                                                                     actionListener="#{mttoCheque.abrirModalCuentas()}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="ui-g-1" >
+                                                <p:outputLabel for="selectOneApliConta" value="Aplicación:" />
+                                            </div>
+                                            <div class="ui-g-2" >
+                                                <p:selectOneMenu id="selectOneApliConta" value="#{mttoCheque.apliccont}">
+                                                    <f:selectItem itemValue="0" itemLabel="Cargo"/>
+                                                    <f:selectItem itemValue="1" itemLabel="Abono"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <div class="ui-g-1" >
+                                                <p:outputLabel value="Valor:" for="txtValor"/>
+                                            </div>
+                                            <div class="ui-g-2" >
+                                                <p:inputNumber id="txtValor" value="#{mttoCheque.valor}"/>
+                                            </div>
+                                            <div class="ui-g-2" style="vertical-align: central;" >
+                                                <p:commandButton value="Agregar" id="btnAgregarProducto" 
+                                                                 action="#{mttoCheque.agregarDetalleCheque()}" 
+                                                                 update="principal otraInfo" style="vertical-align: central;"
+                                                                 icon="fa fa-plus" />
+                                            </div>
+                                            <p:dataTable id="listaDetalle" var = "deta"
+                                                         value="#{mttoCheque.chequeDetaList}"
+                                                         widgetVar="tblDetalleCheque"
+                                                         rowIndexVar="rowId"
+                                                         >
+                                                <p:column headerText="Código" width="10%">
+                                                    <h:outputText value="#{deta.cuenta.cuentaPK.codigo}" />
+                                                </p:column>
+                                                <p:column headerText="Cuenta" width="20%">
+                                                    <h:outputText value="#{deta.cuenta.nombre}" />
+                                                </p:column>
+                                                <p:column headerText="Saldo Actual Presupuesto" width="20%">
+                                                    <h:outputText value="#{deta.saldoanterior}" />
+                                                </p:column>
+                                                <p:column headerText="Aplicación" width="10%">
+                                                    <h:outputText value="#{deta.aplicacion==0?'Cargo':'Abono'}" />
+                                                </p:column>
+                                                <p:column headerText="Presup. Disponible" width="20%">
+                                                    <h:outputText value="#{deta.saldoposterior}" />
+                                                </p:column>
+                                                <p:column headerText="Valor" width="10%" >
+                                                    <h:outputText value="#{deta.monto}" />
+                                                </p:column>
+                                                <p:column width="5%">
+                                                    <p:commandButton icon="ui-icon-trash"
+                                                                     title="Eliminar"
+                                                                     actionListener="#{mttoCheque.eliminarDetalleCheque(deta)}"
+                                                                     update="listaDetalle :principal:growl"/>
+                                                </p:column>
+                                                <p:column width="5%">
+                                                    <p:commandButton icon="fa fa-pencil"
+                                                                     title="Editar"
+                                                                     actionListener="#{mttoCheque.editarDetalleCheque(deta)}"
+                                                                     update="listaDetalle :principal:growl"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </div>
+                                    </p:panel>
                                 </p:tab>
                             </div>
                         </p:tabView>
@@ -234,15 +252,14 @@
         </div>
 
 
-        <p:dialog id="busqProyModal"
+        <p:dialog id="busqCuentasModal"
                   header="Seleccionar Cuenta"
                   widgetVar="modalSelCuentas"
                   modal="true" showEffect="fade" hideEffect="fade"
                   resizable="true" responsive="true"
-                  height="500"
-                  width="400">
+                  height="450"
+                  width="600">
             <h:form id="formCuentas">
-                <div class="card">
                     <p:dataTable id="lista" var = "cuenta" value="#{mttoCheque.cuentasList}"
                                  selectionMode="single"
                                  selection="#{mttoCheque.cuentaActual}"
@@ -252,13 +269,15 @@
                                  paginatorPosition="bottom"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="10,20,50">
-                        <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectProyecto(event)}"
+                        <p:ajax event="rowSelect" listener="#{mttoCheque.onRowSelectCuenta(event)}"
                                 update="principal" />
-                        <p:column headerText="Cuenta">
+                        <p:column headerText="Cuenta" width="30%">
                             <h:outputText value="#{cuenta.cuentaPK.codigo}" />
                         </p:column>
+                        <p:column headerText="Descripción">
+                            <h:outputText value="#{cuenta.nombre}" />
+                        </p:column>
                     </p:dataTable>
-                </div>
             </h:form>
         </p:dialog>
 
@@ -270,7 +289,7 @@
                   height="500"
                   width="800">
             <h:form id="formbuscarProyecto">
-                <div class="card">
+                <div class="card"  style="margin-top: 0px">
                     <p:tab id="busqueda" title="Búsqueda">
                         <p:menubar>
                             <p:menuitem value="Buscar" actionListener="#{mttoCheque.buscarProyectos()}" 
@@ -300,6 +319,7 @@
                                          selection="#{mttoCheque.proyectoB}"
                                          rowKey="#{proy.id}"
                                          paginator="true"
+                                         paginatorAlwaysVisible="false"
                                          rows ="10"
                                          paginatorPosition="bottom"
                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"

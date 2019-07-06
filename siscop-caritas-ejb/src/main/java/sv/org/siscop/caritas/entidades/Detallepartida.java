@@ -44,7 +44,7 @@ public class Detallepartida implements Serializable {
     @Column(name = "monto")
     private BigDecimal monto;
     @JoinColumns({
-        @JoinColumn(name = "codcuenta", referencedColumnName = "codigo")
+        @JoinColumn(name = "codigocuenta", referencedColumnName = "codigo")
         , @JoinColumn(name = "idproyecto", referencedColumnName = "idproyecto")})
     @ManyToOne
     private Cuenta cuenta;

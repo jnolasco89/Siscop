@@ -375,6 +375,7 @@ public class MttoCheque implements Serializable {
             conceptoCheque = ChequeActual.getConcepto();
             comentarioCheque = ChequeActual.getComentarios();
             afavorDe = ChequeActual.getAfavorde();
+            monto = ChequeActual.getMonto();
             cantidadLetras = ChequeActual.getCantidadletras();
             chequeDetaList = ChequeActual.getDetallechequeList();
             esChequeNuevo = false;
@@ -478,7 +479,7 @@ public class MttoCheque implements Serializable {
             detaChequeActual = new Detallecheque();
 
             cuentaActual = new Cuenta();
-            monto = null;
+            valor = null;
             apliccont = 0;
             sublibroActual = new Persona();
 
@@ -493,7 +494,7 @@ public class MttoCheque implements Serializable {
             List<String> campos = new ArrayList<>();
             List<String> mensajes = new ArrayList<>();
 
-            if (monto == null || monto.compareTo(BigDecimal.ZERO) <= 0) {
+            if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
                 campos.add("Monto");
             }
             if (cuentaActual.getCuentaPK() == null) {
@@ -534,7 +535,7 @@ public class MttoCheque implements Serializable {
             detaChequeActual.setAplicacion(apliccont);
             detaChequeActual.setSaldoanterior(valor);
             detaChequeActual.setSaldoposterior(valor);
-            detaChequeActual.setSublibro(sublibroActual);
+//            detaChequeActual.setSublibro(sublibroActual);
             detaChequeActual.setCheque(ChequeActual);
             if (esDetalleNuevo) {
                 servCheque.nuevoDetalleCheque(detaChequeActual);
@@ -722,7 +723,6 @@ public class MttoCheque implements Serializable {
             proyectoActual = proyectoB;
             PrimeFaces.current().executeScript("PF('modalBusqProyecto').hide();");
 
-            tabindex = 1;
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
@@ -739,6 +739,15 @@ public class MttoCheque implements Serializable {
         PrimeFaces.current().executeScript("PF('modalSelCuentas').show();");
     }
 
+    public void onRowSelectCuenta(SelectEvent event) throws IOException {
+        try {
+
+            PrimeFaces.current().executeScript("PF('modalSelCuentas').hide();");
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
+        }
+    }
     //Listas
     private List<Cuenta> cuentasList = new ArrayList<>();
 
@@ -775,7 +784,7 @@ public class MttoCheque implements Serializable {
         Long id = ChequeActual.getId();
         parametros.put("id", id);
 
-        String reporte = "ComparativoCotizacion.jasper";
+        String reporte = "Cheque.jasper";
         String nombreArchivo = "Comparativo_" + id + ".pdf";
         this.generarReporte(reporte, nombreArchivo, parametros);
 

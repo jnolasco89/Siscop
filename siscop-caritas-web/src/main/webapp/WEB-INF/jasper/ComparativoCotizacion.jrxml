@@ -421,6 +421,10 @@ where plan.id= $P{id}]]>
 $F{proyecto}+"\n"+
 "CUADRO DE ANÁLISIS COMPARATIVO DE OFERTAS/PRODUCTOS"]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="40" y="10" width="50" height="38" uuid="41287242-c86c-4b44-9e82-73726e0b7d1e"/>
+				<imageExpression><![CDATA["logo.png"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>

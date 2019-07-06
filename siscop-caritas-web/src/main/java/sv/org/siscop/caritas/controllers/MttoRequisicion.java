@@ -10,6 +10,7 @@ import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -42,15 +43,16 @@ import org.primefaces.event.ReorderEvent;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
-import sv.org.siscop.caritas.ejb.ServicioOrdenCompraLocal;
 import sv.org.siscop.caritas.ejb.ServicioProveedorLocal;
 import sv.org.siscop.caritas.ejb.ServicioProyectoLocal;
 import sv.org.siscop.caritas.ejb.ServicioRequisicionLocal;
+import sv.org.siscop.caritas.entidades.Plancotizacion;
 import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
 import sv.org.siscop.caritas.entidades.Actividad;
+import sv.org.siscop.caritas.entidades.Cotizacion;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.ItemRequisicion;
-import sv.org.siscop.caritas.entidades.OrdenCompra;
+import sv.org.siscop.caritas.entidades.Itemcotizacion;
 import sv.org.siscop.caritas.entidades.Planitem;
 import sv.org.siscop.caritas.entidades.Proveedor;
 import sv.org.siscop.caritas.entidades.Proyecto;
@@ -67,8 +69,6 @@ public class MttoRequisicion implements Serializable {
 
     @EJB
     private ServicioRequisicionLocal servRequisicion;
-    @EJB
-    private ServicioOrdenCompraLocal servOCompra;
     @EJB
     private ServiciosCatalogoLocal servCat;
     @EJB
@@ -267,7 +267,7 @@ public class MttoRequisicion implements Serializable {
         requisicionesList = new ArrayList<>();
         idProyectoB = null;
         descripcionB = "";
-        idProyectoB = null;
+        idProyectoB = 0L;
         estadoActividadB = 0;
     }
 
@@ -291,7 +291,6 @@ public class MttoRequisicion implements Serializable {
             requisicionActual = requisicionB;
 
             descripcion = requisicionActual.getDescripcion();
-            ordenCompra = requisicionActual.getOrdenCompra();
             fecha = requisicionActual.getFecha();
             actividadActual = requisicionActual.getActividad();
             itemRequisicionList = requisicionActual.getItemrequisicionList();
@@ -354,19 +353,13 @@ public class MttoRequisicion implements Serializable {
                 return;
             }
 
-            if (requisicionActual.getNumero() == null) {
-                Long numero = servRequisicion.buscarMaxRequisicionNumero(1L);
-                this.requisicionActual.setNumero(numero);
-            }
-
             this.requisicionActual.setDescripcion(descripcion);
-            this.requisicionActual.setDestino(destino);
             this.requisicionActual.setFecha(fecha);
             this.requisicionActual.setItemrequisicionList(itemRequisicionList);
-            if (proveedorActual != null && proveedorActual.getId() != null) {
+            if (proveedorActual.getId() != null) {
                 this.requisicionActual.setProveedor(proveedorActual);
             }
-            if (actividadActual != null && actividadActual.getId() != null) {
+            if (actividadActual.getId() != null) {
                 this.requisicionActual.setActividad(actividadActual);
             }
 
@@ -790,33 +783,6 @@ public class MttoRequisicion implements Serializable {
     public void abrirModalSelCotizacion() {
         PrimeFaces.current().ajax().update(":formSelCotizacion");
         PrimeFaces.current().executeScript("PF('modalSelCotizacion').show();");
-    }
-
-    private OrdenCompra ordenCompra = new OrdenCompra();
-
-    public OrdenCompra getOrdenCompra() {
-        return ordenCompra;
-    }
-
-    public void setOrdenCompra(OrdenCompra ordenCompra) {
-        this.ordenCompra = ordenCompra;
-    }
-
-    public void crearOrdenDeCompra() {
-        try {
-
-            this.ordenCompra = new OrdenCompra();
-            ordenCompra.setId(requisicionActual.getId());
-            if (ordenCompra.getNumero() == null) {
-                Long numero = servRequisicion.buscarMaxRequisicionNumero(1L);
-                this.ordenCompra.setNumero(numero);
-            }
-
-            this.requisicionActual.setOrdenCompra(ordenCompra);
-
-        } catch (Exception ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
     }
 
     private String duiProvB;

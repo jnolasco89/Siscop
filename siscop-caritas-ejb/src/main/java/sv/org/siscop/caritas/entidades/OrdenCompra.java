@@ -32,9 +32,9 @@ public class OrdenCompra implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ordencompra_generator")
-//    @SequenceGenerator(name = "ordencompra_generator", sequenceName = "seq_ordencompra", allocationSize = 1)
-//    @Basic(optional = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ordencompra_generator")
+    @SequenceGenerator(name = "ordencompra_generator", sequenceName = "seq_ordencompra", allocationSize = 1)
+    @Basic(optional = false)
     @NotNull
     @Column(name = "id")
     private Long id;
@@ -53,9 +53,9 @@ public class OrdenCompra implements Serializable {
     @ManyToOne
     private Requisicion requisicion;
 
-//    @JoinColumn(name = "idproyecto", referencedColumnName = "id")
-//    @ManyToOne
-//    private Proyecto proyecto;
+    @JoinColumn(name = "idproyecto", referencedColumnName = "id")
+    @ManyToOne
+    private Proyecto proyecto;
 
     public OrdenCompra() {
     }
@@ -112,13 +112,13 @@ public class OrdenCompra implements Serializable {
         this.requisicion = requisicion;
     }
 
-//    public Proyecto getProyecto() {
-//        return proyecto;
-//    }
-//
-//    public void setProyecto(Proyecto proyecto) {
-//        this.proyecto = proyecto;
-//    }
+    public Proyecto getProyecto() {
+        return proyecto;
+    }
+
+    public void setProyecto(Proyecto proyecto) {
+        this.proyecto = proyecto;
+    }
 
     @Override
     public int hashCode() {

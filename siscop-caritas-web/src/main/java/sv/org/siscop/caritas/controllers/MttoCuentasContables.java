@@ -7,6 +7,7 @@ package sv.org.siscop.caritas.controllers;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,16 +15,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-<<<<<<< HEAD
-import javax.inject.Named;
-import javax.faces.view.ViewScoped;
-=======
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import org.primefaces.PrimeFaces;
->>>>>>> origin/master
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -31,6 +27,7 @@ import sv.org.siscop.caritas.ejb.ServicioProyectoLocal;
 import sv.org.siscop.caritas.ejb.ServiciosCatalogoLocal;
 import sv.org.siscop.caritas.ejb.ServiciosCuentaLocal;
 import sv.org.siscop.caritas.entidades.Cuenta;
+import sv.org.siscop.caritas.entidades.CuentaPK;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.Proyecto;
 
@@ -51,33 +48,27 @@ public class MttoCuentasContables implements Serializable {
 
     //Variables para la ui
     private int tabActiva;
-<<<<<<< HEAD
-    private List<Proyecto> proyectos;
-=======
     private int modoProyecto;
+    private int modoModalCuenta;
+    private String tituloModalCuenta;
+    private boolean renderInputProyectoModalCuenta;
     private List<Proyecto> proyectosTabla;
     private List<Proyecto> proyectosModal;
->>>>>>> origin/master
     private List<ItemCatalogo> estadosProyecto;
     private String msjPestaniaCatalogo;
     private Map msjs;
     private TreeNode nodoActual;
     //Modelo para la vista
-<<<<<<< HEAD
-    private Proyecto proyectoActual;
-    private Proyecto proyectoCatalogo;
-    private List<Cuenta> catalogoDeCuentas;
-    private TreeNode arbolCuentas;
-=======
     private Proyecto proyectoActualCatalogo;
     private Proyecto proyectoActualDetalle;//SIN USAR POR EL MOMENTO!!!!!!!!!!!!!!!!!!****>>>
     private Proyecto proyectoBusquedaTabla;
     private Proyecto proyectoBusquedaModal;
     private List<Cuenta> catalogoDeCuentas;
+    private List<Cuenta> listaSubcuentasModal;
     private TreeNode arbolCuentasCatalogo;
     private TreeNode arbolCuentasModal;
->>>>>>> origin/master
     private Cuenta cuentaActual;
+    private Cuenta subcuentaActual;
 
     /**
      * Creates a new instance of MttoCuentasContables
@@ -88,26 +79,14 @@ public class MttoCuentasContables implements Serializable {
     @PostConstruct
     public void init() {
         tabActiva = 0;
-<<<<<<< HEAD
-        msjs = new HashMap();
-        msjs.put("vacio", "El proyecto no posee catalogo de cuentas");
-        msjs.put("seleccionar", "Seleccione un proyecto para cargar el catalogo de cuentas");
-
-        msjPestaniaCatalogo = msjs.get("seleccionar").toString();
-        proyectos = servProyecto.getAllProyectos();
-        proyectoActual = new Proyecto();
-        proyectoActual.setEstado(new ItemCatalogo(63));
-        proyectoCatalogo = new Proyecto();
-        estadosProyecto = servCatalogo.findCatalogoById(20).getItemCatalogoList();
-        catalogoDeCuentas = null;
-        arbolCuentas = null;
-        cuentaActual = new Cuenta();
-=======
         modoProyecto = 1;//1 Para agregar, 2 para editar
+        modoModalCuenta = 1;
         msjs = new HashMap();
         msjs.put("vacio", "El proyecto no posee catalogo de cuentas. Para crear un nuevo catalogo cree cuentas desde la pestaña \"detalle\" o cargue un archivo con las cuentas que desea registrar.");
         msjs.put("seleccionar", "Seleccione un proyecto para cargar el catalogo de cuentas o cree un nuevo catalogo. Para crear un nuevo catalogo cree cuentas desde la pestaña \"detalle\" o cargue un archivo con las cuentas que desea registrar.");
         msjPestaniaCatalogo = msjs.get("seleccionar").toString();
+        tituloModalCuenta = "";
+        renderInputProyectoModalCuenta = false;
 
         Map filtroProTabl = new HashMap();
         filtroProTabl.put("estado", new ItemCatalogo(63));
@@ -126,11 +105,13 @@ public class MttoCuentasContables implements Serializable {
         proyectoBusquedaModal.setEstado(new ItemCatalogo(0));
 
         catalogoDeCuentas = null;
+        listaSubcuentasModal = new ArrayList<>();
         arbolCuentasCatalogo = null;
         arbolCuentasModal = null;
         cuentaActual = new Cuenta();
         cuentaActual.setObjProyecto(new Proyecto());
->>>>>>> origin/master
+        subcuentaActual = new Cuenta();
+        subcuentaActual.setCuentaPK(new CuentaPK());
     }
 
     // ================== GETTER Y SETTER ==================
@@ -142,22 +123,6 @@ public class MttoCuentasContables implements Serializable {
         this.tabActiva = tabActiva;
     }
 
-<<<<<<< HEAD
-    public List<Proyecto> getProyectos() {
-        return proyectos;
-    }
-
-    public void setProyectos(List<Proyecto> proyectos) {
-        this.proyectos = proyectos;
-    }
-
-    public Proyecto getProyectoActual() {
-        return proyectoActual;
-    }
-
-    public void setProyectoActual(Proyecto proyectoActual) {
-        this.proyectoActual = proyectoActual;
-=======
     public List<Proyecto> getProyectosTabla() {
         return proyectosTabla;
     }
@@ -172,7 +137,6 @@ public class MttoCuentasContables implements Serializable {
 
     public void setProyectoActualCatalogo(Proyecto proyectoActual) {
         this.proyectoActualCatalogo = proyectoActual;
->>>>>>> origin/master
     }
 
     public List<ItemCatalogo> getEstadosProyecto() {
@@ -183,17 +147,6 @@ public class MttoCuentasContables implements Serializable {
         this.estadosProyecto = estadosProyecto;
     }
 
-<<<<<<< HEAD
-    public Proyecto getProyectoCatalogo() {
-        return proyectoCatalogo;
-    }
-
-    public void setProyectoCatalogo(Proyecto proyectoCatalogo) {
-        this.proyectoCatalogo = proyectoCatalogo;
-    }
-
-=======
->>>>>>> origin/master
     public List<Cuenta> getCatalogoDeCuentas() {
         return catalogoDeCuentas;
     }
@@ -210,21 +163,12 @@ public class MttoCuentasContables implements Serializable {
         this.msjPestaniaCatalogo = msjPestaniaCatalogo;
     }
 
-<<<<<<< HEAD
-    public TreeNode getArbolCuentas() {
-        return arbolCuentas;
-    }
-
-    public void setArbolCuentas(TreeNode arbolCuentas) {
-        this.arbolCuentas = arbolCuentas;
-=======
     public TreeNode getArbolCuentasCatalogo() {
         return arbolCuentasCatalogo;
     }
 
     public void setArbolCuentasCatalogo(TreeNode arbolCuentasCatalogo) {
         this.arbolCuentasCatalogo = arbolCuentasCatalogo;
->>>>>>> origin/master
     }
 
     public TreeNode getNodoActual() {
@@ -243,11 +187,6 @@ public class MttoCuentasContables implements Serializable {
         this.cuentaActual = cuentaActual;
     }
 
-<<<<<<< HEAD
-    // =================== METODOS =========================
-    // ----- Pestaña busqueda --
-    public void buscarProyecto() {
-=======
     public List<Proyecto> getProyectosModal() {
         return proyectosModal;
     }
@@ -288,6 +227,38 @@ public class MttoCuentasContables implements Serializable {
         this.arbolCuentasModal = arbolCuentasModal;
     }
 
+    public List<Cuenta> getListaSubcuentasModal() {
+        return listaSubcuentasModal;
+    }
+
+    public void setListaSubcuentasModal(List<Cuenta> listaSubcuentasModal) {
+        this.listaSubcuentasModal = listaSubcuentasModal;
+    }
+
+    public Cuenta getSubcuentaActual() {
+        return subcuentaActual;
+    }
+
+    public void setSubcuentaActual(Cuenta subcuentaActual) {
+        this.subcuentaActual = subcuentaActual;
+    }
+
+    public String getTituloModalCuenta() {
+        return tituloModalCuenta;
+    }
+
+    public void setTituloModalCuenta(String tituloModalCuenta) {
+        this.tituloModalCuenta = tituloModalCuenta;
+    }
+
+    public boolean isRenderInputProyectoModalCuenta() {
+        return renderInputProyectoModalCuenta;
+    }
+
+    public void setRenderInputProyectoModalCuenta(boolean renderInputProyectoModalCuenta) {
+        this.renderInputProyectoModalCuenta = renderInputProyectoModalCuenta;
+    }
+
     // =================== METODOS =========================
     // ----- Pestaña busqueda --
     public void buscarProyectoEnTabla() {
@@ -295,7 +266,6 @@ public class MttoCuentasContables implements Serializable {
     }
 
     public List<Proyecto> buscarProyecto(Proyecto p) {
->>>>>>> origin/master
         Map filtros = new HashMap();
         filtros.put("codigo", null);
         filtros.put("nombre", null);
@@ -304,63 +274,6 @@ public class MttoCuentasContables implements Serializable {
         filtros.put("fechaFin", null);
         filtros.put("estado", null);
 
-<<<<<<< HEAD
-        if (proyectoActual.getCodigo() != null) {
-            if (proyectoActual.getCodigo().length() > 0) {
-                filtros.replace("codigo", proyectoActual.getCodigo());
-            }
-        }
-
-        if (proyectoActual.getNombre() != null) {
-            if (proyectoActual.getNombre().length() > 0) {
-                filtros.replace("nombre", proyectoActual.getNombre());
-            }
-        }
-
-        if (proyectoActual.getNombreCorto() != null) {
-            if (proyectoActual.getNombreCorto().length() > 0) {
-                filtros.replace("nombreCorto", proyectoActual.getNombreCorto());
-            }
-        }
-
-        if (proyectoActual.getFechaini() != null) {
-            filtros.replace("fechaIni", proyectoActual.getFechaini());
-        }
-
-        if (proyectoActual.getFechafin() != null) {
-            filtros.replace("fechaFin", proyectoActual.getFechafin());
-        }
-
-        if (proyectoActual.getEstado() != null) {
-            if (proyectoActual.getEstado().getId() > 0) {
-                filtros.replace("estado", proyectoActual.getEstado());
-            }
-        }
-
-        proyectos = servProyecto.buscarProyetosCriterial(filtros);
-    }
-
-    public void limpiarBusquedaProyecto() {
-        proyectoActual = new Proyecto();
-        proyectoActual.setEstado(new ItemCatalogo(63));
-        proyectoCatalogo = new Proyecto();
-
-        proyectos = servProyecto.getAllProyectos();
-    }
-
-    public void cargarCatalogoDeCuentasProyecto() {
-        Map filtros = new HashMap();
-        filtros.put("cuentasPrincipales", true);
-        filtros.put("proyecto", proyectoCatalogo);
-        catalogoDeCuentas = servCuenta.buscarCuentas(filtros);
-
-        arbolCuentas = new DefaultTreeNode("Raiz", null);
-        recorrerCuentas(catalogoDeCuentas, arbolCuentas);
-        tabActiva = 1;
-    }
-
-    // ----- Pestaña catalogo -----------
-=======
         if (p.getCodigo() != null) {
             if (p.getCodigo().length() > 0) {
                 filtros.replace("codigo", p.getCodigo());
@@ -442,54 +355,159 @@ public class MttoCuentasContables implements Serializable {
         modoProyecto = 1;
     }
 
-    // ----- Pestaña detalle ------------
->>>>>>> origin/master
-    public void accionBtnGuardar() {
-        System.out.println("Btn guardar action");
-    }
-
-    public void limpiarFormCuenta() {
-        System.out.println("Limpiar from cuenta");
-    }
-
-<<<<<<< HEAD
-    public void cargarCuentaSeleccionada() {
-        System.out.println("Cargar cuenta");
-=======
-    public void cargarCuentaSeleccionadaTabla() {
-        cuentaActual = (Cuenta) nodoActual.getData();
-        cuentaActual.setObjProyecto(proyectoActualCatalogo);
-        //update=":formTabs:tabs:detalle" 
-        tabActiva=2;
-        PrimeFaces.current().ajax().update(":formTabs:tabs");
->>>>>>> origin/master
-    }
-
     public void subirYprocesarArchivo(FileUploadEvent event) {
         try {
-<<<<<<< HEAD
-            catalogoDeCuentas = servCuenta.leerArchivo(event.getFile().getInputstream());
-            arbolCuentas = new DefaultTreeNode("Raiz", null);
-            recorrerCuentas(catalogoDeCuentas, arbolCuentas);
-            
-=======
 
             catalogoDeCuentas = servCuenta.leerArchivo(event.getFile().getInputstream());
             arbolCuentasCatalogo = new DefaultTreeNode("Raiz", null);
             recorrerCuentas(catalogoDeCuentas, arbolCuentasCatalogo, true);
 
             PrimeFaces.current().ajax().update(":formTabs:tabs:contenedorArbolCuentas");
->>>>>>> origin/master
         } catch (IOException ex) {
             Logger.getLogger(MttoCuentasContables.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-<<<<<<< HEAD
-    // ----- Render para componentes -----
-=======
+    public void cargarCuentaSeleccionadaTreeCatalogo() {
+        cuentaActual = (Cuenta) nodoActual.getData();
+        cuentaActual.setObjProyecto(proyectoActualCatalogo);
+    }
+
+    public void abrirModalAgregarCuentaPrincipal() {
+        modoModalCuenta = 1;
+        cuentaActual = new Cuenta();
+        cuentaActual.setCuentaPK(new CuentaPK());
+        cuentaActual.setObjProyecto(new Proyecto());
+        cuentaActual.setCuentaList(new ArrayList<>());
+        
+        tituloModalCuenta = "Agregar cuenta principal";
+        renderInputProyectoModalCuenta = false;
+
+        PrimeFaces.current().executeScript("PF('dialogCuenta').show()");
+    }
+
+    public void agregarCuentaPrincipal() {
+        if (catalogoDeCuentas == null) {
+            catalogoDeCuentas = new ArrayList<>();
+        }
+
+        catalogoDeCuentas.add(cuentaActual);
+        arbolCuentasCatalogo = new DefaultTreeNode("Raiz", null);
+        recorrerCuentas(catalogoDeCuentas, arbolCuentasCatalogo, true);
+        
+        PrimeFaces.current().ajax().update(":formTabs:tabs:tree-catalogo-cuentas");
+        PrimeFaces.current().executeScript("PF('dialogCuenta').hide()");
+    }
+
+    // ----- Overla opciones Cuenta ------------
+    public void abrirModalCuenta() {
+        PrimeFaces.current().executeScript("PF('overlayOpcionesCuenta').hide()");
+        PrimeFaces.current().executeScript("PF('dialogCuenta').show()");
+    }
+
+    // ----- Modal Agregar subcuentas ----------
+    public void abrirModalAgregarSubcuentas() {
+        subcuentaActual = new Cuenta();
+        subcuentaActual.setCuentaPK(new CuentaPK());
+        listaSubcuentasModal = new ArrayList<>();
+        PrimeFaces.current().executeScript("PF('overlayOpcionesCuenta').hide()");
+        PrimeFaces.current().executeScript("PF('dialogAgregarSubcuentas').show()");
+    }
+
+    public void agregarSubcuenta() {
+        listaSubcuentasModal.add(subcuentaActual);
+        subcuentaActual = new Cuenta();
+        subcuentaActual.setCuentaPK(new CuentaPK());
+    }
+
+    public void guardarSubcuentas() {
+        List<String> path;
+
+        path = new ArrayList<>();
+
+        //Armando la ruta de busqueda para las cuentas a agregar
+        Cuenta ctaActual = cuentaActual;
+        boolean continuar = true;
+        while (continuar) {
+
+            path.add(ctaActual.getCuentaPK().getCodigo());
+            
+            continuar = ctaActual.getCuentaPadre() != null?ctaActual.getCuentaPadre().getCuentaPK().getCodigo()!=null:false;
+            ctaActual = ctaActual.getCuentaPadre();
+        }
+
+        Cuenta ctaRaizPath = null;
+        int indiceCtaRaizPath = 0;
+
+        //Buscando la cuenta raiz desde donde se procedera a 
+        //seguir el path
+        String codigoPath = path.get(path.size() - 1);
+        path.remove(path.size() - 1);
+
+        int indice = 0;
+        for (Cuenta c : catalogoDeCuentas) {
+            if (c.getCuentaPK() != null ? c.getCuentaPK().getCodigo() != null : false) {
+                if (c.getCuentaPK().getCodigo().equals(codigoPath)) {
+                    ctaRaizPath = c;
+                    indiceCtaRaizPath = indice;
+                    break;
+                }
+            }
+            indice++;
+        }
+
+        //Buscando dentro de la cuenta raiz
+        if (path.size() > 0) {
+            buscarCuentaParaEditar(ctaRaizPath, path);
+        } else {
+            for (Cuenta ctaNueva : listaSubcuentasModal) {
+                ctaNueva.setCuentaPadre(ctaRaizPath);
+                ctaNueva.setCuentaList(new ArrayList<>());
+                ctaRaizPath.getCuentaList().add(ctaNueva);
+            }
+        }
+
+        //Actualizando el catalogo de cuentas
+        catalogoDeCuentas.set(indiceCtaRaizPath, ctaRaizPath);
+
+        arbolCuentasCatalogo = new DefaultTreeNode("Raiz", null);
+        recorrerCuentas(catalogoDeCuentas, arbolCuentasCatalogo, true);
+
+        //Actualizando la vista
+        PrimeFaces.current().ajax().update(":formTabs:tabs:tree-catalogo-cuentas");
+        PrimeFaces.current().executeScript("PF('dialogAgregarSubcuentas').hide()");
+    }
+
+    public void buscarCuentaParaEditar(Cuenta c, List<String> path) {
+        if (c.getCuentaList() != null ? c.getCuentaList().size() > 0 : false) {
+            for (Cuenta ctaHija : c.getCuentaList()) {
+                if (ctaHija.getCuentaPK().getCodigo().equals(path.get(path.size() - 1))) {
+                    path.remove(path.size() - 1);
+
+                    if (path.size() > 0) {
+                        buscarCuentaParaEditar(ctaHija, path);
+                    } else {
+                        for (Cuenta ctaNueva : listaSubcuentasModal) {
+                            ctaNueva.setCuentaPadre(ctaHija);
+                            ctaNueva.setCuentaList(new ArrayList<>());
+                            ctaHija.getCuentaList().add(ctaNueva);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    // ----- Modal cuenta ------
+    public void accionBtnModalCuenta() {
+        if (modoModalCuenta == 1) {//Para agregar cuenta principal
+            agregarCuentaPrincipal();
+        } else if (modoModalCuenta == 2) {//Para editar subcuenta
+        }
+    }
+
     // ----- Render y enabled para componentes -----
->>>>>>> origin/master
     public boolean verArbolCuentas() {
         if (catalogoDeCuentas == null) {
             return false;
@@ -510,15 +528,6 @@ public class MttoCuentasContables implements Serializable {
         return false;
     }
 
-<<<<<<< HEAD
-    // ---- Metodos utilitarios -------
-    public void recorrerCuentas(List<Cuenta> cuentas, TreeNode padre) {
-        cuentas.forEach((cuenta) -> {
-            TreeNode nodo = new DefaultTreeNode(cuenta, padre);
-            if (cuenta.getIdctapadre() == null) {
-                nodo.setExpanded(true);
-            }
-=======
     public boolean deshabilitarInputProyecto() {
         return modoProyecto == 2;
     }
@@ -539,13 +548,13 @@ public class MttoCuentasContables implements Serializable {
 
     public void cargarProyectoSeleccionadoEnModal() {
         if (tabActiva == 1) {
-            proyectoActualCatalogo=proyectoBusquedaModal;
+            proyectoActualCatalogo = proyectoBusquedaModal;
             PrimeFaces.current().ajax().update(":formTabs:tabs:datosProyectoCatalogo");
         } else if (tabActiva == 2) {
             cuentaActual.setObjProyecto(proyectoBusquedaModal);
             PrimeFaces.current().ajax().update(":formTabs:tabs:txtProyectoCta");
         }
-        
+
         PrimeFaces.current().executeScript("PF('dialogProyectos').hide()");
     }
 
@@ -567,21 +576,24 @@ public class MttoCuentasContables implements Serializable {
     }
 
     // ---- Metodos modal buscar cuenta ----
-    public void mostrarModalBuscarCuenta(){
-        Proyecto p=cuentaActual.getObjProyecto();
-        
-        Map filtros=new HashMap();
+    public void abrirModalBuscarCuenta() {
+        Proyecto p = cuentaActual.getObjProyecto();
+
+        Map filtros = new HashMap();
         filtros.put("cuentasPrincipales", true);
-        filtros.put("proyecto",p);
-        servCuenta.buscarCuentas(msjs);
-        
-        
+        filtros.put("proyecto", p);
+        List<Cuenta> cuentas = servCuenta.buscarCuentas(filtros);
+
+        arbolCuentasModal = new DefaultTreeNode("Raiz", null);
+        recorrerCuentas(cuentas, arbolCuentasModal, true);
+
+        PrimeFaces.current().executeScript("PF('dialogCuentas').show()");
     }
-    
-    public void cargarCuentaSeleccionadaModal(){
+
+    public void cargarCuentaSeleccionadaModal() {
         System.out.println("");
     }
-    
+
     // ---- Metodos utilitarios -------
     public void recorrerCuentas(List<Cuenta> cuentas, TreeNode padre, boolean fullExpansion) {
         cuentas.forEach((cuenta) -> {
@@ -595,19 +607,13 @@ public class MttoCuentasContables implements Serializable {
                 nodo.setExpanded(true);
             }
 
->>>>>>> origin/master
             if (cuenta.getCuentaList().size() > 0) {
                 //Ordenando las subcuentas por codigo
                 for (int i = 0; i < cuenta.getCuentaList().size() - 1; i++) {
 
                     for (int j = 0; j < cuenta.getCuentaList().size() - 1; j++) {
-<<<<<<< HEAD
-                        int codigoPos1 = Integer.parseInt(cuenta.getCuentaList().get(j).getCodigo());
-                        int codigoPos2 = Integer.parseInt(cuenta.getCuentaList().get(j + 1).getCodigo());
-=======
                         int codigoPos1 = Integer.parseInt(cuenta.getCuentaList().get(j).getCuentaPK().getCodigo());
                         int codigoPos2 = Integer.parseInt(cuenta.getCuentaList().get(j + 1).getCuentaPK().getCodigo());
->>>>>>> origin/master
                         if (codigoPos1 > codigoPos2) {
 
                             Cuenta tmp = cuenta.getCuentaList().get(j + 1);
@@ -619,11 +625,6 @@ public class MttoCuentasContables implements Serializable {
                     }
                 }
 
-<<<<<<< HEAD
-                recorrerCuentas(cuenta.getCuentaList(), nodo);
-            }
-        });
-=======
                 recorrerCuentas(cuenta.getCuentaList(), nodo, fullExpansion);
             }
         });
@@ -653,6 +654,5 @@ public class MttoCuentasContables implements Serializable {
 //                recorrerCuentas(cuenta.getCuentaList(), nodo);
 //            }
 //        });
->>>>>>> origin/master
     }
 }

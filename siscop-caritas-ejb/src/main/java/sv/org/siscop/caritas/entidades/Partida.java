@@ -48,6 +48,9 @@ public class Partida implements Serializable {
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
+    @JoinColumn(name = "idestado", referencedColumnName = "id")
+    @ManyToOne
+    private ItemCatalogo estado;
     @OneToMany(mappedBy = "partida")
     private List<Detallepartida> detallepartidaList;
     @JoinColumn(name = "idproyecto", referencedColumnName = "id")
@@ -91,6 +94,14 @@ public class Partida implements Serializable {
 
     public void setDetallepartidaList(List<Detallepartida> detallepartidaList) {
         this.detallepartidaList = detallepartidaList;
+    }
+
+    public ItemCatalogo getEstado() {
+        return estado;
+    }
+
+    public void setEstado(ItemCatalogo estado) {
+        this.estado = estado;
     }
 
     public Proyecto getProyecto() {

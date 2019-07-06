@@ -5,7 +5,7 @@
 -- Dumped from database version 11.2
 -- Dumped by pg_dump version 11.2
 
--- Started on 2019-07-05 08:34:59
+-- Started on 2019-07-06 06:23:05
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,7 +26,7 @@ CREATE SCHEMA public;
 
 
 --
--- TOC entry 3147 (class 0 OID 0)
+-- TOC entry 3149 (class 0 OID 0)
 -- Dependencies: 6
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
 --
@@ -113,7 +113,8 @@ CREATE TABLE public.cheque (
     afavorde character varying(200),
     concepto character varying(300),
     comentarios character varying(500),
-    idproyecto bigint
+    idproyecto bigint,
+    idestado integer
 );
 
 
@@ -175,7 +176,7 @@ CREATE TABLE public.detallepartida (
     id bigint NOT NULL,
     idpartida bigint,
     idproyecto bigint,
-    codcuenta character varying,
+    codigocuenta character varying,
     sublibro bigint,
     aplicacion smallint,
     monto numeric(15,2)
@@ -339,7 +340,8 @@ CREATE TABLE public.partida (
     id bigint NOT NULL,
     idproyecto bigint,
     descripcion character varying,
-    fecha date
+    fecha date,
+    idestado integer
 );
 
 
@@ -383,12 +385,13 @@ CREATE TABLE public.plancotizacion (
     analisis character varying(2000),
     idrequisicion bigint,
     idordencompra bigint,
-    idcotizacionsel bigint
+    idcotizacionsel bigint,
+    nota character varying(300)
 );
 
 
 --
--- TOC entry 3148 (class 0 OID 0)
+-- TOC entry 3150 (class 0 OID 0)
 -- Dependencies: 208
 -- Name: TABLE plancotizacion; Type: COMMENT; Schema: public; Owner: -
 --
@@ -413,7 +416,7 @@ CREATE TABLE public.planitem (
 
 
 --
--- TOC entry 3149 (class 0 OID 0)
+-- TOC entry 3151 (class 0 OID 0)
 -- Dependencies: 209
 -- Name: TABLE planitem; Type: COMMENT; Schema: public; Owner: -
 --
@@ -855,7 +858,7 @@ CREATE TABLE public.usuario (
 
 
 --
--- TOC entry 3090 (class 0 OID 17314)
+-- TOC entry 3092 (class 0 OID 17314)
 -- Dependencies: 196
 -- Data for Name: account; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -864,7 +867,7 @@ INSERT INTO public.account VALUES (1, 'hzometa', 'PBKDF2WithHmacSHA512:3072:jyoZ
 
 
 --
--- TOC entry 3092 (class 0 OID 17319)
+-- TOC entry 3094 (class 0 OID 17319)
 -- Dependencies: 198
 -- Data for Name: actividad; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -875,7 +878,7 @@ INSERT INTO public.actividad VALUES (3, 'x                                      
 
 
 --
--- TOC entry 3093 (class 0 OID 17322)
+-- TOC entry 3095 (class 0 OID 17322)
 -- Dependencies: 199
 -- Data for Name: catalogo; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -894,15 +897,18 @@ INSERT INTO public.catalogo VALUES (30, 'Unidad de Medida                       
 
 
 --
--- TOC entry 3133 (class 0 OID 17803)
+-- TOC entry 3135 (class 0 OID 17803)
 -- Dependencies: 239
 -- Data for Name: cheque; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.cheque VALUES (2, NULL, '2019-07-05', 212.33, '', NULL, 'PRUEBA', 'NINGUNO', 2, NULL);
+INSERT INTO public.cheque VALUES (3, NULL, '2019-07-05', NULL, '', 'JUANA LA CUBANA', 'PRUEBA', 'PRUEBA', 2, NULL);
+INSERT INTO public.cheque VALUES (4, NULL, '2019-07-06', 500.00, '', 'JUAN ORLANDO MENA CALDERON', 'PAGO DE SALARIO MES DE MAYO DE 2019', 'Nota: El ISR se estableció tomando en cuenta salario de ASA y FORTALECIMIENTO DE LA DIGNIDAD CAMPESINA', 2, NULL);
 
 
 --
--- TOC entry 3094 (class 0 OID 17325)
+-- TOC entry 3096 (class 0 OID 17325)
 -- Dependencies: 200
 -- Data for Name: cotizacion; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -921,23 +927,158 @@ INSERT INTO public.cotizacion VALUES (40, 12, 6, '2019-07-04', NULL, 'DD', true,
 
 
 --
--- TOC entry 3130 (class 0 OID 17741)
+-- TOC entry 3132 (class 0 OID 17741)
 -- Dependencies: 236
 -- Data for Name: cuenta; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.cuenta VALUES (2, '6', 'Egresos Transitorios', NULL, NULL);
+INSERT INTO public.cuenta VALUES (2, '2', 'PASIVO', NULL, NULL);
+INSERT INTO public.cuenta VALUES (2, '21', 'Pasivo Circulante', NULL, '2');
+INSERT INTO public.cuenta VALUES (2, '211', 'Cuentas por pagar diversas', NULL, '21');
+INSERT INTO public.cuenta VALUES (2, '2111', 'Cuentas por pagar a proveedore', NULL, '211');
+INSERT INTO public.cuenta VALUES (2, '21111', 'Con contrato', NULL, '2111');
+INSERT INTO public.cuenta VALUES (2, '1', 'ACTIVO', NULL, NULL);
+INSERT INTO public.cuenta VALUES (2, '12', 'Activo Fijo', NULL, '1');
+INSERT INTO public.cuenta VALUES (2, '125', 'Depreciación acumulada', NULL, '12');
+INSERT INTO public.cuenta VALUES (2, '1254', 'Depreciacion acumulada edifici', NULL, '125');
+INSERT INTO public.cuenta VALUES (2, '3', 'PATRIMONIO', NULL, NULL);
+INSERT INTO public.cuenta VALUES (2, '32', 'Superávit o déficit', NULL, '3');
+INSERT INTO public.cuenta VALUES (2, '321', 'Superávit o déficit del ejerci', NULL, '32');
+INSERT INTO public.cuenta VALUES (2, '5', 'GASTOS', NULL, NULL);
+INSERT INTO public.cuenta VALUES (2, '56', 'OTROS COSTOS DIRECTOS', NULL, '5');
+INSERT INTO public.cuenta VALUES (2, '57', 'EQUIPO', NULL, '5');
+INSERT INTO public.cuenta VALUES (2, '5702', 'Equipo de oficina (imp., fotoc', NULL, '57');
+INSERT INTO public.cuenta VALUES (2, '123', 'Terrenos', NULL, '12');
+INSERT INTO public.cuenta VALUES (2, '11', 'Activo Circulante', NULL, '1');
+INSERT INTO public.cuenta VALUES (2, '116', 'Inventarios', NULL, '11');
+INSERT INTO public.cuenta VALUES (2, '1161', 'Inventario de papeleria', NULL, '116');
+INSERT INTO public.cuenta VALUES (2, '54', 'ARTÍCULOS DE OFICINA', NULL, '5');
+INSERT INTO public.cuenta VALUES (2, '5401', 'Artículos de ofic.(pap. y ut.)', NULL, '54');
+INSERT INTO public.cuenta VALUES (2, '23', 'Otros Pasivos', NULL, '2');
+INSERT INTO public.cuenta VALUES (2, '231', 'Ingresos pendientes de aplicac', NULL, '23');
+INSERT INTO public.cuenta VALUES (2, '5607', 'Otros gastos (seguridad, mantt', NULL, '56');
+INSERT INTO public.cuenta VALUES (2, '58', 'INTERVENCIONES A NIVEL DE CAMP', NULL, '5');
+INSERT INTO public.cuenta VALUES (2, '5807', 'Fondo de ecosistema', NULL, '58');
+INSERT INTO public.cuenta VALUES (2, '55', 'SERVICIOS CONTRACTUALES', NULL, '5');
+INSERT INTO public.cuenta VALUES (2, '5501', 'Reuniones de planificación, ot', NULL, '55');
+INSERT INTO public.cuenta VALUES (2, '5601', 'Combustible de vehículos', NULL, '56');
+INSERT INTO public.cuenta VALUES (2, '51', 'PERSONAL', NULL, '5');
+INSERT INTO public.cuenta VALUES (2, '5103', 'Sueldo Coord. eq. de agricultu', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '322', 'Superávit o déficit acumulados', NULL, '32');
+INSERT INTO public.cuenta VALUES (2, '5806', 'Fondo de agricultura', NULL, '58');
+INSERT INTO public.cuenta VALUES (2, '5701', 'Computadoras', NULL, '57');
+INSERT INTO public.cuenta VALUES (2, '212', 'Retenciones por pagar', NULL, '21');
+INSERT INTO public.cuenta VALUES (2, '2125', 'AFP''S', NULL, '212');
+INSERT INTO public.cuenta VALUES (2, '21253', 'UNIDAD DE PENSION', NULL, '2125');
+INSERT INTO public.cuenta VALUES (2, '2124', 'Instituciones financieras y ot', NULL, '212');
+INSERT INTO public.cuenta VALUES (2, '114', 'Cuentas por cobrar', NULL, '11');
+INSERT INTO public.cuenta VALUES (2, '1143', 'Prestamos y Anticipos a Emplea', NULL, '114');
+INSERT INTO public.cuenta VALUES (2, '112', 'Bancos', NULL, '11');
+INSERT INTO public.cuenta VALUES (2, '1122', 'Cuentas de Ahorro', NULL, '112');
+INSERT INTO public.cuenta VALUES (2, '2114', 'Prestamos Entre Proyectos', NULL, '211');
+INSERT INTO public.cuenta VALUES (2, '13', 'Otros Activos', NULL, '1');
+INSERT INTO public.cuenta VALUES (2, '2121', 'I.S.S.S.', NULL, '212');
+INSERT INTO public.cuenta VALUES (2, '5602', 'Mantto/repuestos vehículo', NULL, '56');
+INSERT INTO public.cuenta VALUES (2, '31', 'Aportaciones', NULL, '3');
+INSERT INTO public.cuenta VALUES (2, '311', 'Nacionales', NULL, '31');
+INSERT INTO public.cuenta VALUES (2, '53', 'GASTOS DE VIAJE', NULL, '5');
+INSERT INTO public.cuenta VALUES (2, '5301', 'Alojamiento', NULL, '53');
+INSERT INTO public.cuenta VALUES (2, '5115', 'Sueldo Asistente administrativ', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '4', 'INGRESOS', NULL, NULL);
+INSERT INTO public.cuenta VALUES (2, '43', 'Ingresos financieros', NULL, '4');
+INSERT INTO public.cuenta VALUES (2, '431', 'Intereses Cuenta Corriente', NULL, '43');
+INSERT INTO public.cuenta VALUES (2, '1121', 'Cuentas Corrientes', NULL, '112');
+INSERT INTO public.cuenta VALUES (2, '11211', 'Scotiabank cta. No. 0340027833', NULL, '1121');
+INSERT INTO public.cuenta VALUES (2, '121', 'Mobiliario y equipos de oficin', NULL, '12');
+INSERT INTO public.cuenta VALUES (2, '1212', 'Mobiliario y equipos de oficin', NULL, '121');
+INSERT INTO public.cuenta VALUES (2, '5102', 'Sueldo Coordinador Gral. de Go', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '2112', 'Impuestos por pagar', NULL, '211');
+INSERT INTO public.cuenta VALUES (2, '5104', 'Sueldo Extensionista capac. se', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '124', 'Edificios', NULL, '12');
+INSERT INTO public.cuenta VALUES (2, '5302', 'Alimentación', NULL, '53');
+INSERT INTO public.cuenta VALUES (2, '113', 'Asignaciones', NULL, '11');
+INSERT INTO public.cuenta VALUES (2, '1131', 'Diocesis de Santa Ana', NULL, '113');
+INSERT INTO public.cuenta VALUES (2, '132', 'SEGUROS', NULL, '13');
+INSERT INTO public.cuenta VALUES (2, '52', 'BENEFICIOS', NULL, '5');
+INSERT INTO public.cuenta VALUES (2, '5201', 'Beneficios laborales', NULL, '52');
+INSERT INTO public.cuenta VALUES (2, '5608', 'Plan de teléfono celular', NULL, '56');
+INSERT INTO public.cuenta VALUES (2, '312', 'Internacionales', NULL, '31');
+INSERT INTO public.cuenta VALUES (2, '1142', 'Deudores Varios', NULL, '114');
+INSERT INTO public.cuenta VALUES (2, '21212', 'ISSS Salud', NULL, '2121');
+INSERT INTO public.cuenta VALUES (2, '1141', 'Documentos por Cobrar', NULL, '114');
+INSERT INTO public.cuenta VALUES (2, '5101', 'Sueldo Director', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '1123', 'Depositos a Plazo Fijo', NULL, '112');
+INSERT INTO public.cuenta VALUES (2, '5114', 'Sueldo Aporte auxiliar contabl', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '44', 'Otros ingresos', NULL, '4');
+INSERT INTO public.cuenta VALUES (2, '1253', 'Depreciacion acumulada equipo', NULL, '125');
+INSERT INTO public.cuenta VALUES (2, '5105', 'Sueldo Técnico de campo Junior', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '5605', 'Alquiler de local', NULL, '56');
+INSERT INTO public.cuenta VALUES (2, '2123', 'Embargos judiciales', NULL, '212');
+INSERT INTO public.cuenta VALUES (2, '2113', 'Acreedores diversos', NULL, '211');
+INSERT INTO public.cuenta VALUES (2, '1144', 'Prestamos Entre Proyectos', NULL, '114');
+INSERT INTO public.cuenta VALUES (2, '21112', 'Sin contrato', NULL, '2111');
+INSERT INTO public.cuenta VALUES (2, '22', 'Pasivo Fijo', NULL, '2');
+INSERT INTO public.cuenta VALUES (2, '221', 'Asignaciones', NULL, '22');
+INSERT INTO public.cuenta VALUES (2, '41', 'Cooperaciones', NULL, '4');
+INSERT INTO public.cuenta VALUES (2, '2122', 'Impuesto Sobre la Renta', NULL, '212');
+INSERT INTO public.cuenta VALUES (2, '5606', 'Servicios (agua y luz)', NULL, '56');
+INSERT INTO public.cuenta VALUES (2, '5113', 'Sueldo Aporte a contador', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '42', 'Cooperaciones en especies', NULL, '4');
+INSERT INTO public.cuenta VALUES (2, '1211', 'Equipo de computo', NULL, '121');
+INSERT INTO public.cuenta VALUES (2, '433', 'Intereses Cuentas de ahorro', NULL, '43');
+INSERT INTO public.cuenta VALUES (2, '5603', 'Seguro, Registro, GPS', NULL, '56');
+INSERT INTO public.cuenta VALUES (2, '21211', 'ISSS PREVISIONAL', NULL, '2121');
+INSERT INTO public.cuenta VALUES (2, '115', 'Anticipos', NULL, '11');
+INSERT INTO public.cuenta VALUES (2, '1151', 'Anticipos para gastos de viaje', NULL, '115');
+INSERT INTO public.cuenta VALUES (2, '1153', 'Adelanto a proveedores', NULL, '115');
+INSERT INTO public.cuenta VALUES (2, '5106', 'Sueldo Coord. eq. GAAP y jóven', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '21251', 'AFP CONFIA', NULL, '2125');
+INSERT INTO public.cuenta VALUES (2, '111', 'Cajas', NULL, '11');
+INSERT INTO public.cuenta VALUES (2, '1152', 'Anticipos para compras y gasto', NULL, '115');
+INSERT INTO public.cuenta VALUES (2, '61', 'Diócesis de Santa Ana', NULL, '6');
+INSERT INTO public.cuenta VALUES (2, '432', 'Intereses Depositos a Plazo Fi', NULL, '43');
+INSERT INTO public.cuenta VALUES (2, '5112', 'Sueldo Oficial ICT4D', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '5107', 'Sueldo Especialista GAAP', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '411', 'Cooperaciones Nacionales', NULL, '41');
+INSERT INTO public.cuenta VALUES (2, '2211', 'Catholic Relief Services (CRS)', NULL, '221');
+INSERT INTO public.cuenta VALUES (2, '412', 'Coop. Internacionales/Misereor', NULL, '41');
+INSERT INTO public.cuenta VALUES (2, '5502', 'Cursos o entrenamientos', NULL, '55');
+INSERT INTO public.cuenta VALUES (2, '131', 'Gastos pagados por anticipado', NULL, '13');
+INSERT INTO public.cuenta VALUES (2, '422', 'Cooperaciones Internacionales', NULL, '42');
+INSERT INTO public.cuenta VALUES (2, '441', 'Ingresos Varios', NULL, '44');
+INSERT INTO public.cuenta VALUES (2, '5703', 'Vehículos', NULL, '57');
+INSERT INTO public.cuenta VALUES (2, '5604', 'Gastos de comunicación e Inter', NULL, '56');
+INSERT INTO public.cuenta VALUES (2, '421', 'Cooperaciones Nacionales', NULL, '42');
+INSERT INTO public.cuenta VALUES (2, '5116', 'Sueldo administrador financier', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '5111', 'Sueldo oficial MEAL', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '5808', 'Financ. desarrollo económico y', NULL, '58');
+INSERT INTO public.cuenta VALUES (2, '1321', 'Seguros', NULL, '132');
+INSERT INTO public.cuenta VALUES (2, '21252', 'AFP CRECER', NULL, '2125');
+INSERT INTO public.cuenta VALUES (2, '1251', 'Depreciacion acumulada equipo', NULL, '125');
+INSERT INTO public.cuenta VALUES (2, '11441', 'Proyecto Jóvenes/Noruega', NULL, '1144');
+INSERT INTO public.cuenta VALUES (2, '122', 'Equipo rodante', NULL, '12');
+INSERT INTO public.cuenta VALUES (2, '1111', 'Caja Chica', NULL, '111');
+INSERT INTO public.cuenta VALUES (2, '1252', 'Depreciacion acumulada mob. Y', NULL, '125');
+INSERT INTO public.cuenta VALUES (2, '5109', 'Sueldo Especialista Jóvenes co', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '5110', 'Sueldo Técnico de campo Jóvene', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '5108', 'Sueldo Téc. de campo GAAP', NULL, '51');
+INSERT INTO public.cuenta VALUES (2, '1221', 'Equipo de transporte', NULL, '122');
 
 
 --
--- TOC entry 3134 (class 0 OID 17816)
+-- TOC entry 3136 (class 0 OID 17816)
 -- Dependencies: 240
 -- Data for Name: detallecheque; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO public.detallecheque VALUES (2, 4, 2, '2', NULL, 0, 56.00, 56.00, 56.00);
+INSERT INTO public.detallecheque VALUES (3, 4, 2, '211', NULL, 0, 56.00, 56.00, 56.00);
+INSERT INTO public.detallecheque VALUES (4, 4, 2, '2114', NULL, 1, 56.00, 56.00, 56.00);
 
 
 --
--- TOC entry 3132 (class 0 OID 17774)
+-- TOC entry 3134 (class 0 OID 17774)
 -- Dependencies: 238
 -- Data for Name: detallepartida; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -945,7 +1086,7 @@ INSERT INTO public.cotizacion VALUES (40, 12, 6, '2019-07-04', NULL, 'DD', true,
 
 
 --
--- TOC entry 3095 (class 0 OID 17331)
+-- TOC entry 3097 (class 0 OID 17331)
 -- Dependencies: 201
 -- Data for Name: direccion; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -953,7 +1094,7 @@ INSERT INTO public.cotizacion VALUES (40, 12, 6, '2019-07-04', NULL, 'DD', true,
 
 
 --
--- TOC entry 3096 (class 0 OID 17334)
+-- TOC entry 3098 (class 0 OID 17334)
 -- Dependencies: 202
 -- Data for Name: documento; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -974,7 +1115,7 @@ INSERT INTO public.documento VALUES (22, 11, 10, '243434', NULL, NULL, '2019-06-
 
 
 --
--- TOC entry 3097 (class 0 OID 17337)
+-- TOC entry 3099 (class 0 OID 17337)
 -- Dependencies: 203
 -- Data for Name: empleado; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -984,7 +1125,7 @@ INSERT INTO public.empleado VALUES (4, NULL, NULL, '12:08:03.099', NULL, NULL);
 
 
 --
--- TOC entry 3135 (class 0 OID 17819)
+-- TOC entry 3137 (class 0 OID 17819)
 -- Dependencies: 241
 -- Data for Name: empleadoxproyecto; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -992,41 +1133,41 @@ INSERT INTO public.empleado VALUES (4, NULL, NULL, '12:08:03.099', NULL, NULL);
 
 
 --
--- TOC entry 3098 (class 0 OID 17340)
+-- TOC entry 3100 (class 0 OID 17340)
 -- Dependencies: 204
 -- Data for Name: item_catalogo; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.item_catalogo VALUES (65, '4         ', 'Prueba                                            ', 59, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (67, '3         ', '1                                                 ', 59, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (3, NULL, 'Soltero                                           ', 2, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (4, NULL, 'Casado                                            ', 2, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (5, NULL, 'Acompañado                                        ', 2, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (6, NULL, 'Divorciado                                        ', 2, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (7, NULL, 'Viudo                                             ', 2, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (1, 'IT1       ', 'Natural                                           ', 1, NULL, '23:10:35.613', NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (2, 'IT1       ', 'Jurídica                                          ', 1, NULL, '23:10:44.601', NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (8, NULL, 'Residencia                                        ', 3, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (9, NULL, 'Trabajo                                           ', 3, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (10, NULL, 'DUI                                               ', 4, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (11, NULL, 'NIT                                               ', 4, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (12, NULL, 'Pasaporte                                         ', 4, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (13, NULL, 'NCR                                               ', 4, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (14, NULL, 'Celular 1                                         ', 5, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (15, NULL, 'Celular 2                                         ', 5, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (16, NULL, 'Casa 1                                            ', 5, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (17, NULL, 'Casa 2                                            ', 5, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (18, NULL, 'Trabajo                                           ', 5, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (64, NULL, 'Terminado                                         ', 20, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (63, '          ', 'En ejecución                                      ', 20, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (21, NULL, 'Terminada                                         ', 10, false, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (20, NULL, 'En Ejecución                                      ', 10, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO public.item_catalogo VALUES (32, NULL, 'Botellas                                          ', 30, true, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (65, '4         ', 'Prueba', 59, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (67, '3         ', '1', 59, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (3, NULL, 'Soltero', 2, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (4, NULL, 'Casado', 2, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (5, NULL, 'Acompañado', 2, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (6, NULL, 'Divorciado', 2, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (7, NULL, 'Viudo', 2, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (1, 'IT1       ', 'Natural', 1, NULL, '23:10:35.613', NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (2, 'IT1       ', 'Jurídica', 1, NULL, '23:10:44.601', NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (8, NULL, 'Residencia', 3, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (9, NULL, 'Trabajo', 3, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (10, NULL, 'DUI', 4, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (11, NULL, 'NIT', 4, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (12, NULL, 'Pasaporte', 4, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (13, NULL, 'NCR', 4, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (14, NULL, 'Celular 1', 5, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (15, NULL, 'Celular 2', 5, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (16, NULL, 'Casa 1', 5, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (17, NULL, 'Casa 2', 5, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (18, NULL, 'Trabajo', 5, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (64, NULL, 'Terminado', 20, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (63, '          ', 'En ejecución', 20, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (21, NULL, 'Terminada', 10, false, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (20, NULL, 'En Ejecución', 10, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO public.item_catalogo VALUES (32, NULL, 'Botellas', 30, true, NULL, NULL, NULL, NULL);
 INSERT INTO public.item_catalogo VALUES (31, '4         ', 'Unidad', 30, true, NULL, NULL, NULL, NULL);
 
 
 --
--- TOC entry 3099 (class 0 OID 17343)
+-- TOC entry 3101 (class 0 OID 17343)
 -- Dependencies: 205
 -- Data for Name: itemcotizacion; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1072,7 +1213,7 @@ INSERT INTO public.itemcotizacion VALUES (122, 40, NULL, 'PASTEL', 'DE POLLO ', 
 
 
 --
--- TOC entry 3128 (class 0 OID 17711)
+-- TOC entry 3130 (class 0 OID 17711)
 -- Dependencies: 234
 -- Data for Name: itemrequisicion; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1080,10 +1221,11 @@ INSERT INTO public.itemcotizacion VALUES (122, 40, NULL, 'PASTEL', 'DE POLLO ', 
 INSERT INTO public.itemrequisicion VALUES (10, 22, NULL, '4443', '4344', 32, 3, NULL, NULL);
 INSERT INTO public.itemrequisicion VALUES (11, 23, NULL, 'S', 'SSS', 32, 33, NULL, NULL);
 INSERT INTO public.itemrequisicion VALUES (12, 23, NULL, 'DFSFA', 'DFSAF', 31, 3, NULL, NULL);
+INSERT INTO public.itemrequisicion VALUES (13, 24, NULL, 'REFRIGERIOS FUERTES AM', 'PAN CON CAFÉ s', 31, 25, NULL, NULL);
 
 
 --
--- TOC entry 3100 (class 0 OID 17346)
+-- TOC entry 3102 (class 0 OID 17346)
 -- Dependencies: 206
 -- Data for Name: menu; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1098,21 +1240,23 @@ INSERT INTO public.menu VALUES (108, 'Empleados', '/MttoEmpleados.xhtml', 'fa fa
 INSERT INTO public.menu VALUES (107, 'Usuarios', '/MttoUsuarios.xhtml', 'fa fa-users', 1, true, 'S');
 INSERT INTO public.menu VALUES (204, 'Cotizaciones', '/MttoCotizaciones.xhtml', 'fa fa-file-text-o', 2, true, 'S');
 INSERT INTO public.menu VALUES (2, 'PROYECTOS', NULL, NULL, NULL, true, 'M');
-INSERT INTO public.menu VALUES (1, 'PRINCIPAL', '', '', NULL, true, 'M');
 INSERT INTO public.menu VALUES (205, 'Requisiciones', '/MttoRequisiciones.xhtml', 'fa fa-file-text-o', 2, true, 'S');
+INSERT INTO public.menu VALUES (206, 'Cheques', '/MttoCheques.xhtml', 'fa fa-file-text-o', 2, true, 'S');
+INSERT INTO public.menu VALUES (1, 'Administración', '', '', NULL, true, 'M');
+INSERT INTO public.menu VALUES (207, 'Partidas Contables', '/MttoPartidas.xhtml', 'fa fa-file-text-o', 2, true, 'S');
 
 
 --
--- TOC entry 3125 (class 0 OID 17631)
+-- TOC entry 3127 (class 0 OID 17631)
 -- Dependencies: 231
 -- Data for Name: ordencompra; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.ordencompra VALUES (23, 1, NULL, NULL, '2019-07-16', NULL);
+INSERT INTO public.ordencompra VALUES (23, 1, NULL, 'santa ana', '2019-07-16', '2019-07-16');
 
 
 --
--- TOC entry 3131 (class 0 OID 17761)
+-- TOC entry 3133 (class 0 OID 17761)
 -- Dependencies: 237
 -- Data for Name: partida; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1120,7 +1264,7 @@ INSERT INTO public.ordencompra VALUES (23, 1, NULL, NULL, '2019-07-16', NULL);
 
 
 --
--- TOC entry 3101 (class 0 OID 17349)
+-- TOC entry 3103 (class 0 OID 17349)
 -- Dependencies: 207
 -- Data for Name: persona; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1141,20 +1285,20 @@ INSERT INTO public.persona VALUES (6, 1, 'EDWIN ARNOLDO EDWIN SANCHEZ', 'EDWIN A
 
 
 --
--- TOC entry 3102 (class 0 OID 17352)
+-- TOC entry 3104 (class 0 OID 17352)
 -- Dependencies: 208
 -- Data for Name: plancotizacion; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO public.plancotizacion VALUES (9, NULL, NULL, 'CUMPLEAÑOS', '2019-06-30', '', NULL, NULL, NULL);
-INSERT INTO public.plancotizacion VALUES (10, NULL, NULL, 'CENA DE DOMINGO', '2019-06-30', '', NULL, NULL, NULL);
-INSERT INTO public.plancotizacion VALUES (11, NULL, NULL, 'BODA', '2019-06-30', '', NULL, NULL, NULL);
-INSERT INTO public.plancotizacion VALUES (12, NULL, NULL, 'BODA ZOMETA LIMA', '2019-06-30', '', NULL, NULL, 37);
-INSERT INTO public.plancotizacion VALUES (15, NULL, NULL, 'ee', '2019-07-11', '', NULL, NULL, NULL);
+INSERT INTO public.plancotizacion VALUES (9, NULL, NULL, 'CUMPLEAÑOS', '2019-06-30', '', NULL, NULL, NULL, NULL);
+INSERT INTO public.plancotizacion VALUES (10, NULL, NULL, 'CENA DE DOMINGO', '2019-06-30', '', NULL, NULL, NULL, NULL);
+INSERT INTO public.plancotizacion VALUES (11, NULL, NULL, 'BODA', '2019-06-30', '', NULL, NULL, NULL, NULL);
+INSERT INTO public.plancotizacion VALUES (15, NULL, NULL, 'ee', '2019-07-11', '', NULL, NULL, NULL, NULL);
+INSERT INTO public.plancotizacion VALUES (12, NULL, NULL, 'BODA ZOMETA LIMA', '2019-06-30', '', NULL, NULL, 38, NULL);
 
 
 --
--- TOC entry 3103 (class 0 OID 17358)
+-- TOC entry 3105 (class 0 OID 17358)
 -- Dependencies: 209
 -- Data for Name: planitem; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1176,7 +1320,7 @@ INSERT INTO public.planitem VALUES (47, 12, NULL, 'FDSAF', 'FDAF', 32, 66);
 
 
 --
--- TOC entry 3104 (class 0 OID 17361)
+-- TOC entry 3106 (class 0 OID 17361)
 -- Dependencies: 210
 -- Data for Name: proveedor; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1188,7 +1332,7 @@ INSERT INTO public.proveedor VALUES (4, NULL, NULL, NULL, '2019-06-23', NULL, NU
 
 
 --
--- TOC entry 3105 (class 0 OID 17364)
+-- TOC entry 3107 (class 0 OID 17364)
 -- Dependencies: 211
 -- Data for Name: proyecto; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1198,7 +1342,7 @@ INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', 
 
 
 --
--- TOC entry 3106 (class 0 OID 17370)
+-- TOC entry 3108 (class 0 OID 17370)
 -- Dependencies: 212
 -- Data for Name: recurso; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1206,17 +1350,18 @@ INSERT INTO public.proyecto VALUES (2, 'RA01', 'RECUPERANDO PAISAJE', 'RAICES', 
 
 
 --
--- TOC entry 3124 (class 0 OID 17613)
+-- TOC entry 3126 (class 0 OID 17613)
 -- Dependencies: 230
 -- Data for Name: requisicion; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 INSERT INTO public.requisicion VALUES (22, 1, '2019-07-05', NULL, 'aaa', NULL, NULL, 'fasdfadsf', NULL);
 INSERT INTO public.requisicion VALUES (23, 1, '2019-07-05', NULL, 'entrega lo solicitado en ', NULL, NULL, 'dddd', 23);
+INSERT INTO public.requisicion VALUES (24, 1, '2019-07-05', NULL, 'PARA EVENTO DE INAUGURACIÓN DE LOS DINAMIZADORES', NULL, 2, 'ALMUERZOS', NULL);
 
 
 --
--- TOC entry 3141 (class 0 OID 17898)
+-- TOC entry 3143 (class 0 OID 17898)
 -- Dependencies: 247
 -- Data for Name: saldocuenta; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1224,7 +1369,7 @@ INSERT INTO public.requisicion VALUES (23, 1, '2019-07-05', NULL, 'entrega lo so
 
 
 --
--- TOC entry 3140 (class 0 OID 17883)
+-- TOC entry 3142 (class 0 OID 17883)
 -- Dependencies: 246
 -- Data for Name: saldocuentasl; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1232,7 +1377,7 @@ INSERT INTO public.requisicion VALUES (23, 1, '2019-07-05', NULL, 'entrega lo so
 
 
 --
--- TOC entry 3120 (class 0 OID 17399)
+-- TOC entry 3122 (class 0 OID 17399)
 -- Dependencies: 226
 -- Data for Name: telefono; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1242,7 +1387,7 @@ INSERT INTO public.telefono VALUES (4, 6, 15, NULL, '2222-2222', '2019-07-04 22:
 
 
 --
--- TOC entry 3121 (class 0 OID 17402)
+-- TOC entry 3123 (class 0 OID 17402)
 -- Dependencies: 227
 -- Data for Name: token; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1250,7 +1395,7 @@ INSERT INTO public.telefono VALUES (4, 6, 15, NULL, '2222-2222', '2019-07-04 22:
 
 
 --
--- TOC entry 3123 (class 0 OID 17410)
+-- TOC entry 3125 (class 0 OID 17410)
 -- Dependencies: 229
 -- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1259,7 +1404,7 @@ INSERT INTO public.usuario VALUES (7, NULL, 7, NULL, '2019-06-23 08:35:34.856', 
 
 
 --
--- TOC entry 3150 (class 0 OID 0)
+-- TOC entry 3152 (class 0 OID 0)
 -- Dependencies: 197
 -- Name: account_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1268,7 +1413,7 @@ SELECT pg_catalog.setval('public.account_id_seq', 1, true);
 
 
 --
--- TOC entry 3151 (class 0 OID 0)
+-- TOC entry 3153 (class 0 OID 0)
 -- Dependencies: 213
 -- Name: seq_actividad; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1277,7 +1422,7 @@ SELECT pg_catalog.setval('public.seq_actividad', 5, true);
 
 
 --
--- TOC entry 3152 (class 0 OID 0)
+-- TOC entry 3154 (class 0 OID 0)
 -- Dependencies: 214
 -- Name: seq_catalogo; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1286,25 +1431,25 @@ SELECT pg_catalog.setval('public.seq_catalogo', 4, true);
 
 
 --
--- TOC entry 3153 (class 0 OID 0)
+-- TOC entry 3155 (class 0 OID 0)
 -- Dependencies: 243
 -- Name: seq_cheque; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_cheque', 1, false);
+SELECT pg_catalog.setval('public.seq_cheque', 4, true);
 
 
 --
--- TOC entry 3154 (class 0 OID 0)
+-- TOC entry 3156 (class 0 OID 0)
 -- Dependencies: 242
 -- Name: seq_chequedetalle; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_chequedetalle', 1, false);
+SELECT pg_catalog.setval('public.seq_chequedetalle', 4, true);
 
 
 --
--- TOC entry 3155 (class 0 OID 0)
+-- TOC entry 3157 (class 0 OID 0)
 -- Dependencies: 215
 -- Name: seq_cotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1313,7 +1458,7 @@ SELECT pg_catalog.setval('public.seq_cotizacion', 40, true);
 
 
 --
--- TOC entry 3156 (class 0 OID 0)
+-- TOC entry 3158 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: seq_direccion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1322,7 +1467,7 @@ SELECT pg_catalog.setval('public.seq_direccion', 3, true);
 
 
 --
--- TOC entry 3157 (class 0 OID 0)
+-- TOC entry 3159 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: seq_documento; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1331,7 +1476,7 @@ SELECT pg_catalog.setval('public.seq_documento', 22, true);
 
 
 --
--- TOC entry 3158 (class 0 OID 0)
+-- TOC entry 3160 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: seq_itemcatalogo; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1340,7 +1485,7 @@ SELECT pg_catalog.setval('public.seq_itemcatalogo', 2, true);
 
 
 --
--- TOC entry 3159 (class 0 OID 0)
+-- TOC entry 3161 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: seq_itemcotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1349,16 +1494,16 @@ SELECT pg_catalog.setval('public.seq_itemcotizacion', 125, true);
 
 
 --
--- TOC entry 3160 (class 0 OID 0)
+-- TOC entry 3162 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: seq_itemrequisicion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_itemrequisicion', 12, true);
+SELECT pg_catalog.setval('public.seq_itemrequisicion', 13, true);
 
 
 --
--- TOC entry 3161 (class 0 OID 0)
+-- TOC entry 3163 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: seq_ordencompra; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1367,7 +1512,7 @@ SELECT pg_catalog.setval('public.seq_ordencompra', 1, false);
 
 
 --
--- TOC entry 3162 (class 0 OID 0)
+-- TOC entry 3164 (class 0 OID 0)
 -- Dependencies: 245
 -- Name: seq_partida; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1376,7 +1521,7 @@ SELECT pg_catalog.setval('public.seq_partida', 1, false);
 
 
 --
--- TOC entry 3163 (class 0 OID 0)
+-- TOC entry 3165 (class 0 OID 0)
 -- Dependencies: 244
 -- Name: seq_partidadetalle; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1385,7 +1530,7 @@ SELECT pg_catalog.setval('public.seq_partidadetalle', 1, false);
 
 
 --
--- TOC entry 3164 (class 0 OID 0)
+-- TOC entry 3166 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: seq_persona; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1394,7 +1539,7 @@ SELECT pg_catalog.setval('public.seq_persona', 14, true);
 
 
 --
--- TOC entry 3165 (class 0 OID 0)
+-- TOC entry 3167 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: seq_plancotizacion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1403,7 +1548,7 @@ SELECT pg_catalog.setval('public.seq_plancotizacion', 15, true);
 
 
 --
--- TOC entry 3166 (class 0 OID 0)
+-- TOC entry 3168 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: seq_planitem; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1412,7 +1557,7 @@ SELECT pg_catalog.setval('public.seq_planitem', 47, true);
 
 
 --
--- TOC entry 3167 (class 0 OID 0)
+-- TOC entry 3169 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: seq_proyecto; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1421,16 +1566,16 @@ SELECT pg_catalog.setval('public.seq_proyecto', 2, true);
 
 
 --
--- TOC entry 3168 (class 0 OID 0)
+-- TOC entry 3170 (class 0 OID 0)
 -- Dependencies: 233
 -- Name: seq_requisicion; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.seq_requisicion', 23, true);
+SELECT pg_catalog.setval('public.seq_requisicion', 24, true);
 
 
 --
--- TOC entry 3169 (class 0 OID 0)
+-- TOC entry 3171 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: seq_telefono; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1439,7 +1584,7 @@ SELECT pg_catalog.setval('public.seq_telefono', 4, true);
 
 
 --
--- TOC entry 3170 (class 0 OID 0)
+-- TOC entry 3172 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: seq_usuario; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1448,7 +1593,7 @@ SELECT pg_catalog.setval('public.seq_usuario', 1, false);
 
 
 --
--- TOC entry 3171 (class 0 OID 0)
+-- TOC entry 3173 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: token_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1574,7 +1719,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 3172 (class 0 OID 0)
+-- TOC entry 3174 (class 0 OID 0)
 -- Dependencies: 2868
 -- Name: CONSTRAINT documento_numero_unique ON documento; Type: COMMENT; Schema: public; Owner: -
 --
@@ -1592,7 +1737,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 3173 (class 0 OID 0)
+-- TOC entry 3175 (class 0 OID 0)
 -- Dependencies: 2870
 -- Name: CONSTRAINT documento_persona_unique ON documento; Type: COMMENT; Schema: public; Owner: -
 --
@@ -1835,7 +1980,7 @@ ALTER TABLE ONLY public.actividad
 
 
 --
--- TOC entry 2965 (class 2606 OID 17855)
+-- TOC entry 2966 (class 2606 OID 17855)
 -- Name: cheque cheque_actividad_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1844,7 +1989,16 @@ ALTER TABLE ONLY public.cheque
 
 
 --
--- TOC entry 2964 (class 2606 OID 17833)
+-- TOC entry 2967 (class 2606 OID 17913)
+-- Name: cheque cheque_item_catalogo_estado_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.cheque
+    ADD CONSTRAINT cheque_item_catalogo_estado_fk FOREIGN KEY (idestado) REFERENCES public.item_catalogo(id);
+
+
+--
+-- TOC entry 2965 (class 2606 OID 17833)
 -- Name: cheque cheque_proyecto_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1880,7 +2034,7 @@ ALTER TABLE ONLY public.cuenta
 
 
 --
--- TOC entry 2966 (class 2606 OID 17840)
+-- TOC entry 2968 (class 2606 OID 17840)
 -- Name: detallecheque detallecheque_cheque_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1889,7 +2043,7 @@ ALTER TABLE ONLY public.detallecheque
 
 
 --
--- TOC entry 2968 (class 2606 OID 17868)
+-- TOC entry 2970 (class 2606 OID 17868)
 -- Name: detallecheque detallecheque_cuenta_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1898,7 +2052,7 @@ ALTER TABLE ONLY public.detallecheque
 
 
 --
--- TOC entry 2967 (class 2606 OID 17850)
+-- TOC entry 2969 (class 2606 OID 17850)
 -- Name: detallecheque detallecheque_persona_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1912,11 +2066,11 @@ ALTER TABLE ONLY public.detallecheque
 --
 
 ALTER TABLE ONLY public.detallepartida
-    ADD CONSTRAINT detallepartida_cuenta_fk FOREIGN KEY (codcuenta, idproyecto) REFERENCES public.cuenta(codigo, idproyecto);
+    ADD CONSTRAINT detallepartida_cuenta_fk FOREIGN KEY (codigocuenta, idproyecto) REFERENCES public.cuenta(codigo, idproyecto);
 
 
 --
--- TOC entry 2961 (class 2606 OID 17782)
+-- TOC entry 2964 (class 2606 OID 17923)
 -- Name: detallepartida detallepartida_partida_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1970,7 +2124,7 @@ ALTER TABLE ONLY public.documento
 
 
 --
--- TOC entry 3174 (class 0 OID 0)
+-- TOC entry 3176 (class 0 OID 0)
 -- Dependencies: 2932
 -- Name: CONSTRAINT documento_persona_fk ON documento; Type: COMMENT; Schema: public; Owner: -
 --
@@ -2048,6 +2202,15 @@ ALTER TABLE ONLY public.requisicion
 
 ALTER TABLE ONLY public.ordencompra
     ADD CONSTRAINT ordencompra_cotizacion_fk FOREIGN KEY (idcotizacion) REFERENCES public.cotizacion(id);
+
+
+--
+-- TOC entry 2961 (class 2606 OID 17918)
+-- Name: partida partida_item_catalogo_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.partida
+    ADD CONSTRAINT partida_item_catalogo_fk FOREIGN KEY (idestado) REFERENCES public.item_catalogo(id);
 
 
 --
@@ -2212,7 +2375,7 @@ ALTER TABLE ONLY public.usuario
     ADD CONSTRAINT usuario_persona_fk FOREIGN KEY (idpersona) REFERENCES public.persona(id);
 
 
--- Completed on 2019-07-05 08:35:02
+-- Completed on 2019-07-06 06:23:08
 
 --
 -- PostgreSQL database dump complete

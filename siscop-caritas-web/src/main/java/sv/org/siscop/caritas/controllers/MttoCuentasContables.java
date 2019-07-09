@@ -30,6 +30,11 @@ import sv.org.siscop.caritas.entidades.Cuenta;
 import sv.org.siscop.caritas.entidades.CuentaPK;
 import sv.org.siscop.caritas.entidades.ItemCatalogo;
 import sv.org.siscop.caritas.entidades.Proyecto;
+import sv.org.siscop.caritas.serviciosvista.ModalAgregarCuentas;
+import sv.org.siscop.caritas.serviciosvista.ModalBusProyectMttoCuentasContables;
+import sv.org.siscop.caritas.serviciosvista.ModalEditarCuenta;
+import sv.org.siscop.caritas.serviciosvista.PestaniaBusquedaMttoCuentasContables;
+import sv.org.siscop.caritas.serviciosvista.PestaniaCatalogoMttoCuentasContables;
 
 /**
  *
@@ -39,6 +44,7 @@ import sv.org.siscop.caritas.entidades.Proyecto;
 @ViewScoped
 public class MttoCuentasContables implements Serializable {
 
+    //Servicios
     @EJB
     private ServicioProyectoLocal servProyecto;
     @EJB
@@ -46,29 +52,15 @@ public class MttoCuentasContables implements Serializable {
     @EJB
     private ServiciosCuentaLocal servCuenta;
 
-    //Variables para la ui
-    private int tabActiva;
-    private int modoProyecto;
-    private int modoModalCuenta;
-    private String tituloModalCuenta;
-    private boolean renderInputProyectoModalCuenta;
-    private List<Proyecto> proyectosTabla;
-    private List<Proyecto> proyectosModal;
-    private List<ItemCatalogo> estadosProyecto;
-    private String msjPestaniaCatalogo;
-    private Map msjs;
-    private TreeNode nodoActual;
-    //Modelo para la vista
-    private Proyecto proyectoActualCatalogo;
-    private Proyecto proyectoActualDetalle;//SIN USAR POR EL MOMENTO!!!!!!!!!!!!!!!!!!****>>>
-    private Proyecto proyectoBusquedaTabla;
-    private Proyecto proyectoBusquedaModal;
-    private List<Cuenta> catalogoDeCuentas;
-    private List<Cuenta> listaSubcuentasModal;
-    private TreeNode arbolCuentasCatalogo;
-    private TreeNode arbolCuentasModal;
-    private Cuenta cuentaActual;
-    private Cuenta subcuentaActual;
+    //Variables para control de la UI
+    private int tabActivo;
+
+    //Modelo de datos para procesar en la UI
+    private PestaniaBusquedaMttoCuentasContables pestaniaBusqueda;
+    private PestaniaCatalogoMttoCuentasContables pestaniaCatalogo;
+    private ModalBusProyectMttoCuentasContables modalBusquedaProyecto;
+    private ModalAgregarCuentas modalAgregarCuentas;
+    private ModalEditarCuenta modalEditarCuenta;
 
     /**
      * Creates a new instance of MttoCuentasContables
@@ -78,581 +70,288 @@ public class MttoCuentasContables implements Serializable {
 
     @PostConstruct
     public void init() {
-        tabActiva = 0;
-        modoProyecto = 1;//1 Para agregar, 2 para editar
-        modoModalCuenta = 1;
-        msjs = new HashMap();
-        msjs.put("vacio", "El proyecto no posee catalogo de cuentas. Para crear un nuevo catalogo cree cuentas desde la pestaña \"detalle\" o cargue un archivo con las cuentas que desea registrar.");
-        msjs.put("seleccionar", "Seleccione un proyecto para cargar el catalogo de cuentas o cree un nuevo catalogo. Para crear un nuevo catalogo cree cuentas desde la pestaña \"detalle\" o cargue un archivo con las cuentas que desea registrar.");
-        msjPestaniaCatalogo = msjs.get("seleccionar").toString();
-        tituloModalCuenta = "";
-        renderInputProyectoModalCuenta = false;
+        tabActivo = 0;
 
-        Map filtroProTabl = new HashMap();
-        filtroProTabl.put("estado", new ItemCatalogo(63));
-        proyectosTabla = servProyecto.buscarProyetosCriterial(filtroProTabl);
-        Map filtroProMod = new HashMap();
-        proyectosModal = servProyecto.buscarProyetosCriterial(filtroProMod);
-        estadosProyecto = servCatalogo.findCatalogoById(20).getItemCatalogoList();
-
-        proyectoActualCatalogo = new Proyecto();
-        proyectoActualCatalogo.setEstado(new ItemCatalogo());
-        proyectoActualDetalle = new Proyecto();
-        proyectoActualDetalle.setEstado(new ItemCatalogo());
-        proyectoBusquedaTabla = new Proyecto();
-        proyectoBusquedaTabla.setEstado(new ItemCatalogo(63));
-        proyectoBusquedaModal = new Proyecto();
-        proyectoBusquedaModal.setEstado(new ItemCatalogo(0));
-
-        catalogoDeCuentas = null;
-        listaSubcuentasModal = new ArrayList<>();
-        arbolCuentasCatalogo = null;
-        arbolCuentasModal = null;
-        cuentaActual = new Cuenta();
-        cuentaActual.setObjProyecto(new Proyecto());
-        subcuentaActual = new Cuenta();
-        subcuentaActual.setCuentaPK(new CuentaPK());
+        pestaniaBusqueda = new PestaniaBusquedaMttoCuentasContables(servProyecto, servCatalogo);
+        pestaniaCatalogo = new PestaniaCatalogoMttoCuentasContables(servCuenta);
+        modalBusquedaProyecto = new ModalBusProyectMttoCuentasContables(servProyecto, servCatalogo);
+        modalAgregarCuentas = new ModalAgregarCuentas();
+        modalEditarCuenta = new ModalEditarCuenta();
     }
 
     // ================== GETTER Y SETTER ==================
-    public int getTabActiva() {
-        return tabActiva;
+    public int getTabActivo() {
+        return tabActivo;
     }
 
-    public void setTabActiva(int tabActiva) {
-        this.tabActiva = tabActiva;
+    public void setTabActivo(int tabActivo) {
+        this.tabActivo = tabActivo;
     }
 
-    public List<Proyecto> getProyectosTabla() {
-        return proyectosTabla;
+    public PestaniaBusquedaMttoCuentasContables getPestaniaBusqueda() {
+        return pestaniaBusqueda;
     }
 
-    public void setProyectosTabla(List<Proyecto> proyectos) {
-        this.proyectosTabla = proyectos;
+    public void setPestaniaBusqueda(PestaniaBusquedaMttoCuentasContables pestaniaBusqueda) {
+        this.pestaniaBusqueda = pestaniaBusqueda;
     }
 
-    public Proyecto getProyectoActualCatalogo() {
-        return proyectoActualCatalogo;
+    public PestaniaCatalogoMttoCuentasContables getPestaniaCatalogo() {
+        return pestaniaCatalogo;
     }
 
-    public void setProyectoActualCatalogo(Proyecto proyectoActual) {
-        this.proyectoActualCatalogo = proyectoActual;
+    public void setPestaniaCatalogo(PestaniaCatalogoMttoCuentasContables pestaniaCatalogo) {
+        this.pestaniaCatalogo = pestaniaCatalogo;
     }
 
-    public List<ItemCatalogo> getEstadosProyecto() {
-        return estadosProyecto;
+    public ModalBusProyectMttoCuentasContables getModalBusquedaProyecto() {
+        return modalBusquedaProyecto;
     }
 
-    public void setEstadosProyecto(List<ItemCatalogo> estadosProyecto) {
-        this.estadosProyecto = estadosProyecto;
+    public void setModalBusquedaProyecto(ModalBusProyectMttoCuentasContables modalBusquedaProyecto) {
+        this.modalBusquedaProyecto = modalBusquedaProyecto;
     }
 
-    public List<Cuenta> getCatalogoDeCuentas() {
-        return catalogoDeCuentas;
+    public ModalAgregarCuentas getModalAgregarCuentas() {
+        return modalAgregarCuentas;
     }
 
-    public void setCatalogoDeCuentas(List<Cuenta> catalogoDeCuentas) {
-        this.catalogoDeCuentas = catalogoDeCuentas;
+    public void setModalAgregarCuentas(ModalAgregarCuentas modalAgregarCuentas) {
+        this.modalAgregarCuentas = modalAgregarCuentas;
     }
 
-    public String getMsjPestaniaCatalogo() {
-        return msjPestaniaCatalogo;
+    public ModalEditarCuenta getModalEditarCuenta() {
+        return modalEditarCuenta;
     }
 
-    public void setMsjPestaniaCatalogo(String msjPestaniaCatalogo) {
-        this.msjPestaniaCatalogo = msjPestaniaCatalogo;
+    public void setModalEditarCuenta(ModalEditarCuenta modalEditarCuenta) {
+        this.modalEditarCuenta = modalEditarCuenta;
     }
 
-    public TreeNode getArbolCuentasCatalogo() {
-        return arbolCuentasCatalogo;
-    }
-
-    public void setArbolCuentasCatalogo(TreeNode arbolCuentasCatalogo) {
-        this.arbolCuentasCatalogo = arbolCuentasCatalogo;
-    }
-
-    public TreeNode getNodoActual() {
-        return nodoActual;
-    }
-
-    public void setNodoActual(TreeNode nodoActual) {
-        this.nodoActual = nodoActual;
-    }
-
-    public Cuenta getCuentaActual() {
-        return cuentaActual;
-    }
-
-    public void setCuentaActual(Cuenta cuentaActual) {
-        this.cuentaActual = cuentaActual;
-    }
-
-    public List<Proyecto> getProyectosModal() {
-        return proyectosModal;
-    }
-
-    public void setProyectosModal(List<Proyecto> proyectosModal) {
-        this.proyectosModal = proyectosModal;
-    }
-
-    public Proyecto getProyectoBusquedaModal() {
-        return proyectoBusquedaModal;
-    }
-
-    public void setProyectoBusquedaModal(Proyecto proyectoBusquedaModal) {
-        this.proyectoBusquedaModal = proyectoBusquedaModal;
-    }
-
-    public Proyecto getProyectoBusquedaTabla() {
-        return proyectoBusquedaTabla;
-    }
-
-    public void setProyectoBusquedaTabla(Proyecto proyectoBusquedaTabla) {
-        this.proyectoBusquedaTabla = proyectoBusquedaTabla;
-    }
-
-    public Proyecto getProyectoActualDetalle() {
-        return proyectoActualDetalle;
-    }
-
-    public void setProyectoActualDetalle(Proyecto proyectoActualDetalle) {
-        this.proyectoActualDetalle = proyectoActualDetalle;
-    }
-
-    public TreeNode getArbolCuentasModal() {
-        return arbolCuentasModal;
-    }
-
-    public void setArbolCuentasModal(TreeNode arbolCuentasModal) {
-        this.arbolCuentasModal = arbolCuentasModal;
-    }
-
-    public List<Cuenta> getListaSubcuentasModal() {
-        return listaSubcuentasModal;
-    }
-
-    public void setListaSubcuentasModal(List<Cuenta> listaSubcuentasModal) {
-        this.listaSubcuentasModal = listaSubcuentasModal;
-    }
-
-    public Cuenta getSubcuentaActual() {
-        return subcuentaActual;
-    }
-
-    public void setSubcuentaActual(Cuenta subcuentaActual) {
-        this.subcuentaActual = subcuentaActual;
-    }
-
-    public String getTituloModalCuenta() {
-        return tituloModalCuenta;
-    }
-
-    public void setTituloModalCuenta(String tituloModalCuenta) {
-        this.tituloModalCuenta = tituloModalCuenta;
-    }
-
-    public boolean isRenderInputProyectoModalCuenta() {
-        return renderInputProyectoModalCuenta;
-    }
-
-    public void setRenderInputProyectoModalCuenta(boolean renderInputProyectoModalCuenta) {
-        this.renderInputProyectoModalCuenta = renderInputProyectoModalCuenta;
-    }
-
-    // =================== METODOS =========================
-    // ----- Pestaña busqueda --
-    public void buscarProyectoEnTabla() {
-        proyectosTabla = buscarProyecto(proyectoBusquedaTabla);
-    }
-
-    public List<Proyecto> buscarProyecto(Proyecto p) {
+    // ============== METODOS PARA LA FUNCIONALIDAD DE LA VISTA ============
+    //-------------- Pestaña busqueda ---------------
+    public void pBusquedaBuscarProyecto() {
         Map filtros = new HashMap();
-        filtros.put("codigo", null);
-        filtros.put("nombre", null);
-        filtros.put("nombreCorto", null);
-        filtros.put("fechaIni", null);
-        filtros.put("fechaFin", null);
-        filtros.put("estado", null);
 
-        if (p.getCodigo() != null) {
-            if (p.getCodigo().length() > 0) {
-                filtros.replace("codigo", p.getCodigo());
-            }
+        if (pestaniaBusqueda.getProyectoAbuscar().getCodigo() != null
+                ? pestaniaBusqueda.getProyectoAbuscar().getCodigo().length() > 0
+                : false) {
+            filtros.put("codigo", pestaniaBusqueda.getProyectoAbuscar().getCodigo());
         }
 
-        if (p.getNombre() != null) {
-            if (p.getNombre().length() > 0) {
-                filtros.replace("nombre", p.getNombre());
-            }
+        if (pestaniaBusqueda.getProyectoAbuscar().getNombre() != null
+                ? pestaniaBusqueda.getProyectoAbuscar().getNombre().length() > 0
+                : false) {
+            filtros.put("nombre", pestaniaBusqueda.getProyectoAbuscar().getNombre());
         }
 
-        if (p.getNombreCorto() != null) {
-            if (p.getNombreCorto().length() > 0) {
-                filtros.replace("nombreCorto", p.getNombreCorto());
-            }
+        if (pestaniaBusqueda.getProyectoAbuscar().getNombreCorto() != null
+                ? pestaniaBusqueda.getProyectoAbuscar().getNombreCorto().length() > 0
+                : false) {
+            filtros.put("nombreCorto", pestaniaBusqueda.getProyectoAbuscar().getNombreCorto());
         }
 
-        if (p.getFechaini() != null) {
-            filtros.replace("fechaIni", p.getFechaini());
+        if (pestaniaBusqueda.getProyectoAbuscar().getFechaini() != null) {
+            filtros.put("fechaIni", pestaniaBusqueda.getProyectoAbuscar().getFechaini());
         }
 
-        if (p.getFechafin() != null) {
-            filtros.replace("fechaFin", p.getFechafin());
+        if (pestaniaBusqueda.getProyectoAbuscar().getFechafin() != null) {
+            filtros.put("fechaFin", pestaniaBusqueda.getProyectoAbuscar().getFechafin());
         }
 
-        if (p.getEstado() != null) {
-            if (p.getEstado().getId() > 0) {
-                filtros.replace("estado", p.getEstado());
-            }
+        if (pestaniaBusqueda.getProyectoAbuscar().getEstado() != null
+                ? pestaniaBusqueda.getProyectoAbuscar().getEstado().getId() > 0
+                : false) {
+            filtros.put("estado", pestaniaBusqueda.getProyectoAbuscar().getEstado());
         }
 
-        return servProyecto.buscarProyetosCriterial(filtros);
+        pestaniaBusqueda.buscarProyectosRegistrados(filtros);
     }
 
-    public void limpiarBusquedaProyectoEnTabla() {
-        tabActiva = 0;
-        proyectoBusquedaTabla = new Proyecto();
-        proyectoBusquedaTabla.setEstado(new ItemCatalogo(63));
-
-        Map filtro = new HashMap();
-        filtro.put("estado", proyectoBusquedaTabla.getEstado());
-        proyectosTabla = servProyecto.buscarProyetosCriterial(filtro);
+    public void pBusquedalimpiarBusqueda() {
+        pestaniaBusqueda.resetPestaniaBusqueda();
     }
 
-    public void cargarCatalogoDeCuentasDelProyecto() {
+    public void pBusquedaCargarCatalogoDeCuentas() {
         Map filtros = new HashMap();
         filtros.put("cuentasPrincipales", true);
-        filtros.put("proyecto", proyectoActualCatalogo);
-        catalogoDeCuentas = servCuenta.buscarCuentas(filtros);
+        filtros.put("proyecto", pestaniaBusqueda.getProyectoActual());
 
-        arbolCuentasCatalogo = new DefaultTreeNode("Raiz", null);
-        recorrerCuentas(catalogoDeCuentas, arbolCuentasCatalogo, true);
-        tabActiva = 1;
-        modoProyecto = 2;
+        pestaniaCatalogo.setProyectoActual(pestaniaBusqueda.getProyectoActual());
+        pestaniaCatalogo.buscarCatalogoDeCuentas(filtros);
+        tabActivo = 1;
+    }
+    //-------------- Pestaña catalogo ---------------
+
+    public void pCatalogoLimpiarComponentes() {
+        pestaniaCatalogo.resetearPestaniacatalogo();
     }
 
-    // ----- Pestaña catalogo -----------
-    public void guardarCatalogo() {
-        servCuenta.registraCatalogoDeCuentas(catalogoDeCuentas, proyectoActualCatalogo);
-
+    public void pCatalogoGuardarCatalogo() {
+        pestaniaCatalogo.guardarCatalogo();
+        tabActivo = 1;
         FacesContext.getCurrentInstance()
                 .addMessage("msgGrowl",
                         new FacesMessage(
                                 FacesMessage.SEVERITY_INFO,
                                 "Operacion exitosa",
                                 "Catalogo registrado"));
-        tabActiva = 1;
         PrimeFaces.current().ajax().update(":formTabs");
-
     }
 
-    public void limpiarPestaniaCatalogo() {
-        proyectoActualCatalogo = new Proyecto();
-        proyectoActualCatalogo.setId(null);
-        catalogoDeCuentas = null;
-        arbolCuentasCatalogo = null;
-        msjPestaniaCatalogo = msjs.get("seleccionar").toString();
-        modoProyecto = 1;
-    }
-
-    public void subirYprocesarArchivo(FileUploadEvent event) {
+    public void pCtalogoSubirYprocesarArchivo(FileUploadEvent event) {
         try {
-
-            catalogoDeCuentas = servCuenta.leerArchivo(event.getFile().getInputstream());
-            arbolCuentasCatalogo = new DefaultTreeNode("Raiz", null);
-            recorrerCuentas(catalogoDeCuentas, arbolCuentasCatalogo, true);
-
+            pestaniaCatalogo.subirYprocesarArchivo(event.getFile().getInputstream());
             PrimeFaces.current().ajax().update(":formTabs:tabs:contenedorArbolCuentas");
         } catch (IOException ex) {
             Logger.getLogger(MttoCuentasContables.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void cargarCuentaSeleccionadaTreeCatalogo() {
-        cuentaActual = (Cuenta) nodoActual.getData();
-        cuentaActual.setObjProyecto(proyectoActualCatalogo);
+    public void pCatalogoAbrirModalBusCuenta() {
     }
 
-    public void abrirModalAgregarCuentaPrincipal() {
-        modoModalCuenta = 1;
-        cuentaActual = new Cuenta();
-        cuentaActual.setCuentaPK(new CuentaPK());
-        cuentaActual.setObjProyecto(new Proyecto());
-        cuentaActual.setCuentaList(new ArrayList<>());
-        
-        tituloModalCuenta = "Agregar cuenta principal";
-        renderInputProyectoModalCuenta = false;
+    public void pCatalogoCargarCuentaSeleccionada() {
 
-        PrimeFaces.current().executeScript("PF('dialogCuenta').show()");
     }
 
-    public void agregarCuentaPrincipal() {
-        if (catalogoDeCuentas == null) {
-            catalogoDeCuentas = new ArrayList<>();
+    //-------------- Modal Buscar Proyecto ---------------
+    public void mBuscarProyectoAbrirModal() {
+        PrimeFaces.current().executeScript("PF('dialogProyectos').show()");
+    }
+
+    public void mBuscarProyectoCerrarModal() {
+        modalBusquedaProyecto.resetModalBuscarProyecto();
+        PrimeFaces.current().ajax().update(":formDialogProyectos:dialogProyectos");
+    }
+
+    public void mBuscarProyectoBuscar() {
+        Map filtros = new HashMap();
+
+        if (modalBusquedaProyecto.getProyectoAbuscar().getCodigo() != null
+                ? modalBusquedaProyecto.getProyectoAbuscar().getCodigo().length() > 0
+                : false) {
+            filtros.put("codigo", modalBusquedaProyecto.getProyectoAbuscar().getCodigo());
         }
 
-        catalogoDeCuentas.add(cuentaActual);
-        arbolCuentasCatalogo = new DefaultTreeNode("Raiz", null);
-        recorrerCuentas(catalogoDeCuentas, arbolCuentasCatalogo, true);
-        
-        PrimeFaces.current().ajax().update(":formTabs:tabs:tree-catalogo-cuentas");
-        PrimeFaces.current().executeScript("PF('dialogCuenta').hide()");
+        if (modalBusquedaProyecto.getProyectoAbuscar().getNombre() != null
+                ? modalBusquedaProyecto.getProyectoAbuscar().getNombre().length() > 0
+                : false) {
+            filtros.put("nombre", modalBusquedaProyecto.getProyectoAbuscar().getNombre());
+        }
+
+        if (modalBusquedaProyecto.getProyectoAbuscar().getNombreCorto() != null
+                ? modalBusquedaProyecto.getProyectoAbuscar().getNombreCorto().length() > 0
+                : false) {
+            filtros.put("nombreCorto", modalBusquedaProyecto.getProyectoAbuscar().getNombreCorto());
+        }
+
+        if (modalBusquedaProyecto.getProyectoAbuscar().getFechaini() != null) {
+            filtros.put("fechaIni", modalBusquedaProyecto.getProyectoAbuscar().getFechaini());
+        }
+
+        if (modalBusquedaProyecto.getProyectoAbuscar().getFechafin() != null) {
+            filtros.put("fechaFin", modalBusquedaProyecto.getProyectoAbuscar().getFechafin());
+        }
+
+        if (modalBusquedaProyecto.getProyectoAbuscar().getEstado() != null
+                ? modalBusquedaProyecto.getProyectoAbuscar().getEstado().getId() > 0
+                : false) {
+            filtros.put("estado", modalBusquedaProyecto.getProyectoAbuscar().getEstado());
+        }
+
+        modalBusquedaProyecto.buscarProyectosRegistrados(filtros);
     }
 
-    // ----- Overla opciones Cuenta ------------
-    public void abrirModalCuenta() {
-        PrimeFaces.current().executeScript("PF('overlayOpcionesCuenta').hide()");
-        PrimeFaces.current().executeScript("PF('dialogCuenta').show()");
+    public void mBuscarProyectoLimpiar() {
+        modalBusquedaProyecto.resetModal();
     }
 
-    // ----- Modal Agregar subcuentas ----------
-    public void abrirModalAgregarSubcuentas() {
-        subcuentaActual = new Cuenta();
-        subcuentaActual.setCuentaPK(new CuentaPK());
-        listaSubcuentasModal = new ArrayList<>();
+    public void mBuscarProyectoCargarProyecto() {
+        pestaniaCatalogo.setProyectoActual(modalBusquedaProyecto.getProyectoActual());
+        modalBusquedaProyecto.resetModal();
+        PrimeFaces.current().ajax().update("formTabs:tabs:txtProyecto");
+        PrimeFaces.current().ajax().update("formDialogProyectos:dialogProyectos");
+        //PrimeFaces.current().executeScript("PF('dialogProyectos').hide()");
+
+    }
+
+    public void eliminarCuentaDeArbol() {
+        pestaniaCatalogo.eliminarCuenta();
+        PrimeFaces.current().ajax().update("formTabs:tabs:tree-catalogo-cuentas");
         PrimeFaces.current().executeScript("PF('overlayOpcionesCuenta').hide()");
+    }
+
+    //----------- Modal agregar cuentas ----------------------
+    public void mAgregarCuentasPrincipalesAbrir() {
+        Cuenta c = null;
+        modalAgregarCuentas.setVerCuentaPadre(false);
+        modalAgregarCuentas.setModoCuenta(1);
+        modalAgregarCuentas.setModoModal(1);
+        modalAgregarCuentas.setCuentaPadre(c);
+        modalAgregarCuentas.setTituloModal("Agregar Cuenta(s) principal(es)");
+        PrimeFaces.current().ajax().update(":formModalAgregarSubcuentas:dialogAgregarSubcuentas");
         PrimeFaces.current().executeScript("PF('dialogAgregarSubcuentas').show()");
     }
 
-    public void agregarSubcuenta() {
-        listaSubcuentasModal.add(subcuentaActual);
-        subcuentaActual = new Cuenta();
-        subcuentaActual.setCuentaPK(new CuentaPK());
+    public void mAgregarCuentaCerrar() {
+
     }
 
-    public void guardarSubcuentas() {
-        List<String> path;
-
-        path = new ArrayList<>();
-
-        //Armando la ruta de busqueda para las cuentas a agregar
-        Cuenta ctaActual = cuentaActual;
-        boolean continuar = true;
-        while (continuar) {
-
-            path.add(ctaActual.getCuentaPK().getCodigo());
-            
-            continuar = ctaActual.getCuentaPadre() != null?ctaActual.getCuentaPadre().getCuentaPK().getCodigo()!=null:false;
-            ctaActual = ctaActual.getCuentaPadre();
+    public void mAgregarCuentaAgregar() {
+        if (modalAgregarCuentas.getModoCuenta() == 1) {
+            modalAgregarCuentas.agregarSubCuenta();
+        } else if (modalAgregarCuentas.getModoCuenta() == 2) {
+            modalAgregarCuentas.editarCuenta();
         }
 
-        Cuenta ctaRaizPath = null;
-        int indiceCtaRaizPath = 0;
+        PrimeFaces.current().ajax().update("formModalAgregarSubcuentas:panel-modal-subcuenta");
+    }
 
-        //Buscando la cuenta raiz desde donde se procedera a 
-        //seguir el path
-        String codigoPath = path.get(path.size() - 1);
-        path.remove(path.size() - 1);
-
-        int indice = 0;
-        for (Cuenta c : catalogoDeCuentas) {
-            if (c.getCuentaPK() != null ? c.getCuentaPK().getCodigo() != null : false) {
-                if (c.getCuentaPK().getCodigo().equals(codigoPath)) {
-                    ctaRaizPath = c;
-                    indiceCtaRaizPath = indice;
-                    break;
-                }
-            }
-            indice++;
-        }
-
-        //Buscando dentro de la cuenta raiz
-        if (path.size() > 0) {
-            buscarCuentaParaEditar(ctaRaizPath, path);
-        } else {
-            for (Cuenta ctaNueva : listaSubcuentasModal) {
-                ctaNueva.setCuentaPadre(ctaRaizPath);
-                ctaNueva.setCuentaList(new ArrayList<>());
-                ctaRaizPath.getCuentaList().add(ctaNueva);
-            }
-        }
-
-        //Actualizando el catalogo de cuentas
-        catalogoDeCuentas.set(indiceCtaRaizPath, ctaRaizPath);
-
-        arbolCuentasCatalogo = new DefaultTreeNode("Raiz", null);
-        recorrerCuentas(catalogoDeCuentas, arbolCuentasCatalogo, true);
-
-        //Actualizando la vista
-        PrimeFaces.current().ajax().update(":formTabs:tabs:tree-catalogo-cuentas");
+    public void mAgregarCuentaGuardar() {
+        pestaniaCatalogo.agregarCuentas(modalAgregarCuentas.getCuentas());
+        PrimeFaces.current().ajax().update("formTabs:tabs:tree-catalogo-cuentas");
         PrimeFaces.current().executeScript("PF('dialogAgregarSubcuentas').hide()");
+
     }
 
-    public void buscarCuentaParaEditar(Cuenta c, List<String> path) {
-        if (c.getCuentaList() != null ? c.getCuentaList().size() > 0 : false) {
-            for (Cuenta ctaHija : c.getCuentaList()) {
-                if (ctaHija.getCuentaPK().getCodigo().equals(path.get(path.size() - 1))) {
-                    path.remove(path.size() - 1);
-
-                    if (path.size() > 0) {
-                        buscarCuentaParaEditar(ctaHija, path);
-                    } else {
-                        for (Cuenta ctaNueva : listaSubcuentasModal) {
-                            ctaNueva.setCuentaPadre(ctaHija);
-                            ctaNueva.setCuentaList(new ArrayList<>());
-                            ctaHija.getCuentaList().add(ctaNueva);
-                        }
-                    }
-                    break;
-                }
-            }
-        }
+    public void mAgregarCuentaCargarCuenta(int index, Cuenta c) {
+        modalAgregarCuentas.setModoCuenta(2);
+        c.setIndexEnList(index);
+        modalAgregarCuentas.setCuentaActual(c);
+        PrimeFaces.current().ajax().update(":formModalAgregarSubcuentas:panel-modal-subcuenta");
     }
 
-    // ----- Modal cuenta ------
-    public void accionBtnModalCuenta() {
-        if (modoModalCuenta == 1) {//Para agregar cuenta principal
-            agregarCuentaPrincipal();
-        } else if (modoModalCuenta == 2) {//Para editar subcuenta
-        }
+    public void mAgregarCuentaElmiminarCuenta(int index) {
+        modalAgregarCuentas.eliminarCuenta(index);
+        PrimeFaces.current().ajax().update(":formModalAgregarSubcuentas:tablaCuentasAagregar");
     }
 
-    // ----- Render y enabled para componentes -----
-    public boolean verArbolCuentas() {
-        if (catalogoDeCuentas == null) {
-            return false;
-        } else if (catalogoDeCuentas.size() > 0) {
-            return true;
-        }
-        return false;
+    public void mAgregarSubcuentasAbrir() {
+        PrimeFaces.current().executeScript("PF('overlayOpcionesCuenta').hide()");
+        Cuenta c = (Cuenta) pestaniaCatalogo.getNodoActual().getData();
+        modalAgregarCuentas.setVerCuentaPadre(true);
+        modalAgregarCuentas.setModoCuenta(1);
+        modalAgregarCuentas.setModoModal(2);
+        modalAgregarCuentas.setCuentaPadre(c);
+        modalAgregarCuentas.setTituloModal("Agregar subcuent(s)");
+        PrimeFaces.current().ajax().update(":formModalAgregarSubcuentas:dialogAgregarSubcuentas");
+        PrimeFaces.current().executeScript("PF('dialogAgregarSubcuentas').show()");
     }
 
-    public boolean verMsjNoHayCatalogo() {
-        if (catalogoDeCuentas == null) {
-            msjPestaniaCatalogo = msjs.get("seleccionar").toString();
-            return true;
-        } else if (catalogoDeCuentas.isEmpty()) {
-            msjPestaniaCatalogo = msjs.get("vacio").toString();
-            return true;
-        }
-        return false;
+    // ------------ Modal editar cuenta --------------------------------
+    public void mEditarCuentaAbrir() {
+        PrimeFaces.current().executeScript("PF('overlayOpcionesCuenta').show()");
+        modalEditarCuenta.setCuentaActual((Cuenta) pestaniaCatalogo.getNodoActual().getData());
+        PrimeFaces.current().ajax().update("formModalCuenta:dialogCuenta");
+        PrimeFaces.current().executeScript("PF('dialogCuenta').show()");
     }
 
-    public boolean deshabilitarInputProyecto() {
-        return modoProyecto == 2;
-    }
-
-    // ---- Metodos modal buscar proyecto ----
-    public void buscarProyectoEnModal() {
-        proyectosModal = buscarProyecto(proyectoBusquedaModal);
-    }
-
-    public void limpiarBusquedaProyectoEnModal() {
-        proyectoBusquedaModal = new Proyecto();
-        proyectoBusquedaModal.setEstado(new ItemCatalogo(0));
-
-        Map filtro = new HashMap();
-        filtro.put("estado", null);
-        proyectosModal = servProyecto.buscarProyetosCriterial(filtro);
-    }
-
-    public void cargarProyectoSeleccionadoEnModal() {
-        if (tabActiva == 1) {
-            proyectoActualCatalogo = proyectoBusquedaModal;
-            PrimeFaces.current().ajax().update(":formTabs:tabs:datosProyectoCatalogo");
-        } else if (tabActiva == 2) {
-            cuentaActual.setObjProyecto(proyectoBusquedaModal);
-            PrimeFaces.current().ajax().update(":formTabs:tabs:txtProyectoCta");
-        }
-
-        PrimeFaces.current().executeScript("PF('dialogProyectos').hide()");
-    }
-
-    public void abrirModalBuscarProyectoEnTabCatalogo() {
-        proyectoBusquedaModal = proyectoActualCatalogo;
-        PrimeFaces.current().executeScript("PF('dialogProyectos').show()");
-        tabActiva = 1;
-    }
-
-    public void abrirModalBuscarProyectoEnTabDetalle() {
-        cuentaActual.getObjProyecto().setEstado(new ItemCatalogo(0));
-        proyectoBusquedaModal = cuentaActual.getObjProyecto();
-        PrimeFaces.current().executeScript("PF('dialogProyectos').show()");
-        tabActiva = 2;
-    }
-
-    public void cerrarModalBuscarProyecto() {
-        PrimeFaces.current().executeScript("PF('dialogProyectos').hide()");
-    }
-
-    // ---- Metodos modal buscar cuenta ----
-    public void abrirModalBuscarCuenta() {
-        Proyecto p = cuentaActual.getObjProyecto();
-
-        Map filtros = new HashMap();
-        filtros.put("cuentasPrincipales", true);
-        filtros.put("proyecto", p);
-        List<Cuenta> cuentas = servCuenta.buscarCuentas(filtros);
-
-        arbolCuentasModal = new DefaultTreeNode("Raiz", null);
-        recorrerCuentas(cuentas, arbolCuentasModal, true);
-
-        PrimeFaces.current().executeScript("PF('dialogCuentas').show()");
-    }
-
-    public void cargarCuentaSeleccionadaModal() {
-        System.out.println("");
-    }
-
-    // ---- Metodos utilitarios -------
-    public void recorrerCuentas(List<Cuenta> cuentas, TreeNode padre, boolean fullExpansion) {
-        cuentas.forEach((cuenta) -> {
-            TreeNode nodo = new DefaultTreeNode(cuenta, padre);
-
-            if (cuenta.getCuentaPadre() == null) {
-                nodo.setExpanded(true);
-            }
-
-            if (cuenta.getCuentaPadre() != null && fullExpansion) {
-                nodo.setExpanded(true);
-            }
-
-            if (cuenta.getCuentaList().size() > 0) {
-                //Ordenando las subcuentas por codigo
-                for (int i = 0; i < cuenta.getCuentaList().size() - 1; i++) {
-
-                    for (int j = 0; j < cuenta.getCuentaList().size() - 1; j++) {
-                        int codigoPos1 = Integer.parseInt(cuenta.getCuentaList().get(j).getCuentaPK().getCodigo());
-                        int codigoPos2 = Integer.parseInt(cuenta.getCuentaList().get(j + 1).getCuentaPK().getCodigo());
-                        if (codigoPos1 > codigoPos2) {
-
-                            Cuenta tmp = cuenta.getCuentaList().get(j + 1);
-
-                            cuenta.getCuentaList().set(j + 1, cuenta.getCuentaList().get(j));
-
-                            cuenta.getCuentaList().set(j, tmp);
-                        }
-                    }
-                }
-
-                recorrerCuentas(cuenta.getCuentaList(), nodo, fullExpansion);
-            }
-        });
-//        cuentas.forEach((cuenta) -> {
-//            TreeNode nodo = new DefaultTreeNode(cuenta, padre);
-//            if (cuenta.getIdctapadre() == null) {
-//                nodo.setExpanded(true);
-//            }
-//            if (cuenta.getCuentaList().size() > 0) {
-//                //Ordenando las subcuentas por codigo
-//                for (int i = 0; i < cuenta.getCuentaList().size() - 1; i++) {
-//
-//                    for (int j = 0; j < cuenta.getCuentaList().size() - 1; j++) {
-//                        int codigoPos1 = Integer.parseInt(cuenta.getCuentaList().get(j).getCodigo());
-//                        int codigoPos2 = Integer.parseInt(cuenta.getCuentaList().get(j + 1).getCodigo());
-//                        if (codigoPos1 > codigoPos2) {
-//
-//                            Cuenta tmp = cuenta.getCuentaList().get(j + 1);
-//
-//                            cuenta.getCuentaList().set(j + 1, cuenta.getCuentaList().get(j));
-//
-//                            cuenta.getCuentaList().set(j, tmp);
-//                        }
-//                    }
-//                }
-//
-//                recorrerCuentas(cuenta.getCuentaList(), nodo);
-//            }
-//        });
+    public void mEditarCuentaEditar() {
+        pestaniaCatalogo.editarCuenta(modalEditarCuenta.getCuentaActual());
+        modalEditarCuenta.reset();
+        
+        PrimeFaces.current().ajax().update(":formTabs:tabs:tree-catalogo-cuentas");
+        PrimeFaces.current().executeScript("PF('dialogCuenta').hide()");
     }
 }

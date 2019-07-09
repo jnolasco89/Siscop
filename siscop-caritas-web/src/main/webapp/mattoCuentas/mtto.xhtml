@@ -17,21 +17,21 @@
                                  for="msgGrowl"
                                  />
                         <p:tabView id="tabs" 
-                                   activeIndex="#{mttoCuentasContables.tabActiva}" 
+                                   activeIndex="#{mttoCuentasContables.tabActivo}" 
                                    >
                             <div class="card">
                                 <p:tab id="busqueda" title="Búsqueda">
                                     <p:menubar>
                                         <p:menuitem 
                                             value="Buscar" 
-                                            actionListener="#{mttoCuentasContables.buscarProyectoEnTabla()}" 
+                                            actionListener="#{mttoCuentasContables.pBusquedaBuscarProyecto()}" 
                                             icon="ui-icon-search"
                                             update="formTabs:tabs:tablaProyectos"
                                             process="@this :formTabs:tabs:datosProyectoBuscado"
                                             />
                                         <p:menuitem 
                                             value="Limpiar" 
-                                            action="#{mttoCuentasContables.limpiarBusquedaProyectoEnTabla()}" 
+                                            action="#{mttoCuentasContables.pBusquedalimpiarBusqueda()}" 
                                             update=":formTabs:tabs"
                                             icon="fa fa-eraser" 
                                             process="@this"
@@ -45,20 +45,20 @@
                                             style="border:0px !important; background:none;"
                                             styleClass="ui-panelgrid-blank">
                                             <p:outputLabel for="txtCodigoProyectoB" value="Codigo:" />
-                                            <p:inputText id="txtCodigoProyectoB" value="#{mttoCuentasContables.proyectoBusquedaTabla.codigo}"                                                     
+                                            <p:inputText id="txtCodigoProyectoB" value="#{mttoCuentasContables.pestaniaBusqueda.proyectoAbuscar.codigo}"                                                     
                                                          onkeyup="this.value = this.value.toUpperCase();"/>
                                             <p:outputLabel for="txtNombreProyectoB" value="Nombre:" />
-                                            <p:inputText id="txtNombreProyectoB" value="#{mttoCuentasContables.proyectoBusquedaTabla.nombre}"                                                     
+                                            <p:inputText id="txtNombreProyectoB" value="#{mttoCuentasContables.pestaniaBusqueda.proyectoAbuscar.nombre}"                                                     
                                                          onkeyup="this.value = this.value.toUpperCase();"/>
                                             <p:outputLabel for="txtNombreCortoB" value="Nombre Corto:" />
-                                            <p:inputText id="txtNombreCortoB" value="#{mttoCuentasContables.proyectoBusquedaTabla.nombreCorto}"
+                                            <p:inputText id="txtNombreCortoB" value="#{mttoCuentasContables.pestaniaBusqueda.proyectoAbuscar.nombreCorto}"
                                                          onkeyup="this.value = this.value.toUpperCase();"/>
                                             <p:outputLabel for="listEstado" value="Estado:" />
                                             <p:selectOneMenu id="listEstado" 
-                                                             value="#{mttoCuentasContables.proyectoBusquedaTabla.estado.id}"
+                                                             value="#{mttoCuentasContables.pestaniaBusqueda.proyectoAbuscar.estado.id}"
                                                              >
                                                 <f:selectItem itemLabel="Todos" itemValue="0"/>
-                                                <f:selectItems value="#{mttoCuentasContables.estadosProyecto}" 
+                                                <f:selectItems value="#{mttoCuentasContables.pestaniaBusqueda.estadosProyecto}" 
                                                                var="estado" 
                                                                itemLabel="#{estado.descripcion}"
                                                                itemValue="#{estado.id}"
@@ -66,7 +66,7 @@
                                             </p:selectOneMenu>
                                             <p:outputLabel for="fechaInicioB" value="Fecha inicio:" />
                                             <p:calendar id="fechaInicioB" 
-                                                        value="#{mttoCuentasContables.proyectoBusquedaTabla.fechaini}"
+                                                        value="#{mttoCuentasContables.pestaniaBusqueda.proyectoAbuscar.fechaini}"
                                                         pattern="dd-MM-yyyy" 
                                                         mask="true"
                                                         locale="es"
@@ -75,7 +75,7 @@
                                             </p:calendar>    
                                             <p:outputLabel for="fechaFinB" value="Fecha finalizacion:" />
                                             <p:calendar id="fechaFinB" 
-                                                        value="#{mttoCuentasContables.proyectoBusquedaTabla.fechafin}"
+                                                        value="#{mttoCuentasContables.pestaniaBusqueda.proyectoAbuscar.fechafin}"
                                                         pattern="dd-MM-yyyy" 
                                                         mask="true"
                                                         locale="es"
@@ -87,18 +87,15 @@
                                     <div class="card">
                                         <p:dataTable id="tablaProyectos" var = "pro" 
                                                      widgetVar="tablaProyectos"
-                                                     value="#{mttoCuentasContables.proyectosTabla}"
+                                                     value="#{mttoCuentasContables.pestaniaBusqueda.proyectosRegistrados}"
                                                      selectionMode="single"
-                                                     selection="#{mttoCuentasContables.proyectoActualCatalogo}"
+                                                     selection="#{mttoCuentasContables.pestaniaBusqueda.proyectoActual}"
                                                      rowKey="#{pro.id}"
                                                      emptyMessage="Sin registros">
                                             <p:ajax event="rowSelect"
-                                                    listener="#{mttoCuentasContables.cargarCatalogoDeCuentasDelProyecto()}"
+                                                    listener="#{mttoCuentasContables.pBusquedaCargarCatalogoDeCuentas()}"
                                                     update=":formTabs"
                                                     />
-                                            <p:column headerText="Id">
-                                                <h:outputText value="#{pro.id}" />
-                                            </p:column>
                                             <p:column headerText="Codigo">
                                                 <h:outputText value="#{pro.codigo}" />
                                             </p:column>
@@ -132,14 +129,14 @@
                                             id="mnNuevoCatalogo"
                                             value="Nuevo"
                                             process="@this"
-                                            action="#{mttoCuentasContables.limpiarPestaniaCatalogo()}"
+                                            action="#{mttoCuentasContables.pCatalogoLimpiarComponentes()}"
                                             icon="fa fa-user-plus"
                                             update=":formTabs:tabs:datosProyectoCatalogo :formTabs:tabs:contenedorArbolCuentas"
                                             />                                       
                                         <p:menuitem 
                                             id="mnGuardarCatalogo"
                                             value="Guardar" 
-                                            action="#{mttoCuentasContables.guardarCatalogo()}"
+                                            action="#{mttoCuentasContables.pCatalogoGuardarCatalogo()}"
                                             icon="fa fa-save"
                                             process="@this txtProyecto"
                                             onclick="onComplete();"
@@ -153,16 +150,14 @@
                                             <div class="ui-g-8">
                                                 <div class="ui-inputgroup">
                                                     <p:inputText id="txtProyecto"
-                                                                 value="#{mttoCuentasContables.proyectoActualCatalogo.nombreCorto}"
+                                                                 value="#{mttoCuentasContables.pestaniaCatalogo.proyectoActual.nombreCorto}"
                                                                  readonly="true"
                                                                  >
                                                     </p:inputText>
                                                     <p:commandButton icon="ui-icon-search"  
                                                                      styleClass="white-button"
                                                                      process="@this"
-                                                                     update=":formDialogProyectos"
-                                                                     actionListener="#{mttoCuentasContables.abrirModalBuscarProyectoEnTabCatalogo()}"
-                                                                     disabled="#{mttoCuentasContables.deshabilitarInputProyecto()}"
+                                                                     actionListener="#{mttoCuentasContables.mBuscarProyectoAbrirModal()}"
                                                                      />  
                                                 </div>
                                             </div>
@@ -176,7 +171,7 @@
                                             <div class="ui-g-12" >
                                                 <p:fileUpload 
                                                     id="fileLoader"
-                                                    fileUploadListener="#{mttoCuentasContables.subirYprocesarArchivo}" 
+                                                    fileUploadListener="#{mttoCuentasContables.pCtalogoSubirYprocesarArchivo}" 
                                                     mode="advanced" 
                                                     dragDropSupport="false"
                                                     sizeLimit="10000000" 
@@ -194,46 +189,38 @@
                                             <h3>Procesando archivo...</h3>
                                             <p:progressBar id="barraDeProgreso" style="height:6px;" mode="indeterminate" />
                                         </div>
-                                        
+
                                         <div class="ui-lg-12 ui-md-12 ui-sm-12">
-                                            <!--
-                                            <p:staticMessage 
-                                                severity="info" 
-                                                summary="Informacion: " 
-                                                detail="#{mttoCuentasContables.msjPestaniaCatalogo}" 
-                                                rendered="#{mttoCuentasContables.verMsjNoHayCatalogo()}"
-                                                />
-                                        -->
                                         </div>
-                                        
+
                                         <div class="ui-lg-3">
                                             <p:commandButton
                                                 icon="ui-icon-plus"
                                                 value="Agregar cuenta principal"
-                                                actionListener="#{mttoCuentasContables.abrirModalAgregarCuentaPrincipal()}"
-                                                update=":formModalCuenta:dialogCuenta"
+                                                actionListener="#{mttoCuentasContables.mAgregarCuentasPrincipalesAbrir()}"
+
                                                 process="@this"
                                                 >
                                             </p:commandButton>
                                         </div>
                                         <p:tree
                                             id="tree-catalogo-cuentas" 
-                                            value="#{mttoCuentasContables.arbolCuentasCatalogo}" 
+                                            value="#{mttoCuentasContables.pestaniaCatalogo.arbolCuentasTreeNode}" 
                                             var="nodo" 
                                             selectionMode="single"
-                                            selection="#{mttoCuentasContables.nodoActual}"
+                                            selection="#{mttoCuentasContables.pestaniaCatalogo.nodoActual}"
                                             filterBy="#{nodo}"
                                             animate="true"
                                             styleClass="tree-cuentas"
-                                            
+
                                             >
                                             <p:ajax event="select" 
-                                                    listener="#{mttoCuentasContables.cargarCuentaSeleccionadaTreeCatalogo()}"
+                                                    listener="#{mttoCuentasContables.pCatalogoCargarCuentaSeleccionada()}"
                                                     />
                                             <p:treeNode expandedIcon="ui-icon-folder-open" 
                                                         collapsedIcon="ui-icon-folder-collapsed"
                                                         styleClass="tree-cuentas"
-                                                        
+
                                                         >
                                                 <p:commandButton
                                                     type="button"
@@ -241,7 +228,7 @@
                                                     onclick="PF('overlayOpcionesCuenta').show('#{component.clientId}')" 
                                                     value="#{nodo}"
                                                     >
-                                                    
+
                                                 </p:commandButton>
                                                 <!--<h:outputText value="#{nodo}" />-->
                                             </p:treeNode>
@@ -250,30 +237,6 @@
                                 </p:tab>
                             </div>
                         </p:tabView>
-                    </h:form>
-
-                    <h:form id="formOverlay">
-                        <p:overlayPanel widgetVar="overlayOpcionesCuenta" showEffect="fade" hideEffect="fade" dismissable="false" showCloseIcon="true">
-                            <p:outputPanel style="text-align:center;">
-                                <p:panelGrid  columns="1" styleClass="ui-panelgrid-blank">
-                                    <p:commandButton icon="ui-icon-plus"  
-                                                     styleClass="white-button"
-                                                     value="Agregar subcuenta(s)"
-                                                     actionListener="#{mttoCuentasContables.abrirModalAgregarSubcuentas()}"
-                                                     update=":formModalAgregarSubcuentas:panel-modal-subcuenta"
-                                                     />  
-                                    <p:commandButton icon="ui-icon-pencil"  
-                                                     styleClass="white-button"
-                                                     value="Editar"
-                                                     actionListener="#{mttoCuentasContables.abrirModalCuenta()}"
-                                                     update=":formModalCuenta:panel-modal-datos-cuenta"/>
-                                    <p:commandButton icon="ui-icon-trash"  
-                                                     styleClass="white-button"
-                                                     value="Eliminar"
-                                                     actionListener="#{mttoCuentasContables.abrirModalBuscarCuenta()}"/>  
-                                </p:panelGrid>
-                            </p:outputPanel>
-                        </p:overlayPanel>
                     </h:form>
 
                     <h:form id="formDialogProyectos">
@@ -288,14 +251,14 @@
                             <p:menubar>
                                 <p:menuitem 
                                     value="Buscar" 
-                                    actionListener="#{mttoCuentasContables.buscarProyectoEnModal()}" 
+                                    actionListener="#{mttoCuentasContables.mBuscarProyectoBuscar()}" 
                                     icon="ui-icon-search"
                                     update=":formDialogProyectos:tablaProyectosModal"
                                     process="@this datosProyectoBuscadoModal"
                                     />
                                 <p:menuitem 
                                     value="Limpiar" 
-                                    action="#{mttoCuentasContables.limpiarBusquedaProyectoEnModal()}" 
+                                    action="#{mttoCuentasContables.mBuscarProyectoLimpiar()}" 
                                     update=":formDialogProyectos:datosProyectoBuscadoModal :formDialogProyectos:tablaProyectosModal"
                                     icon="fa fa-eraser" 
                                     process="@this"
@@ -309,20 +272,20 @@
                                     style="border:0px !important; background:none;"
                                     styleClass="ui-panelgrid-blank">
                                     <p:outputLabel for="txtCodigoProyectoBM" value="Codigo:" />
-                                    <p:inputText id="txtCodigoProyectoBM" value="#{mttoCuentasContables.proyectoBusquedaModal.codigo}"                                                     
+                                    <p:inputText id="txtCodigoProyectoBM" value="#{mttoCuentasContables.modalBusquedaProyecto.proyectoAbuscar.codigo}"                                                     
                                                  onkeyup="this.value = this.value.toUpperCase();"/>
                                     <p:outputLabel for="txtNombreProyectoBM" value="Nombre:" />
-                                    <p:inputText id="txtNombreProyectoBM" value="#{mttoCuentasContables.proyectoBusquedaModal.nombre}"                                                     
+                                    <p:inputText id="txtNombreProyectoBM" value="#{mttoCuentasContables.modalBusquedaProyecto.proyectoAbuscar.nombre}"                                                     
                                                  onkeyup="this.value = this.value.toUpperCase();"/>
                                     <p:outputLabel for="txtNombreCortoBM" value="Nombre Corto:" />
-                                    <p:inputText id="txtNombreCortoBM" value="#{mttoCuentasContables.proyectoBusquedaModal.nombreCorto}"
+                                    <p:inputText id="txtNombreCortoBM" value="#{mttoCuentasContables.modalBusquedaProyecto.proyectoAbuscar.nombreCorto}"
                                                  onkeyup="this.value = this.value.toUpperCase();"/>
                                     <p:outputLabel for="listEstadoM" value="Estado:" />
                                     <p:selectOneMenu id="listEstadoM" 
-                                                     value="#{mttoCuentasContables.proyectoBusquedaModal.estado.id}"
+                                                     value="#{mttoCuentasContables.modalBusquedaProyecto.proyectoAbuscar.estado.id}"
                                                      >
                                         <f:selectItem itemLabel="Todos" itemValue="0"/>
-                                        <f:selectItems value="#{mttoCuentasContables.estadosProyecto}" 
+                                        <f:selectItems value="#{mttoCuentasContables.modalBusquedaProyecto.estadosProyecto}" 
                                                        var="estado" 
                                                        itemLabel="#{estado.descripcion}"
                                                        itemValue="#{estado.id}"
@@ -330,7 +293,7 @@
                                     </p:selectOneMenu>
                                     <p:outputLabel for="fechaInicioBM" value="Fecha inicio:" />
                                     <p:calendar id="fechaInicioBM" 
-                                                value="#{mttoCuentasContables.proyectoBusquedaModal.fechaini}"
+                                                value="#{mttoCuentasContables.modalBusquedaProyecto.proyectoAbuscar.fechaini}"
                                                 pattern="dd-MM-yyyy" 
                                                 mask="true"
                                                 locale="es"
@@ -339,7 +302,7 @@
                                     </p:calendar>    
                                     <p:outputLabel for="fechaFinBM" value="Fecha finalizacion:" />
                                     <p:calendar id="fechaFinBM" 
-                                                value="#{mttoCuentasContables.proyectoBusquedaModal.fechafin}"
+                                                value="#{mttoCuentasContables.modalBusquedaProyecto.proyectoAbuscar.fechafin}"
                                                 pattern="dd-MM-yyyy" 
                                                 mask="true"
                                                 locale="es"
@@ -351,14 +314,13 @@
                             <p:scrollPanel id="contenedor-proyectos" style="width: 770px;height: 250px;">
                                 <p:dataTable id="tablaProyectosModal" var = "pro" 
                                              widgetVar="tablaProyectosModal"
-                                             value="#{mttoCuentasContables.proyectosModal}"
+                                             value="#{mttoCuentasContables.modalBusquedaProyecto.proyectosRegistrados}"
                                              selectionMode="single"
-                                             selection="#{mttoCuentasContables.proyectoBusquedaModal}"
+                                             selection="#{mttoCuentasContables.modalBusquedaProyecto.proyectoActual}"
                                              rowKey="#{pro.id}"
                                              emptyMessage="Sin registros">
                                     <p:ajax event="rowSelect"
-                                            listener="#{mttoCuentasContables.cargarProyectoSeleccionadoEnModal()}"
-
+                                            listener="#{mttoCuentasContables.mBuscarProyectoCargarProyecto()}"
                                             />
                                     <p:column headerText="Código">
                                         <h:outputText value="#{pro.codigo}" />
@@ -380,7 +342,7 @@
                                         </h:outputText>
                                     </p:column>
                                     <p:column headerText="Estado">
-                                        <h:outputText value="#{act.estado.descripcion}" />
+                                        <h:outputText value="#{pro.estado.descripcion}" />
                                     </p:column>
                                 </p:dataTable>
                             </p:scrollPanel>
@@ -388,92 +350,56 @@
                                 <p:commandButton 
                                     value="Cancelar" 
                                     process="@this"
-                                    actionListener="#{mttoCuentasContables.cerrarModalBuscarProyecto()}"
+                                    actionListener="#{mttoCuentasContables.mBuscarProyectoCerrarModal()}"
                                     />
                             </h:panelGrid>
                         </p:dialog>
                     </h:form>
 
-                    <h:form id="formModalCuenta">
-                        <p:dialog id="dialogCuenta" 
-                                  widgetVar="dialogCuenta" 
-                                  modal="true" 
-                                  header="#{mttoCuentasContables.tituloModalCuenta}" 
-                                  width="350" 
-                                  height="335"
-                                  resizable="false"
-                                  >
-                            <div jsf:id="panel-modal-datos-cuenta" class="ui-g ui-panelgrid-blank">
-                                <div class="ui-g-12" >
-                                    <div class="ui-g-12" jsf:rendered="#{mttoCuentasContables.renderInputProyectoModalCuenta}">
-                                        <p:outputLabel for="txtSubcuentaDe" value="Subcuenta de:"/>
-                                        <div class="ui-inputgroup input-cta-padre">
-                                            <p:inputText id="txtSubcuentaDe"
-                                                         value="#{mttoCuentasContables.cuentaActual.cuentaPadre.nombre}"
-                                                         disabled="true"
-                                                         >
-                                            </p:inputText>
-                                            <p:commandButton icon="ui-icon-search"  
-                                                             styleClass="white-button"
-                                                             type="button"
-                                                             process="@this"
-                                                             actionListener="#{mttoCuentasContables.abrirModalBuscarCuenta()}"/>  
-                                        </div>
-                                    </div>
-                                    <div class="ui-g-12" >
-                                        <p:outputLabel for="txtCodigoCuenta" value="Codigo: "/>
-
-                                        <p:inputText id="txtCodigoCuenta" 
-                                                     value="#{mttoCuentasContables.cuentaActual.cuentaPK.codigo}"
-                                                     >
-                                            <p:message for="txtCodigoCuenta"/>
-                                        </p:inputText>
-                                    </div>
-                                    <div class="ui-g-12" >
-                                        <p:outputLabel for="txtNombreCuenta" value="Nombre: "/>
-                                        <p:inputText id="txtNombreCuenta"
-                                                     value="#{mttoCuentasContables.cuentaActual.nombre}"
-                                                     >
-                                            <p:message for="txtNombreCuenta"/>
-                                        </p:inputText>
-                                    </div>
-                                    <div class="ui-g-12" >
-                                        <p:outputLabel for="txtDescripcionCuenta" value="Descripcion: "/>
-                                        <p:inputTextarea id="txtDescripcionCuenta"
-                                                         rows="5" 
-                                                         cols="30"
-                                                         value="#{mttoCuentasContables.cuentaActual.descripcion}"
-                                                         />
-                                    </div>
-                                    <div class="ui-g-4">
-                                        <p:commandButton 
-                                            value="Aceptar"
-                                            actionListener="#{mttoCuentasContables.accionBtnModalCuenta()}"
-                                            process="@this txtCodigoCuenta txtNombreCuenta txtDescripcionCuenta"
-                                            />    
-                                    </div>
-                                </div>
-                            </div>
-                        </p:dialog>
+                    <h:form id="formOverlay">
+                        <p:overlayPanel widgetVar="overlayOpcionesCuenta" showEffect="fade" hideEffect="fade" dismissable="false" showCloseIcon="true">
+                            <p:outputPanel style="text-align:center;">
+                                <p:panelGrid  columns="1" styleClass="ui-panelgrid-blank">
+                                    <p:commandButton icon="ui-icon-plus"  
+                                                     styleClass="white-button"
+                                                     value="Agregar subcuenta(s)"
+                                                     actionListener="#{mttoCuentasContables.mAgregarSubcuentasAbrir()}"
+                                                     />  
+                                    <p:commandButton icon="ui-icon-pencil"  
+                                                     styleClass="white-button"
+                                                     value="Editar"
+                                                     actionListener="#{mttoCuentasContables.mEditarCuentaAbrir()}"
+                                                     />
+                                    <p:commandButton icon="ui-icon-trash"  
+                                                     styleClass="white-button"
+                                                     value="Eliminar"
+                                                     actionListener="#{mttoCuentasContables.eliminarCuentaDeArbol()}"/>  
+                                </p:panelGrid>
+                            </p:outputPanel>
+                        </p:overlayPanel>
                     </h:form>
 
                     <h:form id="formModalAgregarSubcuentas">
                         <p:dialog id="dialogAgregarSubcuentas" 
                                   widgetVar="dialogAgregarSubcuentas" 
                                   modal="true" 
-                                  header="Agregar subcuentas" 
-                                  width="520" 
+                                  header="#{mttoCuentasContables.modalAgregarCuentas.tituloModal}" 
+                                  width="570" 
                                   height="345"
                                   resizable="false"
                                   >
                             <div jsf:id="panel-modal-subcuenta" class="ui-g ui-panelgrid-blank">
                                 <div class="ui-g-6" >
                                     <div class="ui-g-12" >
-                                        <p:outputLabel for="txtCuentaPadreSub" value="Cuenta padre:"/>
+                                        <p:outputLabel for="txtCuentaPadreSub" 
+                                                       value="Cuenta padre:"
+                                                       rendered="#{mttoCuentasContables.modalAgregarCuentas.verCuentaPadre}"
+                                                       />
                                         <div class="ui-inputgroup input-cta-padre">
                                             <p:inputText id="txtCuentaPadreSub"
-                                                         value="#{mttoCuentasContables.cuentaActual.cuentaPK.codigo} - #{mttoCuentasContables.cuentaActual.nombre}"
+                                                         value="#{mttoCuentasContables.modalAgregarCuentas.cuentaPadre.cuentaPK.codigo}  #{mttoCuentasContables.modalAgregarCuentas.cuentaPadre.nombre}"
                                                          disabled="true"
+                                                         rendered="#{mttoCuentasContables.modalAgregarCuentas.verCuentaPadre}"
                                                          >
                                             </p:inputText>
                                         </div>
@@ -482,7 +408,7 @@
                                         <p:outputLabel for="txtCodigoCuentaSub" value="Codigo: "/>
 
                                         <p:inputText id="txtCodigoCuentaSub" 
-                                                     value="#{mttoCuentasContables.subcuentaActual.cuentaPK.codigo}"
+                                                     value="#{mttoCuentasContables.modalAgregarCuentas.cuentaActual.cuentaPK.codigo}"
                                                      >
                                             <p:message for="txtCodigoCuentaSub"/>
                                         </p:inputText>
@@ -490,7 +416,7 @@
                                     <div class="ui-g-12" >
                                         <p:outputLabel for="txtNombreCuentaSub" value="Nombre: "/>
                                         <p:inputText id="txtNombreCuentaSub"
-                                                     value="#{mttoCuentasContables.subcuentaActual.nombre}"
+                                                     value="#{mttoCuentasContables.modalAgregarCuentas.cuentaActual.nombre}"
                                                      >
                                             <p:message for="txtNombreCuentaSub"/>
                                         </p:inputText>
@@ -500,15 +426,15 @@
                                         <p:inputTextarea id="txtDescripcionCuentaSub"
                                                          rows="5" 
                                                          cols="30"
-                                                         value="#{mttoCuentasContables.subcuentaActual.descripcion}"
+                                                         value="#{mttoCuentasContables.modalAgregarCuentas.cuentaActual.descripcion}"
                                                          />
                                     </div>
                                     <div class="ui-g-6">
                                         <p:commandButton
                                             icon="ui-icon-plus"
-                                            actionListener="#{mttoCuentasContables.agregarSubcuenta()}"
-                                            update=":formModalAgregarSubcuentas:listaSubcuentas"
-                                            process="@this  txtCuentaPadreSub txtCodigoCuentaSub txtNombreCuentaSub txtDescripcionCuentaSub"
+                                            actionListener="#{mttoCuentasContables.mAgregarCuentaAgregar()}"
+                                            update=":formModalAgregarSubcuentas:panel-modal-subcuenta"
+                                            process="@this txtCuentaPadreSub txtCodigoCuentaSub txtNombreCuentaSub txtDescripcionCuentaSub"
                                             value="Agregar" 
                                             />    
                                     </div>
@@ -517,60 +443,94 @@
                                             icon="ui-icon-check"
                                             value="Aceptar" 
                                             process="@this"
-                                            actionListener="#{mttoCuentasContables.guardarSubcuentas()}"
+                                            actionListener="#{mttoCuentasContables.mAgregarCuentaGuardar()}"
                                             />    
                                     </div>
                                 </div>
                                 <div class="ui-g-6">
-                                    <h3 style="margin-top: 0">Subcuentas a agregar</h3>
-                                    <p:orderList 
-                                        id="listaSubcuentas"
-                                        value="#{mttoCuentasContables.listaSubcuentasModal}" 
-                                        var="cta" 
-                                        controlsLocation="none" 
-                                        itemLabel="#{cta.cuentaPK.codigo} - #{cta.nombre}" 
-                                        itemValue="#{cta}" 
-                                        />
+                                    <p:dataTable id="tablaCuentasAagregar" 
+                                                 var = "cta" 
+                                                 widgetVar="tablaCuentasAagregar"
+                                                 value="#{mttoCuentasContables.modalAgregarCuentas.cuentas}"
+                                                 selection="#{mttoCuentasContables.modalAgregarCuentas.cuentaActual}"
+                                                 emptyMessage="Sin registros"
+                                                 rowIndexVar="index"
+                                                 >
+                                        <p:column headerText="Codigo">
+                                            <h:outputText value="#{cta.cuentaPK.codigo}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre">
+                                            <h:outputText value="#{cta.nombre}" />
+                                        </p:column>
+                                        <p:column headerText="Opciones">
+                                            <p:commandButton 
+                                                icon="ui-icon-pencil" 
+                                                style="width: 30px;margin: 0px 10px 0px 10px;"
+                                                action="#{mttoCuentasContables.mAgregarCuentaCargarCuenta(index,cta)}" 
+                                                update=":formModalAgregarSubcuentas:panel-modal-subcuenta"
+                                                process="@this"
+                                                />
+                                            <p:commandButton 
+                                                icon="ui-icon-trash" 
+                                                style="width: 30px;margin: 0px 10px 0px 10px;"
+                                                action="#{mttoCuentasContables.mAgregarCuentaElmiminarCuenta(index)}" 
+                                                update=":formModalAgregarSubcuentas:panel-modal-subcuenta"
+                                                process="@this"
+                                                />
+                                        </p:column>
+
+                                    </p:dataTable>
                                 </div>
                             </div>
                         </p:dialog>
                     </h:form>
 
-                    <h:form id="formDialogCuentas">
-                        <p:dialog id="dialogCuentas" 
-                                  widgetVar="dialogCuentas" 
+
+                    <h:form id="formModalCuenta">
+                        <p:dialog id="dialogCuenta" 
+                                  widgetVar="dialogCuenta" 
                                   modal="true" 
-                                  header="Cuentas" 
-                                  width="500" 
-                                  height="300"
+                                  header="Editar cuenta" 
+                                  width="350" 
+                                  height="335"
                                   resizable="false"
                                   >
-                            <p:scrollPanel id="contenedor-tree-dialog" style="width: 450px;height: 250px;">
-                                <p:tree value="#{mttoCuentasContables.arbolCuentasModal}" 
-                                        var="nodo" 
-                                        selectionMode="single"
-                                        selection="#{mttoCuentasContables.nodoActual}"
-                                        filterBy="#{nodo}"
-                                        animate="true"
-                                        >
-                                    <p:ajax event="select" 
-                                            listener="#{mttoCuentasContables.cargarCuentaSeleccionadaModal()}"
-                                            oncomplete="PF('dialogCuentas').hide()"
+                            <div jsf:id="panel-modal-datos-cuenta" class="ui-g ui-panelgrid-blank">
+                                <div class="ui-g-12" >
+                                    <div class="ui-g-12" >
+                                        <p:outputLabel for="txtCodigoCuenta" value="Codigo: "/>
 
-                                            />
-                                    <p:treeNode expandedIcon="ui-icon-folder-open" collapsedIcon="ui-icon-folder-collapsed">
-                                        <h:outputText value="#{nodo}" />
-                                    </p:treeNode>
-                                </p:tree>
-                            </p:scrollPanel>
-                            <h:panelGrid columns="3">
-                                <p:commandButton 
-                                    value="Cancelar" 
-                                    type="button"
-                                    onclick="PF('dialogCuentas').hide()"
-
-                                    />
-                            </h:panelGrid>
+                                        <p:inputText id="txtCodigoCuenta" 
+                                                     value="#{mttoCuentasContables.modalEditarCuenta.cuentaActual.cuentaPK.codigo}"
+                                                     >
+                                            <p:message for="txtCodigoCuenta"/>
+                                        </p:inputText>
+                                    </div>
+                                    <div class="ui-g-12" >
+                                        <p:outputLabel for="txtNombreCuenta" value="Nombre: "/>
+                                        <p:inputText id="txtNombreCuenta"
+                                                     value="#{mttoCuentasContables.modalEditarCuenta.cuentaActual.nombre}"
+                                                     >
+                                            <p:message for="txtNombreCuenta"/>
+                                        </p:inputText>
+                                    </div>
+                                    <div class="ui-g-12" >
+                                        <p:outputLabel for="txtDescripcionCuenta" value="Descripcion: "/>
+                                        <p:inputTextarea id="txtDescripcionCuenta"
+                                                         rows="5" 
+                                                         cols="30"
+                                                         value="#{mttoCuentasContables.modalEditarCuenta.cuentaActual.descripcion}"
+                                                         />
+                                    </div>
+                                    <div class="ui-g-4">
+                                        <p:commandButton 
+                                            value="Aceptar"
+                                            actionListener="#{mttoCuentasContables.mEditarCuentaEditar()}"
+                                            process="@this txtCodigoCuenta txtNombreCuenta txtDescripcionCuenta"
+                                            />    
+                                    </div>
+                                </div>
+                            </div>
                         </p:dialog>
                     </h:form>
 
@@ -586,8 +546,6 @@
                         function onComplete() {
                             document.getElementById("divBarraDeProgreso").style.display = "none";
                         }
-
-
                     </script>
 
                 </div>

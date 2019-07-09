@@ -767,7 +767,7 @@ public class MttoCheque implements Serializable {
             Map filtros = new HashMap();
             filtros.put("cuentasPrincipales", true);
             filtros.put("proyecto", proyectoActual);
-            cuentasList = servCuenta.buscarCuentas(filtro);
+            cuentasList = servCuenta.buscarCuentasList(filtro);
 
             if (cuentasList.isEmpty()) {
                 this.showMessage(FacesMessage.SEVERITY_WARN,

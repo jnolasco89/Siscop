@@ -45,7 +45,8 @@ public class Cuenta implements Serializable {
     private Cuenta cuentaPadre;
     @Transient
     private Proyecto objProyecto;
-    
+    @Transient
+    private int indexEnList;
     
     public Cuenta() {
     }
@@ -106,6 +107,14 @@ public class Cuenta implements Serializable {
         this.objProyecto = objProyecto;
     }
 
+    public int getIndexEnList() {
+        return indexEnList;
+    }
+
+    public void setIndexEnList(int indexEnList) {
+        this.indexEnList = indexEnList;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
